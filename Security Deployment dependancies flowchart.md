@@ -48,5 +48,17 @@ flowchart LR
 
     M365ZeroTrustDeployment[Zero Trust deployment plan with Microsoft 365]
     click M365ZeroTrustDeployment "https://learn.microsoft.com/en-us/microsoft-365/security/microsoft-365-zero-trust?view=o365-worldwide"
+    ZeroTrustAssessmentWorkshop[Zero Trust Assessment Workshop]
+    click ZeroTrustAssessmentWorkshop "https://microsoft.github.io/zerotrustassessment/"
+    ZeroTrustAssessmentTool[Zero Trust Assessment Tool]
+    click ZeroTrustAssessmentTool "https://microsoft.github.io/zerotrustassessment/docs/app-permissions"
+    PurviewBlueprint[Purview Deployment Models]
+    click PurviewBlueprint "https://learn.microsoft.com/en-us/purview/deploymentmodels/depmod-overview" 
+    
+    subgraph Resources
+    M365ZeroTrustDeployment
+    ZeroTrustAssessmentWorkshop
+    ZeroTrustAssessmentTool
+    PurviewBlueprint
 
 '''
