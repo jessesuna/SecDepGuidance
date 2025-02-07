@@ -52,6 +52,7 @@ flowchart LR
     click PurviewBlueprint "https://learn.microsoft.com/en-us/purview/deploymentmodels/depmod-overview"
         
     subgraph Resources
+        direction TB
         M365ZeroTrustDeployment
         ZeroTrustAssessmentWorkshop
         ZeroTrustAssessmentTool
@@ -59,6 +60,7 @@ flowchart LR
     end
 
     subgraph Products
+        direction TB
         Entra 
         Intune
         Purview
