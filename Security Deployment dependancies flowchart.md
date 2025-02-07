@@ -37,9 +37,10 @@ flowchart LR
     %%Foundations
     IntuneEnroll[Enroll devices into management]-->IntuneCompPol[Configure complianece policies]
     MFA[Deploy Multifactor Authentication]-->CA[Configure Conditional Access Policies]
-    IntuneCompPol-->CA
+    IntuneCompPol-->OnboardDevices
     CA-->Foundation
     CloudID[Configure Cloud Identity]-->MFA
+    OnboardDevices-->CA
 
     %% Links and Resources
     M365ZeroTrustDeployment[Zero Trust deployment plan with Microsoft 365]
@@ -60,12 +61,12 @@ flowchart LR
     end
 
     subgraph Products
-        direction TB
-        Entra 
-        Intune
-        Purview
-        Defender
-    end
+            direction TB
+                Entra 
+                Intune
+                Purview
+                Defender
+        end
 
     subgraph Foundations
     IntuneEnroll
