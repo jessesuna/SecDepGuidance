@@ -12,7 +12,9 @@ flowchart LR
     Data-->Zero
     Threats[Defend Against Threats]-->Zero
     
-    click Zero "https://"
+    click Zero "https://aka.ms/zerotrust"
+    click Data "https://www.microsoft.com/en-us/security/business/solutions/data-security?msockid=015d6c09ff27605e22fc7f9efecb614d"
+    click Threats ""
 
     %% Data Security
     AI[GenAI Data Safety]-->Data
@@ -25,6 +27,15 @@ flowchart LR
     Purbrowserext[Deploy Purview browser extension]-->Data
     Purbrowserext-->DSPM
 
+    subgraph Data Security
+    AI
+    DSPM
+    Data
+    PurAud
+    EndpointDLP
+    Purbrowserext
+    end
+
     %%Theats
     XDR[M365 Defender for XDR]
     DID[Defender for Identity]-->XDR
@@ -34,6 +45,16 @@ flowchart LR
     XDR-->Threats
     MDVM[Defender for Volnerability Management]-->Threats
 
+    subgraph Defend Against Threats
+    XDR
+    DID
+    MDO
+    MDE
+    MDCA
+    MDVM
+    Threats
+    end
+
     %%Foundations
     IntuneEnroll[Enroll devices into management]-->IntuneCompPol[Configure complianece policies]
     MFA[Deploy Multifactor Authentication]-->CA[Configure Conditional Access Policies]
@@ -41,6 +62,29 @@ flowchart LR
     CA-->Foundation
     CloudID[Configure Cloud Identity]-->MFA
     OnboardDevices-->CA
+
+    subgraph Foundations
+    IntuneEnroll
+    MFA
+    CloudID
+    Foundation
+    CA
+    OnboardDevices
+    IntuneCompPol
+    end
+
+    %% Entra Suite 
+
+    Foundation-->RCA[Risk Based Conditional Access]
+    RCA-->IDProtection[Entra Identity Protection]
+    IDProtAlerts[Entra Identity Protection Alerts and Monitoring]-->IDProtection
+    IDProtection-->Zero 
+    CA-->EPA[Entra Private Access]
+    RCA-->EPA
+    EPAConn[Deploy Entra Private Access Connector]-->EPA
+    EPA-->GSA[Entra Global Secure Access]
+    GSA-->Zero
+    
 
     %% Links and Resources
     M365ZeroTrustDeployment[Zero Trust deployment plan with Microsoft 365]
@@ -61,41 +105,13 @@ flowchart LR
     end
 
     subgraph Products
-            direction TB
-                Entra 
-                Intune
-                Purview
-                Defender
-        end
-
-    subgraph Foundations
-    IntuneEnroll
-    MFA
-    CloudID
-    Foundation
-    CA
-    OnboardDevices
-    IntuneCompPol
+        Entra 
+        Intune
+        Purview
+        Defender
     end
 
-    subgraph Threat
-    XDR
-    DID
-    MDO
-    MDE
-    MDCA
-    MDVM
-    Threats
-    end
 
-    subgraph Data Security
-    AI
-    DSPM
-    Data
-    PurAud
-    EndpointDLP
-    Purbrowserext
-    end
 
     %% Product
     style Entra fill:green,stroke:black
