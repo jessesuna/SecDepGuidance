@@ -18,9 +18,9 @@
    - Enable Identity Protection alerts and monitoring
    - Implement Just-In-Time (JIT) access for privileged roles
 
-2. Deploy Entra Permissions Management
-   - Run initial discovery scan
-   - Review excessive permissions
+2. Entra Recommendations
+   - View Secure Score
+   - Review Recommendations Overview
    - Implement least-privilege recommendations
 
 3. Enable Entra Verified ID
