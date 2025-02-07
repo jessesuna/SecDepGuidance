@@ -26,7 +26,6 @@ flowchart LR
     Purbrowserext-->DSPM
 
     %%Theats
-
     XDR[M365 Defender for XDR]
     DID[Defender for Identity]-->XDR
     MDO[Defender for Office 365]-->XDR
@@ -43,7 +42,6 @@ flowchart LR
     CloudID[Configure Cloud Identity]-->MFA
 
     %% Links and Resources
-
     M365ZeroTrustDeployment[Zero Trust deployment plan with Microsoft 365]
     click M365ZeroTrustDeployment "https://learn.microsoft.com/en-us/microsoft-365/security/microsoft-365-zero-trust?view=o365-worldwide"
     ZeroTrustAssessmentWorkshop[Zero Trust Assessment Workshop]
@@ -73,6 +71,8 @@ flowchart LR
     IntuneComPol
     CloudID
     Foundation
+    CA
+    OnboardDevice
     end
 
     subgraph Threat
@@ -85,4 +85,12 @@ flowchart LR
     Threats
     end
 
+    subgraph Data Security
+    AI
+    DSPM
+    DATA
+    PurAud
+    EndpointDLP
+    Purbrowserext
+    end
 '''
