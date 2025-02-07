@@ -94,4 +94,22 @@ flowchart LR
     EndpointDLP
     Purbrowserext
     end
+
+    %% Product
+    style Entra fill:green,stroke:black
+    style MFA fill:green,stroke:black
+    style CA fill:green,stroke:black
+    style CloudID fill:green,stroke:black
+    style Defender brown,stroke:blue
+    style XDR brown,stroke:blue
+    style DID brown,stroke:blue
+    style MDO brown,stroke:blue
+    style MDE brown,stroke:blue
+    style MDCA brown,stroke:blue
+    style MDVM brown,stroke:blue
+    style id3 fill:#66f,stroke:#f6f,stroke-width:4px
+    style id4 fill:red,stroke:yellow
+    style id5 fill:orange,stroke:white
+    style id6 fill:yellow,stroke:blue
+    style id7 fill:brown,stroke:blue
 '''
