@@ -88,7 +88,7 @@ flowchart LR
     subgraph Data Security
     AI
     DSPM
-    DATA
+    Data
     PurAud
     EndpointDLP
     Purbrowserext
@@ -99,13 +99,13 @@ flowchart LR
     style MFA fill:green,stroke:black
     style CA fill:green,stroke:black
     style CloudID fill:green,stroke:black
-    style Defender brown,stroke:blue
-    style XDR brown,stroke:blue
-    style DID brown,stroke:blue
-    style MDO brown,stroke:blue
-    style MDE brown,stroke:blue
-    style MDCA brown,stroke:blue
-    style MDVM brown,stroke:blue
+    style Defender fill:#66f,stroke:#f6f,stroke-width:4px
+    style XDR fill:#66f,stroke:#f6f,stroke-width:4px
+    style DID fill:#66f,stroke:#f6f,stroke-width:4px
+    style MDO fill:#66f,stroke:#f6f,stroke-width:4px
+    style MDE fill:#66f,stroke:#f6f,stroke-width:4px
+    style MDCA fill:#66f,stroke:#f6f,stroke-width:4px
+    style MDVM fill:#66f,stroke:#f6f,stroke-width:4px
     style Intune fill:red,stroke:yellow
     style IntuneEnroll fill:red,stroke:yellow
     style IntuneCompPol fill:red,stroke:yellow
@@ -115,6 +115,7 @@ flowchart LR
     style PurAUD fill:orange,stroke:white
     style EndpointDLP fill:orange,stroke:white
     style Purbrowserext fill:orange,stroke:white
+    
 
     style id3 fill:#66f,stroke:#f6f,stroke-width:4px
     style id4 fill:red,stroke:yellow
