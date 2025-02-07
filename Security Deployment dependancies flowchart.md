@@ -68,7 +68,6 @@ flowchart LR
     subgraph Foundations
     IntuneEnroll
     MFA
-    IntuneComPol
     CloudID
     Foundation
     CA
@@ -109,7 +108,7 @@ flowchart LR
     style MDVM brown,stroke:blue
     style Intune fill:red,stroke:yellow
     style IntuneEnroll fill:red,stroke:yellow
-    style IntuneComPol fill:red,stroke:yellow
+    style IntuneCompPol fill:red,stroke:yellow
     style OboardDevices fill:red,stroke:yellow
     style Purview fill:orange,stroke:white
     style DSPM fill:orange,stroke:white
