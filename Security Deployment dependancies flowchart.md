@@ -107,6 +107,16 @@ flowchart LR
     style MDE brown,stroke:blue
     style MDCA brown,stroke:blue
     style MDVM brown,stroke:blue
+    style Intune fill:red,stroke:yellow
+    style IntuneEnroll fill:red,stroke:yellow
+    style IntuneComPol fill:red,stroke:yellow
+    style OboardDevices fill:red,stroke:yellow
+    style Purview fill:orange,stroke:white
+    style DSPM fill:orange,stroke:white
+    style PurAUD fill:orange,stroke:white
+    style EndpointDLP fill:orange,stroke:white
+    style Purbrowserext fill:orange,stroke:white
+
     style id3 fill:#66f,stroke:#f6f,stroke-width:4px
     style id4 fill:red,stroke:yellow
     style id5 fill:orange,stroke:white
