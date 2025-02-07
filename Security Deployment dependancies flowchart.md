@@ -50,6 +50,7 @@ flowchart LR
     click ZeroTrustAssessmentWorkshop "https://microsoft.github.io/zerotrustassessment/"
     ZeroTrustAssessmentTool[Zero Trust Assessment Tool]
     click ZeroTrustAssessmentTool "https://microsoft.github.io/zerotrustassessment/docs/app-permissions"
+    
     PurviewBlueprint[Purview Deployment Models]
     click PurviewBlueprint "https://learn.microsoft.com/en-us/purview/deploymentmodels/depmod-overview"
         
