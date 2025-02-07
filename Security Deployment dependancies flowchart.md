@@ -82,8 +82,34 @@ flowchart LR
     CA-->EPA[Entra Private Access]
     RCA-->EPA
     EPAConn[Deploy Entra Private Access Connector]-->EPA
-    EPA-->GSA[Entra Global Secure Access]
+    EPA-->GSA[Entra Global Secure Access SSE]
     GSA-->Zero
+    CA-->EIA[Entra Internet Access]
+    RCA-->EIA
+    EIA-->GSA
+    VIDCred[Configure Verified Credential]-->VID[Entra Verified ID]
+    VIDWorkflow[Configure Verification Workflow]-->VID
+    VID-->Zero
+    AccessReview[Configure Access Reviews]-->IGA[Entra Identity Governance]
+    PIM[Implement Privileged Identity Management]--IGA
+    IGA-->Zero
+
+
+    subgraph Entra Suite
+    RCA
+    IDProtAlerts
+    IDProtection
+    EPAConn
+    EPA
+    GSA
+    EIA
+    VIDCred
+    VID
+    VIDWorkflow
+    AccessReview
+    IGA
+    PIM
+    end
 
 
     %% Links and Resources
