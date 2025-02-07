@@ -65,4 +65,14 @@ flowchart LR
         Intune
         Purview
         Defender
+    end
+
+    subgraph Foundations
+    IntuneEnroll
+    MFA
+    IntuneComPol
+    CloudID
+    Foundation
+    end
+
 '''
