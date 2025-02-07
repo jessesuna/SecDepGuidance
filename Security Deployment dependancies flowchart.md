@@ -27,14 +27,26 @@ flowchart LR
 
     %%Theats
 
-
+    XDR[M365 Defender for XDR]
+    DID[Defender for Identity]-->XDR
+    MDO[Defender for Office 365]-->XDR
+    MDE[Defender for Endpoint]-->XDR
+    MDCA[Defender for Cloud Apps]-->XDR
+    XDR-->Threats
+    MDVM[Defender for Volnerability Management]-->Threats
 
     %%Foundations
     IntuneEnroll[Enroll devices into management]-->IntuneCompPol[Configure complianece policies]
     MFA[Deploy Multifactor Authentication]-->CA[Configure Conditional Access Policies]
     IntuneCompPol-->CA
     CA-->Foundation
+    CloudID[Configure Cloud Identity]-->MFA
 
 
+
+    %% Links 
+
+    M365ZeroTrustDeployment[Zero Trust deployment plan with Microsoft 365]
+    click M365ZeroTrustDeployment "https://learn.microsoft.com/en-us/microsoft-365/security/microsoft-365-zero-trust?view=o365-worldwide"
 
 '''
