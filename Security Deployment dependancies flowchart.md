@@ -72,7 +72,8 @@ flowchart LR
     CloudID
     Foundation
     CA
-    OnboardDevice
+    OnboardDevices
+    IntuneCompPol
     end
 
     subgraph Threat
