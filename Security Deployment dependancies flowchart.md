@@ -109,7 +109,7 @@ flowchart LR
     style Intune fill:red,stroke:yellow
     style IntuneEnroll fill:red,stroke:yellow
     style IntuneCompPol fill:red,stroke:yellow
-    style OboardDevices fill:red,stroke:yellow
+    style OnboardDevices fill:red,stroke:yellow
     style Purview fill:orange,stroke:white
     style DSPM fill:orange,stroke:white
     style PurAUD fill:orange,stroke:white
