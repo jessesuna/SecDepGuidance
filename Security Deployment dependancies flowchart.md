@@ -14,7 +14,7 @@ flowchart LR
     
     click Zero "https://aka.ms/zerotrust"
     click Data "https://www.microsoft.com/en-us/security/business/solutions/data-security?msockid=015d6c09ff27605e22fc7f9efecb614d"
-    click Threats ""
+    click Threats "https://aka.ms/zerotrust"
 
     %% Data Security
     AI[GenAI Data Safety]-->Data
@@ -84,7 +84,7 @@ flowchart LR
     EPAConn[Deploy Entra Private Access Connector]-->EPA
     EPA-->GSA[Entra Global Secure Access]
     GSA-->Zero
-    
+
 
     %% Links and Resources
     M365ZeroTrustDeployment[Zero Trust deployment plan with Microsoft 365]
