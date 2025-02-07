@@ -1,6 +1,6 @@
 ```mermaid
 
-flowchart TD
+flowchart LR
 
     %% Core Zero Trust 
     Zero[Zero Trust/Security Suite Deployed]
