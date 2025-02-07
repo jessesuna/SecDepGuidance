@@ -75,4 +75,14 @@ flowchart LR
     Foundation
     end
 
+    subgraph Threats
+    XDR
+    DID
+    MDO
+    MDE
+    MDCA
+    MDVM
+    Threats
+    end
+
 '''
