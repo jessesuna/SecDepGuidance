@@ -42,9 +42,7 @@ flowchart LR
     CA-->Foundation
     CloudID[Configure Cloud Identity]-->MFA
 
-
-
-    %% Links 
+    %% Links and Resources
 
     M365ZeroTrustDeployment[Zero Trust deployment plan with Microsoft 365]
     click M365ZeroTrustDeployment "https://learn.microsoft.com/en-us/microsoft-365/security/microsoft-365-zero-trust?view=o365-worldwide"
@@ -53,8 +51,8 @@ flowchart LR
     ZeroTrustAssessmentTool[Zero Trust Assessment Tool]
     click ZeroTrustAssessmentTool "https://microsoft.github.io/zerotrustassessment/docs/app-permissions"
     PurviewBlueprint[Purview Deployment Models]
-    click PurviewBlueprint "https://learn.microsoft.com/en-us/purview/deploymentmodels/depmod-overview" 
-    
+    click PurviewBlueprint "https://learn.microsoft.com/en-us/purview/deploymentmodels/depmod-overview"
+        
     subgraph Resources
     M365ZeroTrustDeployment
     ZeroTrustAssessmentWorkshop
