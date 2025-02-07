@@ -10,7 +10,7 @@ flowchart LR
 
     Foundation-->Zero
     Data-->Zero
-    Threats-->Zero
+    Threats[Defend Against Threats]-->Zero
     
     click Zero "https://"
 
@@ -75,7 +75,7 @@ flowchart LR
     Foundation
     end
 
-    subgraph Threats
+    subgraph Threat
     XDR
     DID
     MDO
