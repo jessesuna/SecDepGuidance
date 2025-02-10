@@ -434,92 +434,88 @@
                 '- [Zero Trust Assessment Tool](https://microsoft.github.io/zerotrustassessment/docs/app-permissions)\n' +
                 '- [Purview Deployment Models](https://learn.microsoft.com/en-us/purview/deploymentmodels/depmod-overview)\n\n';
 
+            // First 30 Days: Foundation and Quick Wins
+            recommendations += '## First 30 Days: Foundation and Quick Wins\n\n';
+
             if (!deploymentStatus['CloudID']) {
-                recommendations += '### Identity & Access Management Priority\n' +
+                recommendations += '### Identity Foundation Priority\n' +
                     '- Configure Cloud Identity as your foundation\n' +
                     '- Review Entra ID Protection features\n' +
                     '- Implement basic identity management\n' +
                     '- Reference: [Zero Trust deployment plan](https://learn.microsoft.com/en-us/microsoft-365/security/microsoft-365-zero-trust?view=o365-worldwide#identity)\n\n';
             }
 
-            if (!deploymentStatus['MFA'] && deploymentStatus['CloudID']) {
-                recommendations += '### Security Enhancement Required\n' +
+            if (!deploymentStatus['MFA']) {
+                recommendations += '### Critical Security Enhancement\n' +
                     '- Deploy Multifactor Authentication immediately\n' +
                     '- Configure MFA for all users\n' +
                     '- Set up conditional access policies\n' +
                     '- Use the [Zero Trust Assessment Tool](https://microsoft.github.io/zerotrustassessment/docs/app-permissions) to validate your MFA configuration\n\n';
             }
 
-            if (!deploymentStatus['IntuneEnroll']) {
-                recommendations += '### Device Management Needed\n' +
+            if (!deploymentStatus['IntuneEnroll'] || !deploymentStatus['IntuneCompPol']) {
+                recommendations += '### Basic Device Management\n' +
                     '- Begin device enrollment in Intune\n' +
                     '- Configure basic device compliance policies\n' +
-                    '- Set up device management policies\n' +
+                    '- Set up essential device management policies\n' +
                     '- Follow the [Zero Trust deployment plan device guidance](https://learn.microsoft.com/en-us/microsoft-365/security/microsoft-365-zero-trust?view=o365-worldwide#devices)\n\n';
             }
 
-            if (!deploymentStatus['XDR']) {
-                recommendations += '### Threat Protection Recommendations\n' +
-                    '- Deploy Microsoft 365 Defender (XDR)\n' +
-                    '- Configure EDR capabilities\n' +
-                    '- Set up advanced threat protection\n' +
-                    '- Use the [Zero Trust Assessment Workshop](https://microsoft.github.io/zerotrustassessment/) to validate your security posture\n\n';
-            }
-
-            if (!deploymentStatus['DSPM'] || !deploymentStatus['EndpointDLP'] || !deploymentStatus['PurAud']) {
-                recommendations += '### Data Security Enhancement Required\n' +
-                    '- Deploy Microsoft Purview DSPM\n' +
-                    '- Configure Data Security\n' +
-                    '- Set up advanced threat protection\n' +
-                    '- Follow the [Purview Deployment Models](https://learn.microsoft.com/en-us/purview/deploymentmodels/depmod-overview) guidance\n\n';
-            }
-
-            if (!deploymentStatus['MDO']) {
-                recommendations += '### Office 365 Security Enhancement Required\n' +
-                    '- Deploy Defender for Office 365\n' +
-                    '- Configure EOP capabilities\n' +
-                    '- Set up advanced threat protection\n\n';
-            }
-
-            if (!deploymentStatus['MDE']) {
-                recommendations += '### Endpoint Security Enhancement Required\n' +
-                    '- Deploy Defender for Endpoint\n' +
-                    '- Configure EDR capabilities\n' +
-                    '- Set up advanced threat protection\n\n';
-            }           
-
-            if (!deploymentStatus['MDCA']) {
-                recommendations += '### Cloud Apps Security Enhancement Required\n' +
-                    '- Deploy Defender for Cloud Apps\n' +
-                    '- Configure Cloud App Security\n' +
-                    '- Set up advanced threat protection\n\n';
-                }
-
             if (!deploymentStatus['MDVM']) {
-                recommendations += '### Vulnerability Management Enhancement Required\n' +
+                recommendations += '### Basic Security Posture\n' +
                     '- Deploy Defender for Vulnerability Management\n' +
-                    '- Configure Vulnerability Management\n' +
-                    '- Set up advanced threat protection\n\n';
+                    '- Run initial vulnerability assessment\n' +
+                    '- Create preliminary remediation plan\n\n';
             }
+
+            // 60-Day Milestone: Enhanced Security
+            recommendations += '## 60-Day Milestone: Enhanced Security\n\n';
 
             if (!deploymentStatus['RCA'] || !deploymentStatus['IDProtection']) {
-                recommendations += '### Identity Protection Enhancement Required\n' +
+                recommendations += '### Enhanced Identity Protection\n' +
                     '- Configure Risk-based Conditional Access\n' +
                     '- Deploy Entra Identity Protection\n' +
                     '- Set up Identity Protection alerts and monitoring\n' +
                     '- Reference: [Identity Protection documentation](https://learn.microsoft.com/en-us/entra/id-protection/)\n\n';
             }
 
+            if (!deploymentStatus['XDR'] || !deploymentStatus['MDE']) {
+                recommendations += '### Enhanced Threat Protection\n' +
+                    '- Deploy Microsoft 365 Defender (XDR)\n' +
+                    '- Configure EDR capabilities\n' +
+                    '- Set up advanced threat protection\n' +
+                    '- Enable automated investigation and response\n\n';
+            }
+
             if (!deploymentStatus['EPA'] || !deploymentStatus['EPAConn']) {
-                recommendations += '### Private Access Enhancement Required\n' +
+                recommendations += '### Network Security Enhancement\n' +
                     '- Deploy Entra Private Access\n' +
                     '- Set up Private Access Connector\n' +
                     '- Configure secure application access\n' +
                     '- Reference: [Private Access documentation](https://learn.microsoft.com/en-us/entra/identity/private-access/)\n\n';
             }
 
+            if (!deploymentStatus['AppManagement'] || !deploymentStatus['AppProtection']) {
+                recommendations += '### Enhanced App Management\n' +
+                    '- Configure Advanced App Management\n' +
+                    '- Implement App Protection Policies\n' +
+                    '- Set up application controls\n' +
+                    '- Reference: [App Management documentation](https://learn.microsoft.com/en-us/mem/intune/apps/app-management)\n\n';
+            }
+
+            // 90-Day Milestone: Advanced Features and Optimization
+            recommendations += '## 90-Day Milestone: Advanced Features and Optimization\n\n';
+
+            if (!deploymentStatus['IGA'] || !deploymentStatus['AccessReview'] || !deploymentStatus['PIM']) {
+                recommendations += '### Advanced Identity Governance\n' +
+                    '- Deploy Identity Governance\n' +
+                    '- Configure Access Reviews\n' +
+                    '- Implement Privileged Identity Management\n' +
+                    '- Reference: [Identity Governance documentation](https://learn.microsoft.com/en-us/entra/id-governance/)\n\n';
+            }
+
             if (!deploymentStatus['GSA'] || !deploymentStatus['EIA']) {
-                recommendations += '### Secure Access Enhancement Required\n' +
+                recommendations += '### Advanced Network Security\n' +
                     '- Configure Global Secure Access\n' +
                     '- Deploy Entra Internet Access\n' +
                     '- Set up secure connectivity\n' +
@@ -527,66 +523,34 @@
             }
 
             if (!deploymentStatus['VID'] || !deploymentStatus['VIDCred'] || !deploymentStatus['VIDWorkflow']) {
-                recommendations += '### Verified ID Enhancement Required\n' +
+                recommendations += '### Advanced Identity Features\n' +
                     '- Deploy Entra Verified ID\n' +
                     '- Configure Verified Credentials\n' +
                     '- Set up verification workflows\n' +
                     '- Reference: [Verified ID documentation](https://learn.microsoft.com/en-us/entra/verified-id/)\n\n';
             }
 
-            if (!deploymentStatus['IGA'] || !deploymentStatus['AccessReview'] || !deploymentStatus['PIM']) {
-                recommendations += '### Identity Governance Enhancement Required\n' +
-                    '- Deploy Identity Governance\n' +
-                    '- Configure Access Reviews\n' +
-                    '- Implement Privileged Identity Management\n' +
-                    '- Reference: [Identity Governance documentation](https://learn.microsoft.com/en-us/entra/id-governance/)\n\n';
-            }
-
             if (!deploymentStatus['EndpointAnalytics']) {
-                recommendations += '### Endpoint Analytics Enhancement Required\n' +
+                recommendations += '### Advanced Endpoint Management\n' +
                     '- Deploy Advanced Endpoint Analytics\n' +
                     '- Configure proactive remediations\n' +
                     '- Set up performance monitoring\n' +
                     '- Reference: [Endpoint Analytics documentation](https://learn.microsoft.com/en-us/mem/analytics/)\n\n';
             }
 
-            if (!deploymentStatus['RemoteHelp']) {
-                recommendations += '### Remote Support Enhancement Required\n' +
-                    '- Implement Remote Help\n' +
-                    '- Train help desk staff\n' +
-                    '- Configure access permissions\n' +
-                    '- Reference: [Remote Help documentation](https://learn.microsoft.com/en-us/mem/intune/remote-actions/remote-help)\n\n';
-            }
-
-            if (!deploymentStatus['EPM']) {
-                recommendations += '### Privilege Management Enhancement Required\n' +
-                    '- Configure Endpoint Privilege Management\n' +
-                    '- Set up elevation policies\n' +
-                    '- Define privileged applications\n' +
-                    '- Reference: [EPM documentation](https://learn.microsoft.com/en-us/mem/intune/protect/endpoint-privilege-management)\n\n';
-            }
-
-            if (!deploymentStatus['SpecializedDevices'] || !deploymentStatus['AutoPilot']) {
-                recommendations += '### Device Management Enhancement Required\n' +
-                    '- Configure Specialized Device Management\n' +
-                    '- Implement Windows Autopilot\n' +
-                    '- Set up device provisioning flows\n' +
-                    '- Reference: [Autopilot documentation](https://learn.microsoft.com/en-us/mem/autopilot/windows-autopilot)\n\n';
-            }
-
-            if (!deploymentStatus['AppManagement'] || !deploymentStatus['AppProtection']) {
-                recommendations += '### Application Management Enhancement Required\n' +
-                    '- Configure Advanced App Management\n' +
-                    '- Implement App Protection Policies\n' +
-                    '- Set up application controls\n' +
-                    '- Reference: [App Management documentation](https://learn.microsoft.com/en-us/mem/intune/apps/app-management)\n\n';
+            if (!deploymentStatus['DSPM'] || !deploymentStatus['EndpointDLP'] || !deploymentStatus['PurAud']) {
+                recommendations += '### Advanced Data Protection\n' +
+                    '- Deploy Microsoft Purview DSPM\n' +
+                    '- Configure comprehensive Data Security\n' +
+                    '- Set up advanced auditing\n' +
+                    '- Follow the [Purview Deployment Models](https://learn.microsoft.com/en-us/purview/deploymentmodels/depmod-overview) guidance\n\n';
             }
 
             recommendations += '\n### Next Steps\n' +
-                '1. Review the [Zero Trust Assessment Workshop](https://microsoft.github.io/zerotrustassessment/) for comprehensive guidance\n' +
+                '1. Focus on completing the 30-day foundation items first\n' +
                 '2. Use the [Zero Trust Assessment Tool](https://microsoft.github.io/zerotrustassessment/docs/app-permissions) to validate your implementation\n' +
                 '3. Follow the [Zero Trust deployment plan](https://learn.microsoft.com/en-us/microsoft-365/security/microsoft-365-zero-trust?view=o365-worldwide) for detailed steps\n' +
-                '4. Consult the [Purview Deployment Models](https://learn.microsoft.com/en-us/purview/deploymentmodels/depmod-overview) for data security guidance\n';
+                '4. Schedule regular reviews of your security posture\n';
 
             return recommendations;
         }
