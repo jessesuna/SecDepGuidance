@@ -249,6 +249,48 @@
                 text: 'Have you implemented Privileged Identity Management?',
                 description: 'Just-in-time privileged access management and controls.',
                 docLink: 'https://learn.microsoft.com/en-us/entra/id-governance/privileged-identity-management/pim-configure'
+            },
+            {
+                id: 'EndpointAnalytics',
+                text: 'Have you deployed Advanced Endpoint Analytics?',
+                description: 'Monitor and improve end-user experience with proactive insights and recommendations.',
+                docLink: 'https://learn.microsoft.com/en-us/mem/analytics/'
+            },
+            {
+                id: 'RemoteHelp',
+                text: 'Have you implemented Remote Help?',
+                description: 'Secure remote assistance solution for your help desk to support end users.',
+                docLink: 'https://learn.microsoft.com/en-us/mem/intune/remote-actions/remote-help'
+            },
+            {
+                id: 'EPM',
+                text: 'Have you configured Endpoint Privilege Management?',
+                description: 'Manage administrative privileges on Windows and macOS devices.',
+                docLink: 'https://learn.microsoft.com/en-us/mem/intune/protect/endpoint-privilege-management'
+            },
+            {
+                id: 'SpecializedDevices',
+                text: 'Have you configured Specialized Device Management?',
+                description: 'Manage multi-user devices, kiosks, and other specialized scenarios.',
+                docLink: 'https://learn.microsoft.com/en-us/mem/intune/configuration/device-restrictions-configure'
+            },
+            {
+                id: 'AutoPilot',
+                text: 'Have you implemented Windows Autopilot?',
+                description: 'Zero-touch device provisioning and deployment.',
+                docLink: 'https://learn.microsoft.com/en-us/mem/autopilot/windows-autopilot'
+            },
+            {
+                id: 'AppManagement',
+                text: 'Have you configured Advanced App Management?',
+                description: 'Comprehensive application lifecycle management and protection.',
+                docLink: 'https://learn.microsoft.com/en-us/mem/intune/apps/app-management'
+            },
+            {
+                id: 'AppProtection',
+                text: 'Have you set up App Protection Policies?',
+                description: 'Protect corporate data in mobile applications.',
+                docLink: 'https://learn.microsoft.com/en-us/mem/intune/apps/app-protection-policies'
             }
         ];
 
@@ -354,6 +396,18 @@
                 AccessReview[Configure Access Reviews]-->IGA[Entra Identity Governance]
                 PIM[Implement Privileged Identity Management]-->IGA
                 IGA-->Zero
+
+                %% Intune Suite
+                IntuneEnroll-->EndpointAnalytics[Advanced Endpoint Analytics]
+                EndpointAnalytics-->RemoteHelp[Remote Help]
+                EndpointAnalytics-->EPM[Endpoint Privilege Management]
+                IntuneEnroll-->SpecializedDevices[Specialized Device Management]
+                SpecializedDevices-->AutoPilot[Windows Autopilot]
+                IntuneEnroll-->AppManagement[Advanced App Management]
+                AppManagement-->AppProtection[App Protection Policies]
+                EndpointAnalytics-->Zero
+                AutoPilot-->Zero
+                AppManagement-->Zero
 
                 classDef deployed fill:#90EE90,stroke:#333
                 classDef notDeployed fill:#FFB6C1,stroke:#333
@@ -481,6 +535,46 @@
                     '- Configure Access Reviews\n' +
                     '- Implement Privileged Identity Management\n' +
                     '- Reference: [Identity Governance documentation](https://learn.microsoft.com/en-us/entra/id-governance/)\n\n';
+            }
+
+            if (!deploymentStatus['EndpointAnalytics']) {
+                recommendations += '### Endpoint Analytics Enhancement Required\n' +
+                    '- Deploy Advanced Endpoint Analytics\n' +
+                    '- Configure proactive remediations\n' +
+                    '- Set up performance monitoring\n' +
+                    '- Reference: [Endpoint Analytics documentation](https://learn.microsoft.com/en-us/mem/analytics/)\n\n';
+            }
+
+            if (!deploymentStatus['RemoteHelp']) {
+                recommendations += '### Remote Support Enhancement Required\n' +
+                    '- Implement Remote Help\n' +
+                    '- Train help desk staff\n' +
+                    '- Configure access permissions\n' +
+                    '- Reference: [Remote Help documentation](https://learn.microsoft.com/en-us/mem/intune/remote-actions/remote-help)\n\n';
+            }
+
+            if (!deploymentStatus['EPM']) {
+                recommendations += '### Privilege Management Enhancement Required\n' +
+                    '- Configure Endpoint Privilege Management\n' +
+                    '- Set up elevation policies\n' +
+                    '- Define privileged applications\n' +
+                    '- Reference: [EPM documentation](https://learn.microsoft.com/en-us/mem/intune/protect/endpoint-privilege-management)\n\n';
+            }
+
+            if (!deploymentStatus['SpecializedDevices'] || !deploymentStatus['AutoPilot']) {
+                recommendations += '### Device Management Enhancement Required\n' +
+                    '- Configure Specialized Device Management\n' +
+                    '- Implement Windows Autopilot\n' +
+                    '- Set up device provisioning flows\n' +
+                    '- Reference: [Autopilot documentation](https://learn.microsoft.com/en-us/mem/autopilot/windows-autopilot)\n\n';
+            }
+
+            if (!deploymentStatus['AppManagement'] || !deploymentStatus['AppProtection']) {
+                recommendations += '### Application Management Enhancement Required\n' +
+                    '- Configure Advanced App Management\n' +
+                    '- Implement App Protection Policies\n' +
+                    '- Set up application controls\n' +
+                    '- Reference: [App Management documentation](https://learn.microsoft.com/en-us/mem/intune/apps/app-management)\n\n';
             }
 
             recommendations += '\n### Next Steps\n' +
