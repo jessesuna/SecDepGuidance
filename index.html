@@ -146,6 +146,23 @@
                 description: 'Cloud Access Security Broker that provides rich visibility and control over data travel.',
                 docLink: 'https://learn.microsoft.com/en-us/defender-cloud-apps/what-is-defender-for-cloud-apps'
             }
+            {
+                id: 'PurAud',
+                text: 'Have you deployed Purview Audit?',
+                description: 'Microsoft Purview auditing solutions provide an integrated solution to help organizations effectively respond to security events, forensic investigations, internal investigations, and compliance obligations.'
+                docLink: 'https://learn.microsoft.com/en-us/purview/audit-solutions-overview'
+            }
+            {
+                id: 'MDO',
+                text: 'Have you deployed the Microsoft Defender For Office?',
+                description: 'Proactively search for threats, malware, and malicious activity across your endpoints, Microsoft 365 mailboxes',
+                docLink: 'https://www.microsoft.com/en-us/security/business/siem-and-xdr/microsoft-defender-office-365'
+
+            }
+            {
+                id: 'MDE'
+                text: ''
+            }
             // ... Add more questions for other nodes from the flowchart
         ];
 
@@ -212,9 +229,15 @@
                 %% Data Security
                 DSPM[Microsoft Purview DSPM]-->Data
                 EndpointDLP[Endpoint DLP Policy]-->Data
+                PurAud[Purview Audit]-->DSPM
+                OnboardDevices[Onboard Windows devices into Microsoft 365]
+                
 
                 %% Threats
                 XDR[M365 Defender for XDR]-->Threats
+                DID[Defender for Identity]-->XDR
+                MDE[Defender for Endpoint]-->XDR
+
 
                 %% Foundations
                 IntuneEnroll[Enroll devices into management]-->IntuneCompPol[Configure compliance policies]
