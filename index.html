@@ -349,6 +349,8 @@
                 Data[Protect and govern sensitive data]
                 Threats[Defend against threats]
                 Foundation[Zero trust foundation]
+                SecureID[Secure Identities and Access]
+                IntuneSuite[Advanced Endpoint Management and Security]
 
                 Foundation-->Zero
                 Data-->Zero
@@ -386,16 +388,18 @@
                 RCA-->EPA
                 EPAConn[Deploy Entra Private Access Connector]-->EPA
                 EPA-->GSA[Entra Global Secure Access SSE]
-                GSA-->Zero
+                GSA-->SecureID
                 CA-->EIA[Entra Internet Access]
                 RCA-->EIA
                 EIA-->GSA
                 VIDCred[Configure Verified Credential]-->VID[Entra Verified ID]
                 VIDWorkflow[Configure Verification Workflow]-->VID
-                VID-->Zero
+                VID-->SecureID
+
                 AccessReview[Configure Access Reviews]-->IGA[Entra Identity Governance]
                 PIM[Implement Privileged Identity Management]-->IGA
-                IGA-->Zero
+                IGA-->SecureID
+
 
                 %% Intune Suite
                 IntuneEnroll-->EndpointAnalytics[Advanced Endpoint Analytics]
@@ -405,9 +409,10 @@
                 SpecializedDevices-->AutoPilot[Windows Autopilot]
                 IntuneEnroll-->AppManagement[Advanced App Management]
                 AppManagement-->AppProtection[App Protection Policies]
-                EndpointAnalytics-->Zero
-                AutoPilot-->Zero
-                AppManagement-->Zero
+                EndpointAnalytics-->IntuneSuite
+                AutoPilot-->IntuneSuite
+                AppManagement-->IntuneSuite
+
 
                 classDef deployed fill:#90EE90,stroke:#333
                 classDef notDeployed fill:#FFB6C1,stroke:#333
