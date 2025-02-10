@@ -362,7 +362,7 @@
                 IntuneSuite --> Zero
 
                 %% Group Data Security components
-                subgraph DataProtection["Data Protection Suite"]
+                subgraph DataProtection["Data Protection"]
                     direction TB
                     DSPM["Purview DSPM"]
                     EndpointDLP["Endpoint DLP"]
@@ -373,7 +373,7 @@
                 PurAud --> DSPM
 
                 %% Group Threat Protection components
-                subgraph ThreatProtection["Threat Protection Suite"]
+                subgraph ThreatProtection["Threat Protection"]
                     direction TB
                     XDR["M365 Defender XDR"]
                     DID["Defender Identity"]
@@ -388,7 +388,7 @@
                 MDVM --> Threats
 
                 %% Group Identity components
-                subgraph IdentityProtection["Identity Protection Suite"]
+                subgraph IdentityProtection["Identity Protection"]
                     direction TB
                     CloudID["Cloud Identity"] --> MFA["MFA"]
                     MFA --> CA["Conditional Access"]
@@ -399,7 +399,7 @@
                 end
 
                 %% Group Network Access components
-                subgraph NetworkAccess["Network Security Suite"]
+                subgraph NetworkAccess["Secure Service Edge"]
                     direction TB
                     EPA["Private Access"]
                     EPAConn["Private Access Connector"]
@@ -416,7 +416,7 @@
                 EIA --> GSA
 
                 %% Group Identity Governance components
-                subgraph IdentityGovernance["Identity Governance Suite"]
+                subgraph IdentityGovernance["Identity Governance"]
                     direction TB
                     VIDCred["Verified Credentials"]
                     VIDWorkflow["Verification Workflow"]
@@ -433,7 +433,7 @@
                 IGA --> SecureID
 
                 %% Group Endpoint Management components
-                subgraph EndpointManagement["Endpoint Management Suite"]
+                subgraph EndpointManagement["Endpoint Management and Security"]
                     direction TB
                     IntuneEnroll["Device Enrollment"]
                     IntuneCompPol["Compliance Policies"]
