@@ -299,8 +299,59 @@
                     '- Set up advanced threat protection\n\n';
             }
 
+            if (!deploymentStatus['MDO']) {
+                recommendations += '### Office 365 Security Enhancement Required\n' +
+                    '- Deploy Defender for Office 365\n' +
+                    '- Configure EOP capabilities\n' +
+                    '- Set up advanced threat protection\n\n';
+            }
+
+            if (!deploymentStatus['MDE']) {
+                recommendations += '### Endpoint Security Enhancement Required\n' +
+                    '- Deploy Defender for Endpoint\n' +
+                    '- Configure EDR capabilities\n' +
+                    '- Set up advanced threat protection\n\n';
+            }           
+
+            if (!deploymentStatus['MDCA']) {
+                recommendations += '### Cloud Apps Security Enhancement Required\n' +
+                    '- Deploy Defender for Cloud Apps\n' +
+                    '- Configure Cloud App Security\n' +
+                    '- Set up advanced threat protection\n\n';
+                }
+
+            if (!deploymentStatus['MDVM']) {
+                recommendations += '### Vulnerability Management Enhancement Required\n' +
+                    '- Deploy Defender for Vulnerability Management\n' +
+                    '- Configure Vulnerability Management\n' +
+                    '- Set up advanced threat protection\n\n';
+            }
+
+            if (!deploymentStatus['DSPM']) {
+                recommendations += '### Data Security Enhancement Required\n' +
+                    '- Deploy Microsoft Purview DSPM\n' +
+                    '- Configure Data Security\n' +
+                    '- Set up advanced threat protection\n\n';
+            }   
+
+            if (!deploymentStatus['EndpointDLP']) {
+                recommendations += '### Data Security Enhancement Required\n' +
+                    '- Deploy Microsoft Purview DSPM\n' +
+                    '- Configure Data Security\n' +
+                    '- Set up advanced threat protection\n\n';
+            }
+
+            if (!deploymentStatus['PurAud']) {
+                recommendations += '### Data Security Enhancement Required\n' +
+                    '- Deploy Microsoft Purview DSPM\n' +
+                    '- Configure Data Security\n' +
+                    '- Set up advanced threat protection\n\n';
+            }   
+
             return recommendations;
         }
+
+
 
         // Initialize when DOM is loaded
         document.addEventListener('DOMContentLoaded', function() {
