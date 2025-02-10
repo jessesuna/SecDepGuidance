@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Microsoft Security Deployment Checklist</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.6.1/mermaid.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"></script>
+</head>
+<body class="bg-gray-100 p-8">
+    <div class="max-w-4xl mx-auto">
+        <div id="questionContainer" class="bg-white p-6 rounded-lg shadow-md mb-6">
+            <h2 class="text-xl font-bold mb-4">Microsoft Security Deployment Checklist</h2>
+            <div id="progress" class="mb-4 text-sm text-gray-600"></div>
+            <div id="categoryTitle" class="text-lg font-semibold mb-2"></div>
+            <div id="currentQuestion" class="mb-4"></div>
+            <div class="flex gap-4">
+                <button onclick="answer(true)" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Yes</button>
+                <button onclick="answer(false)" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">No</button>
+            </div>
+        </div>
+        
+        <div id="resultContainer" class="bg-white p-6 rounded-lg shadow-md hidden">
+            <h3 class="text-xl font-bold mb-4">Security Assessment Results</h3>
+            <div id="diagramContainer" class="mb-6"></div>
+            <div id="markdownResult" class="prose"></div>
+            <button onclick="resetQuiz()" class="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Start Over</button>
+        </div>
+    </div>
+
+    <script>
+        mermaid.initialize({ startOnLoad: false });
+
+        const recommendations = {
+            "Identity and Access Management": {
+                "MFA": "Enable MFA for all users through Azure AD:\n- Use the Microsoft Admin Portal\n- Configure authentication methods\n- Set up MFA registration policy\n- Consider passwordless options",
+                "Identity Protection": "Deploy Azure AD Identity Protection:\n- Configure risk policies\n- Set up risk-based alerts\n- Enable user risk policy\n- Configure sign-in risk policy",
+                "Conditional Access": "Implement Conditional Access in Intune:\n- Create baseline policies\n- Configure device compliance requirements\n- Set up location-based conditions\n- Enable app protection policies",
+                "AD Connect": "Set up Azure AD Connect:\n- Install latest version\n- Configure password hash sync\n- Enable pass-through authentication\n- Set up filtering if needed",
+                "PIM": "Configure Privileged Identity Management:\n- Define role assignments\n- Set up approval workflows\n- Configure time-bound access\n- Implement just-in-time access"
+            }
+            // Add similar detailed recommendations for other categories
+        };
+
+        const categories = {
+            "Identity and Access Management": [
+                ["MFA", "Have you configured Multi-Factor Authentication (MFA) for all users?"],
+                ["Identity Protection", "Have you enabled Azure AD Identity Protection?"],
+                ["Conditional Access", "Have you set up Conditional Access Policies in Microsoft Intune?"],
+                ["AD Connect", "Have you integrated on-premises Active Directory with Azure AD using Azure AD Connect?"],
+                ["PIM", "Have you implemented Privileged Identity Management (PIM) for administrative roles?"]
+            ],
+            // ... other categories with their [id, question] pairs
+        };
+
+        let currentCategory = 0;
+        let currentQuestionIndex = 0;
+        let answers = {};
+        
+        function initQuiz() {
+            Object.keys(categories).forEach(category => {
+                answers[category] = new Array(categories[category].length).fill(null);
+            });
+            updateQuestion();
+            document.getElementById('questionContainer').style.display = 'block';
+            document.getElementById('resultContainer').style.display = 'none';
+        }
+
+        function updateQuestion() {
+            const categoryNames = Object.keys(categories);
+            const currentCategoryName = categoryNames[currentCategory];
+            const questions = categories[currentCategoryName];
+            
+            document.getElementById('categoryTitle').textContent = currentCategoryName;
+            document.getElementById('currentQuestion').textContent = questions[currentQuestionIndex][1];
+            
+            const totalQuestions = Object.values(categories).flat().length;
+            const answeredQuestions = Object.values(answers).flat().filter(a => a !== null).length;
+            document.getElementById('progress').textContent = 
+                `Progress: ${answeredQuestions + 1} of ${totalQuestions} questions`;
+        }
+
+        function generateMermaidDiagram() {
+            let diagram = 'flowchart LR\n\n';
+            
+            // Add main security pillars
+            diagram += '    Zero[Zero Trust Security Suite]\n';
+            diagram += '    Foundation[Zero Trust Foundation]\n';
+            diagram += '    Data[Data Protection]\n';
+            diagram += '    Threats[Threat Defense]\n\n';
+            
+            // Add connections to main node
+            diagram += '    Foundation-->Zero\n';
+            diagram += '    Data-->Zero\n';
+            diagram += '    Threats-->Zero\n\n';
+            
+            // Add category nodes and their status
+            Object.entries(answers).forEach(([category, categoryAnswers]) => {
+                const implemented = categoryAnswers.filter(a => a === true).length;
+                const total = categoryAnswers.length;
+                
+                // Create nodes for each control
+                categories[category].forEach((question, index) => {
+                    const controlId = question[0].replace(/\s+/g, '');
+                    const status = categoryAnswers[index];
+                    const color = status ? 'green' : 'red';
+                    
+                    diagram += `    ${controlId}[${question[0]}]\n`;
+                    diagram += `    style ${controlId} fill:${color}\n`;
+                    
+                    // Connect to appropriate pillar
+                    if (category.includes('Identity')) {
+                        diagram += `    ${controlId}-->Foundation\n`;
+                    } else if (category.includes('Data')) {
+                        diagram += `    ${controlId}-->Data\n`;
+                    } else if (category.includes('Security')) {
+                        diagram += `    ${controlId}-->Threats\n`;
+                    }
+                });
+            });
+            
+            return diagram;
+        }
+
+        function generateMarkdown() {
+            let result = '# Security Implementation Analysis\n\n';
+            
+            Object.entries(answers).forEach(([category, categoryAnswers]) => {
+                const implemented = categoryAnswers.filter(a => a === true).length;
+                const total = categoryAnswers.length;
+                const percentage = Math.round((implemented / total) * 100);
+                
+                result += `## ${category}\n`;
+                result += `Implementation Progress: ${implemented}/${total} (${percentage}%)\n\n`;
+                
+                result += '### Status and Recommendations\n\n';
+                categories[category].forEach((question, index) => {
+                    const [controlId, questionText] = question;
+                    if (categoryAnswers[index] === true) {
+                        result += `✅ ${questionText}\n\n`;
+                    } else if (categoryAnswers[index] === false) {
+                        result += `❌ ${questionText}\n\n`;
+                        if (recommendations[category] && recommendations[category][controlId]) {
+                            result += "**Recommendation:**\n";
+                            result += recommendations[category][controlId] + "\n\n";
+                        }
+                    }
+                });
+                
+                result += '---\n\n';
+            });
+            
+            const totalImplemented = Object.values(answers)
+                .flat()
+                .filter(a => a === true).length;
+            const totalControls = Object.values(answers)
+                .flat()
+                .length;
+            const overallScore = Math.round((totalImplemented / totalControls) * 100);
+            
+            result = `# Overall Security Score: ${overallScore}%\n\n` + result;
+            
+            return result;
+        }
+
+        function answer(isYes) {
+            const categoryNames = Object.keys(categories);
+            const currentCategoryName = categoryNames[currentCategory];
+            
+            answers[currentCategoryName][currentQuestionIndex] = isYes;
+            
+            if (currentQuestionIndex < categories[currentCategoryName].length - 1) {
+                currentQuestionIndex++;
+            } else if (currentCategory < Object.keys(categories).length - 1) {
+                currentCategory++;
+                currentQuestionIndex = 0;
+            } else {
+                showResults();
+                return;
+            }
+            
+            updateQuestion();
+        }
+
+        function showResults() {
+            document.getElementById('questionContainer').style.display = 'none';
+            document.getElementById('resultContainer').style.display = 'block';
+
+            const diagram = generateMermaidDiagram();
+            const element = document.getElementById('diagramContainer');
+            
+            mermaid.render('mermaid-diagram', diagram).then(result => {
+                element.innerHTML = result.svg;
+            });
+
+            const markdown = generateMarkdown();
+            document.getElementById('markdownResult').innerHTML = marked.parse(markdown);
+        }
+
+        function resetQuiz() {
+            currentCategory = 0;
+            currentQuestionIndex = 0;
+            initQuiz();
+        }
+
+        initQuiz();
+    </script>
+</body>
+</html>
