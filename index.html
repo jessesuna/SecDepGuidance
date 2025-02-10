@@ -344,79 +344,130 @@
         function generateMermaidDiagram(deploymentStatus) {
             return `
             flowchart LR
-                %% Core Zero Trust 
-                Zero[Zero Trust/Security Suite Deployed]
-                Data[Protect and govern sensitive data]
-                Threats[Defend against threats]
-                Foundation[Zero trust foundation]
-                SecureID[Secure Identities and Access]
-                IntuneSuite[Advanced Endpoint Management and Security]
+                %% Define core components with clear labels
+                subgraph Core["Zero Trust Core"]
+                    Zero["Zero Trust Security Suite"]
+                    Foundation["Zero Trust Foundation"]
+                    Data["Data Protection"]
+                    Threats["Threat Defense"]
+                    SecureID["Identity Security"]
+                    IntuneSuite["Endpoint Security"]
+                end
 
-                Foundation-->Zero
-                Data-->Zero
-                Threats-->Zero
+                %% Core relationships
+                Foundation --> Zero
+                Data --> Zero
+                Threats --> Zero
+                SecureID --> Zero
+                IntuneSuite --> Zero
 
-                %% Data Security
-                DSPM[Microsoft Purview DSPM]-->Data
-                EndpointDLP[Endpoint DLP Policy]-->Data
-                PurAud[Purview Audit]-->DSPM
-                
+                %% Group Data Security components
+                subgraph DataProtection["Data Protection Suite"]
+                    direction TB
+                    DSPM["Purview DSPM"]
+                    EndpointDLP["Endpoint DLP"]
+                    PurAud["Purview Audit"]
+                end
+                DSPM --> Data
+                EndpointDLP --> Data
+                PurAud --> DSPM
 
-                %% Threats
-                XDR[M365 Defender for XDR]-->Threats
-                DID[Defender for Identity]-->XDR
-                MDE[Defender for Endpoint]-->XDR
-                MDCA[Defender for Cloud Apps]-->XDR
-                XDR-->Threats
-                MDVM[Defender for Volnerability Management]-->Threats
+                %% Group Threat Protection components
+                subgraph ThreatProtection["Threat Protection Suite"]
+                    direction TB
+                    XDR["M365 Defender XDR"]
+                    DID["Defender Identity"]
+                    MDE["Defender Endpoint"]
+                    MDCA["Defender Cloud Apps"]
+                    MDVM["Defender VM"]
+                end
+                XDR --> Threats
+                DID --> XDR
+                MDE --> XDR
+                MDCA --> XDR
+                MDVM --> Threats
 
+                %% Group Identity components
+                subgraph IdentityProtection["Identity Protection Suite"]
+                    direction TB
+                    CloudID["Cloud Identity"] --> MFA["MFA"]
+                    MFA --> CA["Conditional Access"]
+                    CA --> Foundation
+                    RCA["Risk-Based CA"] --> IDProtection["Identity Protection"]
+                    IDProtAlerts["Identity Alerts"] --> IDProtection
+                    IDProtection --> SecureID
+                end
 
-                %% Foundations
-                IntuneEnroll[Enroll devices into management]-->IntuneCompPol[Configure compliance policies]
-                MFA[Deploy Multifactor Authentication]-->CA[Configure Conditional Access Policies]
-                CloudID[Configure Cloud Identity]-->MFA
-                OnboardDevices[Onboard Windows devices]-->CA
-                IntuneCompPol-->OnboardDevices
-                CA-->Foundation
+                %% Group Network Access components
+                subgraph NetworkAccess["Network Security Suite"]
+                    direction TB
+                    EPA["Private Access"]
+                    EPAConn["Private Access Connector"]
+                    GSA["Global Secure Access"]
+                    EIA["Internet Access"]
+                end
+                CA --> EPA
+                RCA --> EPA
+                EPAConn --> EPA
+                EPA --> GSA
+                GSA --> SecureID
+                CA --> EIA
+                RCA --> EIA
+                EIA --> GSA
 
-                %% Entra Suite 
-                Foundation-->RCA[Risk Based Conditional Access]
-                RCA-->IDProtection[Entra Identity Protection]
-                IDProtAlerts[Entra Identity Protection Alerts and Monitoring]-->IDProtection
-                IDProtection-->Zero 
-                CA-->EPA[Entra Private Access]
-                RCA-->EPA
-                EPAConn[Deploy Entra Private Access Connector]-->EPA
-                EPA-->GSA[Entra Global Secure Access SSE]
-                GSA-->SecureID
-                CA-->EIA[Entra Internet Access]
-                RCA-->EIA
-                EIA-->GSA
-                VIDCred[Configure Verified Credential]-->VID[Entra Verified ID]
-                VIDWorkflow[Configure Verification Workflow]-->VID
-                VID-->SecureID
+                %% Group Identity Governance components
+                subgraph IdentityGovernance["Identity Governance Suite"]
+                    direction TB
+                    VIDCred["Verified Credentials"]
+                    VIDWorkflow["Verification Workflow"]
+                    VID["Verified ID"]
+                    AccessReview["Access Reviews"]
+                    IGA["Identity Governance"]
+                    PIM["Privileged Identity Management"]
+                end
+                VIDCred --> VID
+                VIDWorkflow --> VID
+                VID --> SecureID
+                AccessReview --> IGA
+                PIM --> IGA
+                IGA --> SecureID
 
-                AccessReview[Configure Access Reviews]-->IGA[Entra Identity Governance]
-                PIM[Implement Privileged Identity Management]-->IGA
-                IGA-->SecureID
+                %% Group Endpoint Management components
+                subgraph EndpointManagement["Endpoint Management Suite"]
+                    direction TB
+                    IntuneEnroll["Device Enrollment"]
+                    IntuneCompPol["Compliance Policies"]
+                    EndpointAnalytics["Analytics"]
+                    RemoteHelp["Remote Help"]
+                    EPM["Privilege Management"]
+                    SpecializedDevices["Device Management"]
+                    AutoPilot["Windows Autopilot"]
+                    AppManagement["App Management"]
+                    AppProtection["App Protection"]
+                end
+                IntuneEnroll --> IntuneCompPol
+                IntuneEnroll --> EndpointAnalytics
+                EndpointAnalytics --> RemoteHelp
+                EndpointAnalytics --> EPM
+                IntuneEnroll --> SpecializedDevices
+                SpecializedDevices --> AutoPilot
+                IntuneEnroll --> AppManagement
+                AppManagement --> AppProtection
+                EndpointAnalytics --> IntuneSuite
+                AutoPilot --> IntuneSuite
+                AppManagement --> IntuneSuite
 
+                %% Styling
+                classDef deployed fill:#90EE90,stroke:#333,stroke-width:2px
+                classDef notDeployed fill:#FFB6C1,stroke:#333,stroke-width:2px
+                classDef subgraphStyle fill:#f5f5f5,stroke:#666,stroke-width:2px
+                classDef core fill:#e1f5fe,stroke:#0277bd,stroke-width:3px
 
-                %% Intune Suite
-                IntuneEnroll-->EndpointAnalytics[Advanced Endpoint Analytics]
-                EndpointAnalytics-->RemoteHelp[Remote Help]
-                EndpointAnalytics-->EPM[Endpoint Privilege Management]
-                IntuneEnroll-->SpecializedDevices[Specialized Device Management]
-                SpecializedDevices-->AutoPilot[Windows Autopilot]
-                IntuneEnroll-->AppManagement[Advanced App Management]
-                AppManagement-->AppProtection[App Protection Policies]
-                EndpointAnalytics-->IntuneSuite
-                AutoPilot-->IntuneSuite
-                AppManagement-->IntuneSuite
+                %% Apply styles
+                class Core,DataProtection,ThreatProtection,IdentityProtection,NetworkAccess,IdentityGovernance,EndpointManagement subgraphStyle
+                class Zero,Foundation,Data,Threats,SecureID,IntuneSuite core
 
-
-                classDef deployed fill:#90EE90,stroke:#333
-                classDef notDeployed fill:#FFB6C1,stroke:#333
-
+                %% Apply deployment status
                 ${Object.entries(deploymentStatus).map(([id, isDeployed]) => 
                     `class ${id} ${isDeployed ? 'deployed' : 'notDeployed'}`
                 ).join('\n')}
