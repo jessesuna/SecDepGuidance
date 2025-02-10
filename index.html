@@ -13,13 +13,39 @@
             margin: 0 auto;
             padding: 20px;
         }
-        #questionContainer {
+        .question {
             margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .question h3 {
+            margin-top: 0;
+        }
+        .question p {
+            margin: 10px 0;
+        }
+        .question a {
+            color: #0066cc;
+            text-decoration: none;
+        }
+        .question a:hover {
+            text-decoration: underline;
+        }
+        .radio-group {
+            margin: 10px 0;
         }
         button {
-            margin: 5px;
+            margin: 20px 0;
             padding: 10px 20px;
             cursor: pointer;
+            background-color: #0066cc;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #0052a3;
         }
         #results {
             margin-top: 20px;
@@ -33,11 +59,11 @@
     </style>
 </head>
 <body>
-    <div id="questionContainer">
-        <h2 id="currentQuestion"></h2>
-        <button onclick="answer(true)">Yes</button>
-        <button onclick="answer(false)">No</button>
-    </div>
+    <h1>Security Deployment Assessment</h1>
+    <form id="assessmentForm">
+        <div id="questionsContainer"></div>
+        <button type="button" onclick="showResults()">Generate Results</button>
+    </form>
     <div id="results" style="display: none;">
         <h2>Assessment Results</h2>
         <div id="mermaidChart"></div>
@@ -48,33 +74,99 @@
         mermaid.initialize({ startOnLoad: true });
 
         const questions = [
-            { id: 'CloudID', text: 'Have you configured Cloud Identity?' },
-            { id: 'MFA', text: 'Have you deployed Multifactor Authentication?' },
-            { id: 'CA', text: 'Have you configured Conditional Access Policies?' },
-            { id: 'IntuneEnroll', text: 'Have you enrolled devices into management?' },
-            { id: 'IntuneCompPol', text: 'Have you configured compliance policies?' },
-            { id: 'OnboardDevices', text: 'Have you onboarded Windows devices into Microsoft 365?' },
-            { id: 'DSPM', text: 'Have you deployed Microsoft Purview DSPM?' },
-            { id: 'EndpointDLP', text: 'Have you configured Endpoint DLP Policy?' },
-            { id: 'XDR', text: 'Have you deployed M365 Defender for XDR?' }
+            {
+                id: 'CloudID',
+                text: 'Have you configured Cloud Identity?',
+                description: 'Cloud Identity provides the foundation for managing user identities and access in Microsoft 365.',
+                docLink: 'https://learn.microsoft.com/en-us/entra/fundamentals/whatis'
+            },
+            {
+                id: 'MFA',
+                text: 'Have you deployed Multifactor Authentication?',
+                description: 'MFA adds an additional layer of security by requiring two or more verification methods.',
+                docLink: 'https://learn.microsoft.com/en-us/entra/identity/authentication/concept-mfa-howitworks'
+            },
+            {
+                id: 'CA',
+                text: 'Have you configured Conditional Access Policies?',
+                description: 'Conditional Access helps you manage access to your resources based on specific conditions.',
+                docLink: 'https://learn.microsoft.com/en-us/entra/identity/conditional-access/overview'
+            },
+            {
+                id: 'IntuneEnroll',
+                text: 'Have you enrolled devices into management?',
+                description: 'Device enrollment allows you to manage and secure your organization's devices.',
+                docLink: 'https://learn.microsoft.com/en-us/mem/intune/enrollment/'
+            },
+            {
+                id: 'IntuneCompPol',
+                text: 'Have you configured compliance policies?',
+                description: 'Compliance policies define the rules and settings devices must meet to be considered compliant.',
+                docLink: 'https://learn.microsoft.com/en-us/mem/intune/protect/device-compliance-get-started'
+            },
+            {
+                id: 'OnboardDevices',
+                text: 'Have you onboarded Windows devices into Microsoft 365?',
+                description: 'Onboarding connects your Windows devices to Microsoft 365 security services.',
+                docLink: 'https://learn.microsoft.com/en-us/microsoft-365/security/defender-endpoint/onboard-windows'
+            },
+            {
+                id: 'DSPM',
+                text: 'Have you deployed Microsoft Purview Data Security Posture Management?',
+                description: 'DSPM helps you discover, classify, and protect sensitive data across your organization.',
+                docLink: 'https://learn.microsoft.com/en-us/purview/data-security-posture-management'
+            },
+            {
+                id: 'EndpointDLP',
+                text: 'Have you configured Endpoint DLP Policy?',
+                description: 'Endpoint DLP helps prevent sensitive information from being shared inappropriately.',
+                docLink: 'https://learn.microsoft.com/en-us/purview/endpoint-dlp-learn-about'
+            },
+            {
+                id: 'XDR',
+                text: 'Have you deployed M365 Defender for XDR?',
+                description: 'Extended Detection and Response (XDR) provides unified security incident detection and response.',
+                docLink: 'https://learn.microsoft.com/en-us/microsoft-365/security/defender/microsoft-365-defender'
+            },
+            {
+                id: 'DID',
+                text: 'Have you deployed Defender for Identity?',
+                description: 'Defender for Identity protects your on-premises Active Directory identities.',
+                docLink: 'https://learn.microsoft.com/en-us/defender-for-identity/what-is'
+            },
+            {
+                id: 'MDO',
+                text: 'Have you deployed Defender for Office 365?',
+                description: 'Protects your organization against malicious threats from email messages, links and collaboration tools.',
+                docLink: 'https://learn.microsoft.com/en-us/microsoft-365/security/office-365-security/defender-for-office-365'
+            },
+            {
+                id: 'MDCA',
+                text: 'Have you deployed Defender for Cloud Apps?',
+                description: 'Cloud Access Security Broker that provides rich visibility and control over data travel.',
+                docLink: 'https://learn.microsoft.com/en-us/defender-cloud-apps/what-is-defender-for-cloud-apps'
+            }
+            // ... Add more questions for other nodes from the flowchart
         ];
 
-        let currentQuestionIndex = 0;
-        const deploymentStatus = {};
-
-        function showQuestion() {
-            if (currentQuestionIndex < questions.length) {
-                document.getElementById('currentQuestion').textContent = 
-                    questions[currentQuestionIndex].text;
-            } else {
-                showResults();
-            }
-        }
-
-        function answer(isYes) {
-            deploymentStatus[questions[currentQuestionIndex].id] = isYes;
-            currentQuestionIndex++;
-            showQuestion();
+        function createQuestionElements() {
+            const container = document.getElementById('questionsContainer');
+            questions.forEach(q => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question';
+                questionDiv.innerHTML = `
+                    <h3>${q.text}</h3>
+                    <p>${q.description}</p>
+                    <p><a href="${q.docLink}" target="_blank">Learn more</a></p>
+                    <div class="radio-group">
+                        <input type="radio" id="${q.id}_no" name="${q.id}" value="false" checked>
+                        <label for="${q.id}_no">No</label>
+                        <input type="radio" id="${q.id}_yes" name="${q.id}" value="true">
+                        <label for="${q.id}_yes">Yes</label>
+                    </div>
+                `;
+                container.appendChild(questionDiv);
+            });
         }
 
         function generateMermaidDiagram() {
@@ -149,7 +241,12 @@
         }
 
         function showResults() {
-            document.getElementById('questionContainer').style.display = 'none';
+            const deploymentStatus = {};
+            questions.forEach(q => {
+                const radioValue = document.querySelector(`input[name="${q.id}"]:checked`).value;
+                deploymentStatus[q.id] = radioValue === 'true';
+            });
+
             document.getElementById('results').style.display = 'block';
             
             const mermaidDiv = document.getElementById('mermaidChart');
@@ -159,10 +256,13 @@
             recommendationsDiv.innerHTML = marked.parse(generateRecommendations());
             
             mermaid.init();
+            
+            // Scroll to results
+            document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
         }
 
-        // Start the questionnaire
-        showQuestion();
+        // Initialize the form
+        createQuestionElements();
     </script>
 </body>
 </html>
