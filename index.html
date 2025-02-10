@@ -149,21 +149,30 @@
             {
                 id: 'PurAud',
                 text: 'Have you deployed Purview Audit?',
-                description: 'Microsoft Purview auditing solutions provide an integrated solution to help organizations effectively respond to security events, forensic investigations, internal investigations, and compliance obligations.'
+                description: 'Microsoft Purview auditing solutions provide an integrated solution to help organizations effectively respond to security events, forensic investigations, internal investigations, and compliance obligations.',
                 docLink: 'https://learn.microsoft.com/en-us/purview/audit-solutions-overview'
             }
             {
                 id: 'MDO',
-                text: 'Have you deployed the Microsoft Defender For Office?',
+                text: 'Have you deployed Microsoft Defender For Office?',
                 description: 'Proactively search for threats, malware, and malicious activity across your endpoints, Microsoft 365 mailboxes',
                 docLink: 'https://www.microsoft.com/en-us/security/business/siem-and-xdr/microsoft-defender-office-365'
 
             }
             {
-                id: 'MDE'
-                text: ''
+                id: 'MDE',
+                text: 'Have you deployed Microsoft Defender for Endpoint?',
+                description: 'Microsoft Defender for Endpoint is an enterprise endpoint security platform that helps defend against advanced persistent threats.',
+                docLink: 'https://learn.microsoft.com/en-us/defender-endpoint/production-deployment'
+
             }
-            // ... Add more questions for other nodes from the flowchart
+            {
+                id: 'MDVM',
+                text: 'Have you deployed Microsoft Defender for Volnerability Management',
+                description: 'Microsoft Defender Vulnerability Management standalone is a comprehensive vulnerability management solution to access continuous asset visibility, in-depth vulnerability assessments, and risk-based prioritization to help teams address critical vulnerabilities and misconfigurations.',
+                docLink: 'https://learn.microsoft.com/en-us/defender-vulnerability-management/'
+            }
+           
         ];
 
         // Function to create question elements
@@ -230,13 +239,15 @@
                 DSPM[Microsoft Purview DSPM]-->Data
                 EndpointDLP[Endpoint DLP Policy]-->Data
                 PurAud[Purview Audit]-->DSPM
-                OnboardDevices[Onboard Windows devices into Microsoft 365]
                 
 
                 %% Threats
                 XDR[M365 Defender for XDR]-->Threats
                 DID[Defender for Identity]-->XDR
                 MDE[Defender for Endpoint]-->XDR
+                MDCA[Defender for Cloud Apps]-->XDR
+                XDR-->Threats
+                MDVM[Defender for Volnerability Management]-->Threats
 
 
                 %% Foundations
