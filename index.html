@@ -6,6 +6,7 @@
     <title>Security Deployment Assessment</title>
     <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="favicon" href="data:;base64,iVBORw0KGgo=">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -62,7 +63,7 @@
     <h1>Security Deployment Assessment</h1>
     <form id="assessmentForm">
         <div id="questionsContainer"></div>
-        <button type="button" onclick="showResults()">Generate Results</button>
+        <button type="button" onclick="generateResults()">Generate Results</button>
     </form>
     <div id="results" style="display: none;">
         <h2>Assessment Results</h2>
@@ -71,212 +72,207 @@
     </div>
 
     <script>
-        // Add this right after the script tag opens
-        console.log('Script loading...');
-        
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('DOM loaded');
-            mermaid.initialize({ startOnLoad: true });
-            
-            const questions = [
-                {
-                    id: 'CloudID',
-                    text: 'Have you configured Cloud Identity?',
-                    description: 'Cloud Identity provides the foundation for managing user identities and access in Microsoft 365.',
-                    docLink: 'https://learn.microsoft.com/en-us/entra/fundamentals/whatis'
-                },
-                {
-                    id: 'MFA',
-                    text: 'Have you deployed Multifactor Authentication?',
-                    description: 'MFA adds an additional layer of security by requiring two or more verification methods.',
-                    docLink: 'https://learn.microsoft.com/en-us/entra/identity/authentication/concept-mfa-howitworks'
-                },
-                {
-                    id: 'CA',
-                    text: 'Have you configured Conditional Access Policies?',
-                    description: 'Conditional Access helps you manage access to your resources based on specific conditions.',
-                    docLink: 'https://learn.microsoft.com/en-us/entra/identity/conditional-access/overview'
-                },
-                {
-                    id: 'IntuneEnroll',
-                    text: 'Have you enrolled devices into management?',
-                    description: 'Device enrollment allows you to manage and secure your organization's devices.',
-                    docLink: 'https://learn.microsoft.com/en-us/mem/intune/enrollment/'
-                },
-                {
-                    id: 'IntuneCompPol',
-                    text: 'Have you configured compliance policies?',
-                    description: 'Compliance policies define the rules and settings devices must meet to be considered compliant.',
-                    docLink: 'https://learn.microsoft.com/en-us/mem/intune/protect/device-compliance-get-started'
-                },
-                {
-                    id: 'OnboardDevices',
-                    text: 'Have you onboarded Windows devices into Microsoft 365?',
-                    description: 'Onboarding connects your Windows devices to Microsoft 365 security services.',
-                    docLink: 'https://learn.microsoft.com/en-us/microsoft-365/security/defender-endpoint/onboard-windows'
-                },
-                {
-                    id: 'DSPM',
-                    text: 'Have you deployed Microsoft Purview Data Security Posture Management?',
-                    description: 'DSPM helps you discover, classify, and protect sensitive data across your organization.',
-                    docLink: 'https://learn.microsoft.com/en-us/purview/data-security-posture-management'
-                },
-                {
-                    id: 'EndpointDLP',
-                    text: 'Have you configured Endpoint DLP Policy?',
-                    description: 'Endpoint DLP helps prevent sensitive information from being shared inappropriately.',
-                    docLink: 'https://learn.microsoft.com/en-us/purview/endpoint-dlp-learn-about'
-                },
-                {
-                    id: 'XDR',
-                    text: 'Have you deployed M365 Defender for XDR?',
-                    description: 'Extended Detection and Response (XDR) provides unified security incident detection and response.',
-                    docLink: 'https://learn.microsoft.com/en-us/microsoft-365/security/defender/microsoft-365-defender'
-                },
-                {
-                    id: 'DID',
-                    text: 'Have you deployed Defender for Identity?',
-                    description: 'Defender for Identity protects your on-premises Active Directory identities.',
-                    docLink: 'https://learn.microsoft.com/en-us/defender-for-identity/what-is'
-                },
-                {
-                    id: 'MDO',
-                    text: 'Have you deployed Defender for Office 365?',
-                    description: 'Protects your organization against malicious threats from email messages, links and collaboration tools.',
-                    docLink: 'https://learn.microsoft.com/en-us/microsoft-365/security/office-365-security/defender-for-office-365'
-                },
-                {
-                    id: 'MDCA',
-                    text: 'Have you deployed Defender for Cloud Apps?',
-                    description: 'Cloud Access Security Broker that provides rich visibility and control over data travel.',
-                    docLink: 'https://learn.microsoft.com/en-us/defender-cloud-apps/what-is-defender-for-cloud-apps'
-                }
-                // ... Add more questions for other nodes from the flowchart
-            ];
+        // Define questions array in global scope
+        const questions = [
+            {
+                id: 'CloudID',
+                text: 'Have you configured Cloud Identity?',
+                description: 'Cloud Identity provides the foundation for managing user identities and access in Microsoft 365.',
+                docLink: 'https://learn.microsoft.com/en-us/entra/fundamentals/whatis'
+            },
+            {
+                id: 'MFA',
+                text: 'Have you deployed Multifactor Authentication?',
+                description: 'MFA adds an additional layer of security by requiring two or more verification methods.',
+                docLink: 'https://learn.microsoft.com/en-us/entra/identity/authentication/concept-mfa-howitworks'
+            },
+            {
+                id: 'CA',
+                text: 'Have you configured Conditional Access Policies?',
+                description: 'Conditional Access helps you manage access to your resources based on specific conditions.',
+                docLink: 'https://learn.microsoft.com/en-us/entra/identity/conditional-access/overview'
+            },
+            {
+                id: 'IntuneEnroll',
+                text: 'Have you enrolled devices into management?',
+                description: 'Device enrollment allows you to manage and secure your organizations devices.',
+                docLink: 'https://learn.microsoft.com/en-us/mem/intune/enrollment/'
+            },
+            {
+                id: 'IntuneCompPol',
+                text: 'Have you configured compliance policies?',
+                description: 'Compliance policies define the rules and settings devices must meet to be considered compliant.',
+                docLink: 'https://learn.microsoft.com/en-us/mem/intune/protect/device-compliance-get-started'
+            },
+            {
+                id: 'OnboardDevices',
+                text: 'Have you onboarded Windows devices into Microsoft 365?',
+                description: 'Onboarding connects your Windows devices to Microsoft 365 security services.',
+                docLink: 'https://learn.microsoft.com/en-us/microsoft-365/security/defender-endpoint/onboard-windows'
+            },
+            {
+                id: 'DSPM',
+                text: 'Have you deployed Microsoft Purview Data Security Posture Management?',
+                description: 'DSPM helps you discover, classify, and protect sensitive data across your organization.',
+                docLink: 'https://learn.microsoft.com/en-us/purview/data-security-posture-management'
+            },
+            {
+                id: 'EndpointDLP',
+                text: 'Have you configured Endpoint DLP Policy?',
+                description: 'Endpoint DLP helps prevent sensitive information from being shared inappropriately.',
+                docLink: 'https://learn.microsoft.com/en-us/purview/endpoint-dlp-learn-about'
+            },
+            {
+                id: 'XDR',
+                text: 'Have you deployed M365 Defender for XDR?',
+                description: 'Extended Detection and Response (XDR) provides unified security incident detection and response.',
+                docLink: 'https://learn.microsoft.com/en-us/microsoft-365/security/defender/microsoft-365-defender'
+            },
+            {
+                id: 'DID',
+                text: 'Have you deployed Defender for Identity?',
+                description: 'Defender for Identity protects your on-premises Active Directory identities.',
+                docLink: 'https://learn.microsoft.com/en-us/defender-for-identity/what-is'
+            },
+            {
+                id: 'MDO',
+                text: 'Have you deployed Defender for Office 365?',
+                description: 'Protects your organization against malicious threats from email messages, links and collaboration tools.',
+                docLink: 'https://learn.microsoft.com/en-us/microsoft-365/security/office-365-security/defender-for-office-365'
+            },
+            {
+                id: 'MDCA',
+                text: 'Have you deployed Defender for Cloud Apps?',
+                description: 'Cloud Access Security Broker that provides rich visibility and control over data travel.',
+                docLink: 'https://learn.microsoft.com/en-us/defender-cloud-apps/what-is-defender-for-cloud-apps'
+            }
+            // ... Add more questions for other nodes from the flowchart
+        ];
 
-            function createQuestionElements() {
-                console.log('Creating question elements...');
-                const container = document.getElementById('questionsContainer');
-                if (!container) {
-                    console.error('Questions container not found!');
-                    return;
-                }
-                console.log('Found container, creating questions...');
-                questions.forEach(q => {
-                    const questionDiv = document.createElement('div');
-                    questionDiv.className = 'question';
-                    questionDiv.innerHTML = `
-                        <h3>${q.text}</h3>
-                        <p>${q.description}</p>
-                        <p><a href="${q.docLink}" target="_blank">Learn more</a></p>
-                        <div class="radio-group">
-                            <input type="radio" id="${q.id}_no" name="${q.id}" value="false" checked>
-                            <label for="${q.id}_no">No</label>
-                            <input type="radio" id="${q.id}_yes" name="${q.id}" value="true">
-                            <label for="${q.id}_yes">Yes</label>
-                        </div>
-                    `;
-                    container.appendChild(questionDiv);
-                });
+        // Function to create question elements
+        function createQuestionElements() {
+            const container = document.getElementById('questionsContainer');
+            if (!container) {
+                console.error('Questions container not found!');
+                return;
             }
 
-            function generateMermaidDiagram() {
-                return `
-                flowchart LR
-                    %% Core Zero Trust 
-                    Zero[Zero Trust/Security Suite Deployed]
-                    Data[Protect and govern sensitive data]
-                    Threats[Defend against threats]
-                    Foundation[Zero trust foundation]
-
-                    Foundation-->Zero
-                    Data-->Zero
-                    Threats-->Zero
-
-                    %% Data Security
-                    DSPM[Microsoft Purview DSPM]-->Data
-                    EndpointDLP[Endpoint DLP Policy]-->Data
-
-                    %% Threats
-                    XDR[M365 Defender for XDR]-->Threats
-
-                    %% Foundations
-                    IntuneEnroll[Enroll devices into management]-->IntuneCompPol[Configure compliance policies]
-                    MFA[Deploy Multifactor Authentication]-->CA[Configure Conditional Access Policies]
-                    CloudID[Configure Cloud Identity]-->MFA
-                    OnboardDevices[Onboard Windows devices]-->CA
-                    IntuneCompPol-->OnboardDevices
-                    CA-->Foundation
-
-                    classDef deployed fill:#90EE90,stroke:#333
-                    classDef notDeployed fill:#FFB6C1,stroke:#333
-
-                    ${Object.entries(deploymentStatus).map(([id, isDeployed]) => 
-                        `class ${id} ${isDeployed ? 'deployed' : 'notDeployed'}`
-                    ).join('\n')}
+            questions.forEach(q => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question';
+                questionDiv.innerHTML = `
+                    <h3>${q.text}</h3>
+                    <p>${q.description}</p>
+                    <p><a href="${q.docLink}" target="_blank">Learn more</a></p>
+                    <div class="radio-group">
+                        <input type="radio" id="${q.id}_no" name="${q.id}" value="false" checked>
+                        <label for="${q.id}_no">No</label>
+                        <input type="radio" id="${q.id}_yes" name="${q.id}" value="true">
+                        <label for="${q.id}_yes">Yes</label>
+                    </div>
                 `;
-            }
+                container.appendChild(questionDiv);
+            });
+        }
 
-            function generateRecommendations() {
-                let recommendations = '## Recommended Next Steps\n\n';
-                
-                if (!deploymentStatus['CloudID']) {
-                    recommendations += '### Identity & Access Management Priority\n' +
-                        '- Configure Cloud Identity as your foundation\n' +
-                        '- Review Entra ID Protection features\n' +
-                        '- Implement basic identity management\n\n';
-                }
-
-                if (!deploymentStatus['MFA'] && deploymentStatus['CloudID']) {
-                    recommendations += '### Security Enhancement Required\n' +
-                        '- Deploy Multifactor Authentication immediately\n' +
-                        '- Configure MFA for all users\n' +
-                        '- Set up conditional access policies\n\n';
-                }
-
-                if (!deploymentStatus['IntuneEnroll']) {
-                    recommendations += '### Device Management Needed\n' +
-                        '- Begin device enrollment in Intune\n' +
-                        '- Configure basic device compliance policies\n' +
-                        '- Set up device management policies\n\n';
-                }
-
-                if (!deploymentStatus['XDR']) {
-                    recommendations += '### Threat Protection Recommendations\n' +
-                        '- Deploy Microsoft 365 Defender (XDR)\n' +
-                        '- Configure EDR capabilities\n' +
-                        '- Set up advanced threat protection\n\n';
-                }
-
-                return recommendations;
-            }
-
-            console.log('Calling createQuestionElements...');
-            createQuestionElements();
-            console.log('Setup complete');
-        });
-
-        // Move showResults outside DOMContentLoaded to keep it global
-        function showResults() {
+        // Function to generate results
+        function generateResults() {
             const deploymentStatus = {};
             questions.forEach(q => {
                 const radioValue = document.querySelector(`input[name="${q.id}"]:checked`).value;
                 deploymentStatus[q.id] = radioValue === 'true';
             });
 
-            document.getElementById('results').style.display = 'block';
-            
             const mermaidDiv = document.getElementById('mermaidChart');
-            mermaidDiv.innerHTML = `<div class="mermaid">${generateMermaidDiagram()}</div>`;
-            
+            const diagram = generateMermaidDiagram(deploymentStatus);
+            mermaidDiv.innerHTML = `<div class="mermaid">${diagram}</div>`;
+
             const recommendationsDiv = document.getElementById('recommendations');
-            recommendationsDiv.innerHTML = marked.parse(generateRecommendations());
-            
+            recommendationsDiv.innerHTML = marked.parse(generateRecommendations(deploymentStatus));
+
+            document.getElementById('results').style.display = 'block';
             mermaid.init();
-            
-            // Scroll to results
             document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
         }
+
+        // Function to generate Mermaid diagram
+        function generateMermaidDiagram(deploymentStatus) {
+            return `
+            flowchart LR
+                %% Core Zero Trust 
+                Zero[Zero Trust/Security Suite Deployed]
+                Data[Protect and govern sensitive data]
+                Threats[Defend against threats]
+                Foundation[Zero trust foundation]
+
+                Foundation-->Zero
+                Data-->Zero
+                Threats-->Zero
+
+                %% Data Security
+                DSPM[Microsoft Purview DSPM]-->Data
+                EndpointDLP[Endpoint DLP Policy]-->Data
+
+                %% Threats
+                XDR[M365 Defender for XDR]-->Threats
+
+                %% Foundations
+                IntuneEnroll[Enroll devices into management]-->IntuneCompPol[Configure compliance policies]
+                MFA[Deploy Multifactor Authentication]-->CA[Configure Conditional Access Policies]
+                CloudID[Configure Cloud Identity]-->MFA
+                OnboardDevices[Onboard Windows devices]-->CA
+                IntuneCompPol-->OnboardDevices
+                CA-->Foundation
+
+                classDef deployed fill:#90EE90,stroke:#333
+                classDef notDeployed fill:#FFB6C1,stroke:#333
+
+                ${Object.entries(deploymentStatus).map(([id, isDeployed]) => 
+                    `class ${id} ${isDeployed ? 'deployed' : 'notDeployed'}`
+                ).join('\n')}
+            `;
+        }
+
+        // Function to generate recommendations
+        function generateRecommendations(deploymentStatus) {
+            let recommendations = '## Recommended Next Steps\n\n';
+            
+            if (!deploymentStatus['CloudID']) {
+                recommendations += '### Identity & Access Management Priority\n' +
+                    '- Configure Cloud Identity as your foundation\n' +
+                    '- Review Entra ID Protection features\n' +
+                    '- Implement basic identity management\n\n';
+            }
+
+            if (!deploymentStatus['MFA'] && deploymentStatus['CloudID']) {
+                recommendations += '### Security Enhancement Required\n' +
+                    '- Deploy Multifactor Authentication immediately\n' +
+                    '- Configure MFA for all users\n' +
+                    '- Set up conditional access policies\n\n';
+            }
+
+            if (!deploymentStatus['IntuneEnroll']) {
+                recommendations += '### Device Management Needed\n' +
+                    '- Begin device enrollment in Intune\n' +
+                    '- Configure basic device compliance policies\n' +
+                    '- Set up device management policies\n\n';
+            }
+
+            if (!deploymentStatus['XDR']) {
+                recommendations += '### Threat Protection Recommendations\n' +
+                    '- Deploy Microsoft 365 Defender (XDR)\n' +
+                    '- Configure EDR capabilities\n' +
+                    '- Set up advanced threat protection\n\n';
+            }
+
+            return recommendations;
+        }
+
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            mermaid.initialize({ startOnLoad: true });
+            createQuestionElements();
+        });
     </script>
 </body>
 </html>
