@@ -403,8 +403,8 @@
                     Foundation["Zero Trust Foundation"]
                     Data["Data Protection"]
                     Threats["Threat Defense"]
-                    SecureID["Identity Security"]
-                    IntuneSuite["Endpoint Security"]
+                    SecureID["AdvancedIdentity Security"]
+                    IntuneSuite["Advanced Endpoint Security"]
                 end
 
                 %% Core relationships
@@ -440,13 +440,16 @@
                 MDCA --> XDR
                 MDVM --> Threats
 
-                %% Group Identity components
-                subgraph IdentityProtection["Identity Protection"]
+                %% Group Foundation components
+                subgraph Foundation["Zero Trust Foundation"]
                     direction TB
                     CloudID["Cloud Identity"] --> MFA["MFA"]
                     MFA --> CA["Conditional Access"]
+                    IntuneEnroll["Device Enrollment"] --> IntuneCompPol["Compliance Policies"]
+                    IntuneCompPol --> CA
                     CA --> Foundation
                     RCA["Risk-Based CA"] --> IDProtection["Identity Protection"]
+                    CA --> RCA
                     IDProtAlerts["Identity Alerts"] --> IDProtection
                     IDProtection --> SecureID
                 end
@@ -486,10 +489,8 @@
                 IGA --> SecureID
 
                 %% Group Endpoint Management components
-                subgraph EndpointManagement["Endpoint Management and Security"]
+                subgraph EndpointManagement["Advanced Endpoint Management and Security"]
                     direction TB
-                    IntuneEnroll["Device Enrollment"]
-                    IntuneCompPol["Compliance Policies"]
                     EndpointAnalytics["Analytics"]
                     RemoteHelp["Remote Help"]
                     EPM["Privilege Management"]
