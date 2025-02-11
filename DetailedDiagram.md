@@ -67,8 +67,6 @@
                 EPAConn --> EPA
                 EPA --> GSA
                 GSA --> SecureID
-                CA --> EIA
-                RCA --> EIA
                 EIA --> GSA
 
                 %% Group Identity Governance components
