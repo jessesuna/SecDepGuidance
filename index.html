@@ -102,10 +102,66 @@
         input:checked + .slider:before {
             transform: translateX(26px);
         }
+        .instructions {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 30px;
+            border-left: 4px solid #0066cc;
+        }
+        .instructions h2 {
+            color: #0066cc;
+            margin-top: 0;
+        }
+        .instructions ol {
+            padding-left: 20px;
+        }
+        .instructions ul {
+            padding-left: 20px;
+            margin: 10px 0;
+        }
+        .instructions li {
+            margin-bottom: 10px;
+        }
+        .instructions strong {
+            color: #333;
+        }
+        .instructions p {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #fff;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
     </style>
 </head>
 <body>
     <h1>Security Deployment Assessment</h1>
+    
+    <div class="instructions">
+        <h2>How to Use This Assessment Tool</h2>
+        <ol>
+            <li><strong>Answer Questions:</strong> Go through each question and select "Yes" or "No" based on your current deployment status.</li>
+            <li><strong>Generate Results:</strong> Click the "Generate Results" button at the bottom of the form.</li>
+            <li><strong>Review Visualization:</strong>
+                <ul>
+                    <li>Toggle between Simplified and Detailed views using the switch</li>
+                    <li>Green boxes indicate deployed components</li>
+                    <li>Pink boxes indicate components yet to be deployed</li>
+                    <li>Click on any component to view Microsoft documentation</li>
+                </ul>
+            </li>
+            <li><strong>Review Recommendations:</strong> Below the diagram, you'll find:
+                <ul>
+                    <li>Prioritized deployment recommendations</li>
+                    <li>Links to key resources and documentation</li>
+                    <li>30/60/90 day implementation guidance</li>
+                </ul>
+            </li>
+        </ol>
+        <p><strong>Note:</strong> This tool is designed to help you assess your current security posture and plan your deployment strategy. For detailed implementation guidance, always refer to the official Microsoft documentation.</p>
+    </div>
+
     <form id="assessmentForm">
         <div id="questionsContainer"></div>
         <button type="button" onclick="generateResults()">Generate Results</button>
@@ -650,7 +706,7 @@
 
             recommendations += '\n### Next Steps\n' +
                 '1. Focus on completing the 30-day foundation items first\n' +
-                '2. Consider running a Zero Trust Assessment Workshop to validate your implementation\n' +
+                '2. Consider running a [Zero Trust Assessment Workshop] (https://microsoft.github.io/zerotrustassessment/workshop) to build a detailed plan\n' +
                 '3. Use the [Zero Trust Assessment Tool](https://microsoft.github.io/zerotrustassessment/docs/app-permissions) to validate your implementation\n' +
                 '3. Follow the [Zero Trust Rapid Modernization Plan] (https://learn.microsoft.com/en-us/microsoft-365/security/microsoft-365-zero-trust?view=o365-worldwide#zero-trust-rapid-deployment-guide) or the [Zero Trust deployment plan](https://learn.microsoft.com/en-us/microsoft-365/security/microsoft-365-zero-trust?view=o365-worldwide) for detailed steps\n' +
                 '4. Schedule regular reviews of your security posture\n';
