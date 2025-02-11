@@ -53,8 +53,7 @@
                     IntuneCompPol --> CA
                     CA --> Foundation
                     IDProtAlerts["Identity Alerts"] --> IDProtection
-                    IDProtection --> SecureID
-                end
+                end                
 
                 %% Group Network Access components
                 subgraph NetworkAccess["Secure Service Edge"]
