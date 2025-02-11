@@ -16,12 +16,12 @@
                     SecureID --> Zero
                     IntuneSuite --> Zero
 
-                %% Add click events for core components
-                click Zero "https://learn.microsoft.com/en-us/security/zero-trust/zero-trust-overview" _blank
-                click Data "https://learn.microsoft.com/en-us/purview/data-protection" _blank
-                click Threats "https://learn.microsoft.com/en-us/microsoft-365/security/defender/microsoft-365-defender" _blank
-                click SecureID "https://learn.microsoft.com/en-us/entra/identity/identity-overview-azure-portal" _blank
-                click IntuneSuite "https://learn.microsoft.com/en-us/mem/intune/fundamentals/what-is-intune" _blank
+                    %% Add click events for core components
+                    click Zero "https://learn.microsoft.com/en-us/security/zero-trust/zero-trust-overview" _blank
+                    click Data "https://learn.microsoft.com/en-us/purview/data-protection" _blank
+                    click Threats "https://learn.microsoft.com/en-us/microsoft-365/security/defender/microsoft-365-defender" _blank
+                    click SecureID "https://learn.microsoft.com/en-us/entra/identity/identity-overview-azure-portal" _blank
+                    click IntuneSuite "https://learn.microsoft.com/en-us/mem/intune/fundamentals/what-is-intune" _blank
 
                 %% Group Data Security components
                         subgraph DataProtection["Data Protection"]
@@ -109,6 +109,7 @@
                 end
                 IDProtection --> SecureID
 
+            
                 %% Add click events for Identity Protection components
                 click RCA "https://learn.microsoft.com/en-us/entra/identity/conditional-access/howto-conditional-access-policy-risk" _blank
                 click IDProtection "https://learn.microsoft.com/en-us/entra/id-protection/overview-identity-protection" _blank
@@ -144,19 +145,23 @@
                     direction TB
                     EndpointAnalytics["Analytics"]
                     RemoteHelp["Remote Help"]
-                    EPM["Privilege Management"]
+                    EPM["Endpoint Privilege Management"]
                     SpecializedDevices["Device Management"]
                     AutoPilot["Windows Autopilot"]
-                    AppManagement["App Management"]
+                    AppManagement["Enterprise Application Management"]
                     AppProtection["App Protection"]
+                    Cloudpki["Cloud PKI"]
                 end
                 EndpointAnalytics --> RemoteHelp
                 EndpointAnalytics --> EPM
                 SpecializedDevices --> AutoPilot
                 AppManagement --> AppProtection
                 EndpointAnalytics --> IntuneSuite
-                AutoPilot --> IntuneSuite
                 AppManagement --> IntuneSuite
+                Cloudpki --> IntuneSuite
+                Autopilot --> SpecializedDevices
+                RemoteHelp --> IntuneSuite
+                EPM --> IntuneSuite
 
                 %% Add click events for Endpoint Management components
                 click EndpointAnalytics "https://learn.microsoft.com/en-us/mem/analytics/" _blank

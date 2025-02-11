@@ -616,9 +616,11 @@
                 SpecializedDevices --> AutoPilot
                 AppManagement --> AppProtection
                 EndpointAnalytics --> IntuneSuite
-                AutoPilot --> IntuneSuite
                 AppManagement --> IntuneSuite
                 Cloudpki --> IntuneSuite
+                Autopilot --> SpecializedDevices
+                RemoteHelp --> IntuneSuite
+                EPM --> IntuneSuite
 
                 %% Add click events for Endpoint Management components
                 click EndpointAnalytics "https://learn.microsoft.com/en-us/mem/analytics/" _blank
