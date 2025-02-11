@@ -159,7 +159,7 @@
                 EndpointAnalytics --> IntuneSuite
                 AppManagement --> IntuneSuite
                 Cloudpki --> IntuneSuite
-                Autopilot --> SpecializedDevices
+                AutoPilot --> SpecializedDevices
                 RemoteHelp --> IntuneSuite
                 EPM --> IntuneSuite
 
