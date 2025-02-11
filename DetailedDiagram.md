@@ -173,7 +173,7 @@
                 click AutoPilot "https://learn.microsoft.com/en-us/mem/autopilot/windows-autopilot" _blank
                 click AppManagement "https://learn.microsoft.com/en-us/mem/intune/apps/app-management" _blank
                 click AppProtection "https://learn.microsoft.com/en-us/mem/intune/apps/app-protection-policies" _blank
-                click Cloudpki "https://learn.microsoft.com/en-us/mem/intune/protect/microsoft-cloud-pki-overview" _black
+                click Cloudpki "https://learn.microsoft.com/en-us/mem/intune/protect/microsoft-cloud-pki-overview" _blank
 
                 %% Styling
                 classDef deployed fill:#90EE90,stroke:#333,stroke-width:2px
