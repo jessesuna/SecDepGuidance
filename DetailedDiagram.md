@@ -69,7 +69,7 @@
                 EIA --> GSA
 
                 %% Group Identity Protection components
-                subgraph IdentityProtectiongroup["Identity Protection Group"]    
+                subgraph IdentityProtectiongroup["Identity Protection Group"]
                     RCA["Risk-Based CA"] --> IDProtection["Identity Protection"]                                   
                 end
                 CA --> RCA
