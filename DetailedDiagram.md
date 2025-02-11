@@ -105,7 +105,6 @@
                     AppManagement["App Management"]
                     AppProtection["App Protection"]
                 end
-                IntuneEnroll --> IntuneCompPol
                 EndpointAnalytics --> RemoteHelp
                 EndpointAnalytics --> EPM
                 SpecializedDevices --> AutoPilot

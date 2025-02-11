@@ -398,29 +398,27 @@
             return `
             flowchart LR
                 %% Define core components with clear labels
-                subgraph Core["Zero Trust Core"]
+                    subgraph Core["Zero Trust Core"]
                     Zero["Zero Trust Security Suite"]
-                    Foundation["Zero Trust Foundation"]
                     Data["Data Protection"]
                     Threats["Threat Defense"]
                     SecureID["Advanced Identity Security"]
                     IntuneSuite["Advanced Endpoint Security"]
-                end
+                    end
 
                 %% Core relationships
-                Foundation --> Zero
-                Data --> Zero
-                Threats --> Zero
-                SecureID --> Zero
-                IntuneSuite --> Zero
+                    Data --> Zero
+                    Threats --> Zero
+                    SecureID --> Zero
+                    IntuneSuite --> Zero
 
                 %% Group Data Security components
-                subgraph DataProtection["Data Protection"]
-                    direction TB
-                    DSPM["Purview DSPM"]
-                    EndpointDLP["Endpoint DLP"]
-                    PurAud["Purview Audit"]
-                end
+                        subgraph DataProtection["Data Protection"]
+                        direction TB
+                        DSPM["Purview DSPM"]
+                        EndpointDLP["Endpoint DLP"]
+                        PurAud["Purview Audit"]
+                        end
                 DSPM --> Data
                 EndpointDLP --> Data
                 PurAud --> DSPM
@@ -443,16 +441,16 @@
                 %% Group Foundation components
                 subgraph Foundationcomponents["Zero Trust Foundation"]
                     direction TB
+                    Foundation["Zero Trust Foundation"]
                     CloudID["Cloud Identity"] --> MFA["MFA"]
                     MFA --> CA["Conditional Access"]
                     IntuneEnroll["Device Enrollment"] --> IntuneCompPol["Compliance Policies"]
                     IntuneCompPol --> CA
                     CA --> Foundation
-                    RCA["Risk-Based CA"] --> IDProtection["Identity Protection"]
-                    CA --> RCA
-                    IDProtAlerts["Identity Alerts"] --> IDProtection
-                    IDProtection --> SecureID
                 end
+                Foundation --> IdentityProtectiongroup
+                Foundation --> IdentityGovernance
+                Foundation --> EndpointManagement
 
                 %% Group Network Access components
                 subgraph NetworkAccess["Secure Service Edge"]
@@ -462,14 +460,18 @@
                     GSA["Global Secure Access"]
                     EIA["Internet Access"]
                 end
-                CA --> EPA
-                RCA --> EPA
                 EPAConn --> EPA
                 EPA --> GSA
                 GSA --> SecureID
-                CA --> EIA
-                RCA --> EIA
                 EIA --> GSA
+
+                %% Group Identity Protection components
+                subgraph IdentityProtectiongroup["Identity Protection Group"]
+                    RCA["Risk-Based CA"] --> IDProtection["Identity Protection"]
+                    IDProtAlerts["Identity Alerts"] --> IDProtection                                   
+                end
+                CA --> RCA
+                IDProtection --> SecureID
 
                 %% Group Identity Governance components
                 subgraph IdentityGovernance["Identity Governance"]
@@ -499,13 +501,9 @@
                     AppManagement["App Management"]
                     AppProtection["App Protection"]
                 end
-                IntuneEnroll --> IntuneCompPol
-                IntuneEnroll --> EndpointAnalytics
                 EndpointAnalytics --> RemoteHelp
                 EndpointAnalytics --> EPM
-                IntuneEnroll --> SpecializedDevices
                 SpecializedDevices --> AutoPilot
-                IntuneEnroll --> AppManagement
                 AppManagement --> AppProtection
                 EndpointAnalytics --> IntuneSuite
                 AutoPilot --> IntuneSuite
@@ -518,9 +516,8 @@
                 classDef core fill:#e1f5fe,stroke:#0277bd,stroke-width:3px
 
                 %% Apply styles
-                class Core,DataProtection,ThreatProtection,IdentityProtection,NetworkAccess,IdentityGovernance,EndpointManagement subgraphStyle
+                class Core,DataProtection,ThreatProtection,IdentityProtection,NetworkAccess,IdentityGovernance,EndpointManagement,IdentityProtectiongroup,IdentityGovernance, subgraphStyle
                 class Zero,Foundation,Data,Threats,SecureID,IntuneSuite core
-
                 %% Apply deployment status
                 ${Object.entries(deploymentStatus).map(([id, isDeployed]) => 
                     `class ${id} ${isDeployed ? 'deployed' : 'notDeployed'}`
