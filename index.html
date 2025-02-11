@@ -133,63 +133,6 @@
             border-radius: 4px;
             border: 1px solid #ddd;
         }
-        .category-section {
-            margin-bottom: 40px;
-            background-color: #ffffff;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            padding: 20px;
-        }
-        .category-header {
-            color: #0066cc;
-            padding-bottom: 10px;
-            margin-bottom: 20px;
-            border-bottom: 2px solid #0066cc;
-            font-size: 1.5em;
-        }
-        .question {
-            margin-bottom: 20px;
-            padding: 15px;
-            border: 1px solid #e0e0e0;
-            border-radius: 5px;
-            background-color: #f8f9fa;
-        }
-        .question:hover {
-            border-color: #0066cc;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .radio-group {
-            display: flex;
-            gap: 20px;
-            margin-top: 15px;
-        }
-        .radio-group label {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            cursor: pointer;
-        }
-        .radio-group input[type="radio"] {
-            cursor: pointer;
-        }
-        .question h3 {
-            color: #333;
-            margin-top: 0;
-            font-size: 1.1em;
-        }
-        .question p {
-            color: #666;
-            margin: 10px 0;
-            line-height: 1.4;
-        }
-        .question a {
-            color: #0066cc;
-            text-decoration: none;
-            font-weight: 500;
-        }
-        .question a:hover {
-            text-decoration: underline;
-        }
     </style>
 </head>
 <body>
@@ -240,91 +183,224 @@
     <script>
         // Define questions array in global scope
         const questions = [
-            // Identity and Access Management
             {
-                category: 'Identity and Access Management',
-                questions: [
-                    {
-                        id: 'CloudID',
-                        text: 'Have you configured Cloud Identity?',
-                        description: 'Cloud Identity provides the foundation for managing user identities and access in Microsoft 365.',
-                        docLink: 'https://learn.microsoft.com/en-us/entra/fundamentals/whatis'
-                    },
-                    {
-                        id: 'MFA',
-                        text: 'Have you deployed Multifactor Authentication?',
-                        description: 'MFA adds an additional layer of security by requiring two or more verification methods.',
-                        docLink: 'https://learn.microsoft.com/en-us/entra/identity/authentication/concept-mfa-howitworks'
-                    },
-                    {
-                        id: 'CA',
-                        text: 'Have you configured Conditional Access Policies?',
-                        description: 'Conditional Access helps you manage access to your resources based on specific conditions.',
-                        docLink: 'https://learn.microsoft.com/en-us/entra/identity/conditional-access/overview'
-                    },
-                    {
-                        id: 'RCA',
-                        text: 'Have you configured Risk-Based Conditional Access?',
-                        description: 'Risk-based Conditional Access helps protect your organization by analyzing signals in real-time to detect and respond to risks.',
-                        docLink: 'https://learn.microsoft.com/en-us/entra/identity/conditional-access/howto-conditional-access-policy-risk'
-                    },
-                    {
-                        id: 'IDProtection',
-                        text: 'Have you deployed Entra Identity Protection?',
-                        description: 'Identity Protection uses machine learning to detect and prevent identity-based risks.',
-                        docLink: 'https://learn.microsoft.com/en-us/entra/id-protection/overview-identity-protection'
-                    }
-                ]
+                id: 'CloudID',
+                text: 'Have you configured Cloud Identity?',
+                description: 'Cloud Identity provides the foundation for managing user identities and access in Microsoft 365.',
+                docLink: 'https://learn.microsoft.com/en-us/entra/fundamentals/whatis'
             },
-            // Device Management
             {
-                category: 'Device Management',
-                questions: [
-                    {
-                        id: 'IntuneEnroll',
-                        text: 'Have you enrolled devices into management?',
-                        description: 'Device enrollment allows you to manage and secure your organizations devices.',
-                        docLink: 'https://learn.microsoft.com/en-us/mem/intune/enrollment/'
-                    },
-                    {
-                        id: 'IntuneCompPol',
-                        text: 'Have you configured compliance policies?',
-                        description: 'Compliance policies define the rules and settings devices must meet to be considered compliant.',
-                        docLink: 'https://learn.microsoft.com/en-us/mem/intune/protect/device-compliance-get-started'
-                    },
-                    {
-                        id: 'OnboardDevices',
-                        text: 'Have you onboarded Windows devices into Microsoft 365?',
-                        description: 'Onboarding connects your Windows devices to Microsoft 365 security services.',
-                        docLink: 'https://learn.microsoft.com/en-us/purview/device-onboarding-overview'
-                    }
-                ]
+                id: 'MFA',
+                text: 'Have you deployed Multifactor Authentication?',
+                description: 'MFA adds an additional layer of security by requiring two or more verification methods.',
+                docLink: 'https://learn.microsoft.com/en-us/entra/identity/authentication/concept-mfa-howitworks'
             },
-            // Data Protection
             {
-                category: 'Data Protection',
-                questions: [
-                    {
-                        id: 'DSPM',
-                        text: 'Have you deployed Microsoft Purview Data Security Posture Management?',
-                        description: 'DSPM helps you discover, classify, and protect sensitive data across your organization.',
-                        docLink: 'https://learn.microsoft.com/en-us/purview/data-security-posture-management'
-                    },
-                    {
-                        id: 'EndpointDLP',
-                        text: 'Have you configured Endpoint DLP Policy?',
-                        description: 'Endpoint DLP helps prevent sensitive information from being shared inappropriately.',
-                        docLink: 'https://learn.microsoft.com/en-us/purview/endpoint-dlp-learn-about'
-                    },
-                    {
-                        id: 'PurAud',
-                        text: 'Have you deployed Purview Audit?',
-                        description: 'Microsoft Purview auditing solutions provide an integrated solution to help organizations effectively respond to security events, forensic investigations, internal investigations, and compliance obligations.',
-                        docLink: 'https://learn.microsoft.com/en-us/purview/audit-solutions-overview'
-                    }
-                ]
+                id: 'CA',
+                text: 'Have you configured Conditional Access Policies?',
+                description: 'Conditional Access helps you manage access to your resources based on specific conditions.',
+                docLink: 'https://learn.microsoft.com/en-us/entra/identity/conditional-access/overview'
             },
-            // ... continue organizing remaining questions into appropriate categories
+            {
+                id: 'IntuneEnroll',
+                text: 'Have you enrolled devices into management?',
+                description: 'Device enrollment allows you to manage and secure your organizations devices.',
+                docLink: 'https://learn.microsoft.com/en-us/mem/intune/enrollment/'
+            },
+            {
+                id: 'IntuneCompPol',
+                text: 'Have you configured compliance policies?',
+                description: 'Compliance policies define the rules and settings devices must meet to be considered compliant.',
+                docLink: 'https://learn.microsoft.com/en-us/mem/intune/protect/device-compliance-get-started'
+            },
+            {
+                id: 'OnboardDevices',
+                text: 'Have you onboarded Windows devices into Microsoft 365?',
+                description: 'Onboarding connects your Windows devices to Microsoft 365 security services.',
+                docLink: 'https://learn.microsoft.com/en-us/purview/device-onboarding-overview'
+            },
+            {
+                id: 'DSPM',
+                text: 'Have you deployed Microsoft Purview Data Security Posture Management?',
+                description: 'DSPM helps you discover, classify, and protect sensitive data across your organization.',
+                docLink: 'https://learn.microsoft.com/en-us/purview/data-security-posture-management'
+            },
+            {
+                id: 'EndpointDLP',
+                text: 'Have you configured Endpoint DLP Policy?',
+                description: 'Endpoint DLP helps prevent sensitive information from being shared inappropriately.',
+                docLink: 'https://learn.microsoft.com/en-us/purview/endpoint-dlp-learn-about'
+            },
+            {
+                id: 'XDR',
+                text: 'Have you deployed M365 Defender for XDR?',
+                description: 'Extended Detection and Response (XDR) provides unified security incident detection and response.',
+                docLink: 'https://learn.microsoft.com/en-us/microsoft-365/security/defender/microsoft-365-defender'
+            },
+            {
+                id: 'DID',
+                text: 'Have you deployed Defender for Identity?',
+                description: 'Defender for Identity protects your on-premises Active Directory identities.',
+                docLink: 'https://learn.microsoft.com/en-us/defender-for-identity/what-is'
+            },
+            {
+                id: 'MDO',
+                text: 'Have you deployed Defender for Office 365?',
+                description: 'Protects your organization against malicious threats from email messages, links and collaboration tools.',
+                docLink: 'https://learn.microsoft.com/en-us/microsoft-365/security/office-365-security/defender-for-office-365'
+            },
+            {
+                id: 'MDCA',
+                text: 'Have you deployed Defender for Cloud Apps?',
+                description: 'Cloud Access Security Broker that provides rich visibility and control over data travel.',
+                docLink: 'https://learn.microsoft.com/en-us/defender-cloud-apps/what-is-defender-for-cloud-apps'
+            },
+            {
+                id: 'PurAud',
+                text: 'Have you deployed Purview Audit?',
+                description: 'Microsoft Purview auditing solutions provide an integrated solution to help organizations effectively respond to security events, forensic investigations, internal investigations, and compliance obligations.',
+                docLink: 'https://learn.microsoft.com/en-us/purview/audit-solutions-overview'
+            },
+            {
+                id: 'MDO',
+                text: 'Have you deployed Microsoft Defender For Office?',
+                description: 'Proactively search for threats, malware, and malicious activity across your endpoints, Microsoft 365 mailboxes',
+                docLink: 'https://www.microsoft.com/en-us/security/business/siem-and-xdr/microsoft-defender-office-365'
+
+            },
+            {
+                id: 'MDE',
+                text: 'Have you deployed Microsoft Defender for Endpoint?',
+                description: 'Microsoft Defender for Endpoint is an enterprise endpoint security platform that helps defend against advanced persistent threats.',
+                docLink: 'https://learn.microsoft.com/en-us/defender-endpoint/production-deployment'
+
+            },
+            {
+                id: 'MDVM',
+                text: 'Have you deployed Microsoft Defender for Volnerability Management',
+                description: 'Microsoft Defender Vulnerability Management standalone is a comprehensive vulnerability management solution to access continuous asset visibility, in-depth vulnerability assessments, and risk-based prioritization to help teams address critical vulnerabilities and misconfigurations.',
+                docLink: 'https://learn.microsoft.com/en-us/defender-vulnerability-management/'
+            },
+            {
+                id: 'RCA',
+                text: 'Have you configured Risk-Based Conditional Access?',
+                description: 'Risk-based Conditional Access helps protect your organization by analyzing signals in real-time to detect and respond to risks.',
+                docLink: 'https://learn.microsoft.com/en-us/entra/identity/conditional-access/howto-conditional-access-policy-risk'
+            },
+            {
+                id: 'IDProtection',
+                text: 'Have you deployed Entra Identity Protection?',
+                description: 'Identity Protection uses machine learning to detect and prevent identity-based risks.',
+                docLink: 'https://learn.microsoft.com/en-us/entra/id-protection/overview-identity-protection'
+            },
+            {
+                id: 'IDProtAlerts',
+                text: 'Have you configured Identity Protection Alerts and Monitoring?',
+                description: 'Set up alerts and monitoring for identity risks and suspicious activities.',
+                docLink: 'https://learn.microsoft.com/en-us/entra/id-protection/howto-identity-protection-configure-notifications'
+            },
+            {
+                id: 'EPA',
+                text: 'Have you deployed Entra Private Access?',
+                description: 'Entra Private Access provides secure access to private applications without VPNs.',
+                docLink: 'https://learn.microsoft.com/en-us/entra/identity/private-access/private-access-overview'
+            },
+            {
+                id: 'EPAConn',
+                text: 'Have you deployed Entra Private Access Connector?',
+                description: 'The connector enables secure access to on-premises applications.',
+                docLink: 'https://learn.microsoft.com/en-us/entra/identity/private-access/deployment-guide'
+            },
+            {
+                id: 'GSA',
+                text: 'Have you configured Entra Global Secure Access SSE?',
+                description: 'Global Secure Access provides secure connectivity for remote workers.',
+                docLink: 'https://learn.microsoft.com/en-us/entra/global-secure-access/overview'
+            },
+            {
+                id: 'EIA',
+                text: 'Have you deployed Entra Internet Access?',
+                description: 'Secure internet access and web filtering for your organization.',
+                docLink: 'https://learn.microsoft.com/en-us/entra/internet-access/overview'
+            },
+            {
+                id: 'VID',
+                text: 'Have you deployed Entra Verified ID?',
+                description: 'Enables issuance and verification of decentralized identity credentials.',
+                docLink: 'https://learn.microsoft.com/en-us/entra/verified-id/overview'
+            },
+            {
+                id: 'VIDCred',
+                text: 'Have you configured Verified Credentials?',
+                description: 'Set up and manage verifiable credentials for your organization.',
+                docLink: 'https://learn.microsoft.com/en-us/entra/verified-id/verifiable-credentials-configure'
+            },
+            {
+                id: 'VIDWorkflow',
+                text: 'Have you configured Verification Workflow?',
+                description: 'Set up workflows for issuing and verifying credentials.',
+                docLink: 'https://learn.microsoft.com/en-us/entra/verified-id/verifiable-credentials-configure-workflow'
+            },
+            {
+                id: 'IGA',
+                text: 'Have you deployed Entra Identity Governance?',
+                description: 'Manage identity lifecycle, access reviews, and entitlements.',
+                docLink: 'https://learn.microsoft.com/en-us/entra/id-governance/'
+            },
+            {
+                id: 'AccessReview',
+                text: 'Have you configured Access Reviews?',
+                description: 'Regular reviews of user access rights to maintain security.',
+                docLink: 'https://learn.microsoft.com/en-us/entra/id-governance/access-reviews-overview'
+            },
+            {
+                id: 'PIM',
+                text: 'Have you implemented Privileged Identity Management?',
+                description: 'Just-in-time privileged access management and controls.',
+                docLink: 'https://learn.microsoft.com/en-us/entra/id-governance/privileged-identity-management/pim-configure'
+            },
+            {
+                id: 'EndpointAnalytics',
+                text: 'Have you deployed Advanced Endpoint Analytics?',
+                description: 'Monitor and improve end-user experience with proactive insights and recommendations.',
+                docLink: 'https://learn.microsoft.com/en-us/mem/analytics/'
+            },
+            {
+                id: 'RemoteHelp',
+                text: 'Have you implemented Remote Help?',
+                description: 'Secure remote assistance solution for your help desk to support end users.',
+                docLink: 'https://learn.microsoft.com/en-us/mem/intune/remote-actions/remote-help'
+            },
+            {
+                id: 'EPM',
+                text: 'Have you configured Endpoint Privilege Management?',
+                description: 'Manage administrative privileges on Windows and macOS devices.',
+                docLink: 'https://learn.microsoft.com/en-us/mem/intune/protect/endpoint-privilege-management'
+            },
+            {
+                id: 'SpecializedDevices',
+                text: 'Have you configured Specialized Device Management?',
+                description: 'Manage multi-user devices, kiosks, and other specialized scenarios.',
+                docLink: 'https://learn.microsoft.com/en-us/mem/intune/configuration/device-restrictions-configure'
+            },
+            {
+                id: 'AutoPilot',
+                text: 'Have you implemented Windows Autopilot?',
+                description: 'Zero-touch device provisioning and deployment.',
+                docLink: 'https://learn.microsoft.com/en-us/mem/autopilot/windows-autopilot'
+            },
+            {
+                id: 'AppManagement',
+                text: 'Have you configured Advanced App Management?',
+                description: 'Comprehensive application lifecycle management and protection.',
+                docLink: 'https://learn.microsoft.com/en-us/mem/intune/apps/app-management'
+            },
+            {
+                id: 'AppProtection',
+                text: 'Have you set up App Protection Policies?',
+                description: 'Protect corporate data in mobile applications.',
+                docLink: 'https://learn.microsoft.com/en-us/mem/intune/apps/app-protection-policies'
+            }
         ];
 
         // Function to create question elements
@@ -335,36 +411,21 @@
                 return;
             }
 
-            questions.forEach(category => {
-                // Create category section
-                const categorySection = document.createElement('div');
-                categorySection.className = 'category-section';
-                
-                // Add category header
-                const categoryHeader = document.createElement('h2');
-                categoryHeader.className = 'category-header';
-                categoryHeader.textContent = category.category;
-                categorySection.appendChild(categoryHeader);
-
-                // Add questions for this category
-                category.questions.forEach(q => {
-                    const questionDiv = document.createElement('div');
-                    questionDiv.className = 'question';
-                    questionDiv.innerHTML = `
-                        <h3>${q.text}</h3>
-                        <p>${q.description}</p>
-                        <p><a href="${q.docLink}" target="_blank">Learn more</a></p>
-                        <div class="radio-group">
-                            <input type="radio" id="${q.id}_no" name="${q.id}" value="false" checked>
-                            <label for="${q.id}_no">No</label>
-                            <input type="radio" id="${q.id}_yes" name="${q.id}" value="true">
-                            <label for="${q.id}_yes">Yes</label>
-                        </div>
-                    `;
-                    categorySection.appendChild(questionDiv);
-                });
-
-                container.appendChild(categorySection);
+            questions.forEach(q => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question';
+                questionDiv.innerHTML = `
+                    <h3>${q.text}</h3>
+                    <p>${q.description}</p>
+                    <p><a href="${q.docLink}" target="_blank">Learn more</a></p>
+                    <div class="radio-group">
+                        <input type="radio" id="${q.id}_no" name="${q.id}" value="false" checked>
+                        <label for="${q.id}_no">No</label>
+                        <input type="radio" id="${q.id}_yes" name="${q.id}" value="true">
+                        <label for="${q.id}_yes">Yes</label>
+                    </div>
+                `;
+                container.appendChild(questionDiv);
             });
         }
 
