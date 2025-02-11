@@ -71,11 +71,12 @@
                 RCA --> EIA
                 EIA --> GSA
 
-                      %% Group Identity Governance components
-                      subgraph IdentityProtectiongroup["Identity Protection Group"]    
-                               RCA["Risk-Based CA"] --> IDProtection["Identity Protection"]                    
-                      end
-                    CA --> RCA
+                %% Group Identity Governance components
+                subgraph IdentityProtectiongroup["Identity Protection Group"]    
+                    RCA["Risk-Based CA"] --> IDProtection["Identity Protection"]                                   
+                end
+                CA --> RCA
+                IDProtection --> SecureID
 
                 %% Group Identity Governance components
                 subgraph IdentityGovernance["Identity Governance"]
