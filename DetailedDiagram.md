@@ -175,6 +175,6 @@
 
                 %% Apply styles
                 class Core,DataProtection,ThreatProtection,IdentityProtection,NetworkAccess,IdentityGovernance,EndpointManagement,IdentityProtectiongroup,IdentityGovernance, subgraphStyle
-                class Zero,Foundation,Data,Threats,SecureID,IntuneSuite core
+                class Zero,Foundationcomponents,Data,Threats,SecureID,IntuneSuite core
 
 ```
