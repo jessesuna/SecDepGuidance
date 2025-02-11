@@ -68,6 +68,8 @@
                     CloudID["Cloud Identity"] --> MFA["MFA"]
                     MFA --> CA["Conditional Access"]
                     IntuneEnroll["Device Enrollment"] --> IntuneCompPol["Compliance Policies"]
+                    AppProtection["App Protection"] --> CA
+                    AutoPilot["Windows Autopilot"] --> IntuneCompPol
                     IntuneCompPol --> CA
                     CA --> Foundation
                 end
@@ -82,6 +84,8 @@
                 click CA "https://learn.microsoft.com/en-us/entra/identity/conditional-access/overview" _blank
                 click IntuneEnroll "https://learn.microsoft.com/en-us/mem/intune/enrollment/" _blank
                 click IntuneCompPol "https://learn.microsoft.com/en-us/mem/intune/protect/device-compliance-get-started" _blank
+                click AppProtection "https://learn.microsoft.com/en-us/mem/intune/apps/app-protection-policies" _blank
+                click AutoPilot "https://learn.microsoft.com/en-us/mem/autopilot/windows-autopilot" _blank
 
                 %% Group Network Access components
                 subgraph NetworkAccess["Secure Service Edge"]
@@ -147,22 +151,17 @@
                     RemoteHelp["Remote Help"]
                     EPM["Endpoint Privilege Management"]
                     SpecializedDevices["Device Management"]
-                    AutoPilot["Windows Autopilot"]
                     AppManagement["Enterprise App Management"]
-                    AppProtection["App Protection"]
                     Cloudpki["Cloud PKI"]
-                    AdvDevice["Advanced Device Management"]
                 end
 
-                SpecializedDevices --> AdvDevice
-                AppManagement --> AppProtection
-                EndpointAnalytics --> IntuneSuite
+                SpecializedDevices --> IntuneSuite
                 AppManagement --> IntuneSuite
-                Cloudpki --> AdvDevice
-                AutoPilot --> AdvDevice
-                RemoteHelp --> AdvDevice
-                EPM --> AdvDevice
-                AdvDevice --> IntuneSuite
+                EndpointAnalytics --> IntuneSuite
+                Cloudpki --> IntuneSuite
+                RemoteHelp --> IntuneSuite
+                EPM --> IntuneSuite
+
                 
 
                 %% Add click events for Endpoint Management components
@@ -170,9 +169,7 @@
                 click RemoteHelp "https://learn.microsoft.com/en-us/mem/intune/remote-actions/remote-help" _blank
                 click EPM "https://learn.microsoft.com/en-us/mem/intune/protect/endpoint-privilege-management" _blank
                 click SpecializedDevices "https://learn.microsoft.com/en-us/mem/intune/configuration/device-restrictions-configure" _blank
-                click AutoPilot "https://learn.microsoft.com/en-us/mem/autopilot/windows-autopilot" _blank
                 click AppManagement "https://learn.microsoft.com/en-us/mem/intune/apps/app-management" _blank
-                click AppProtection "https://learn.microsoft.com/en-us/mem/intune/apps/app-protection-policies" _blank
                 click Cloudpki "https://learn.microsoft.com/en-us/mem/intune/protect/microsoft-cloud-pki-overview" _blank
 
                 %% Styling
