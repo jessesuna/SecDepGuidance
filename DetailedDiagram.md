@@ -11,7 +11,8 @@
                     end
 
                 %% Core relationships
-                    Foundation --> Zero
+                    Foundation --> SecureID
+                    Foundation --> IntuneSuite
                     Data --> Zero
                     Threats --> Zero
                     SecureID --> Zero
@@ -52,7 +53,6 @@
                     IntuneEnroll["Device Enrollment"] --> IntuneCompPol["Compliance Policies"]
                     IntuneCompPol --> CA
                     CA --> Foundation
-                    IDProtAlerts["Identity Alerts"] --> IDProtection
                 end
 
                 %% Group Network Access components
@@ -70,7 +70,8 @@
 
                 %% Group Identity Protection components
                 subgraph IdentityProtectiongroup["Identity Protection Group"]
-                    RCA["Risk-Based CA"] --> IDProtection["Identity Protection"]                                   
+                    RCA["Risk-Based CA"] --> IDProtection["Identity Protection"]
+                    IDProtAlerts["Identity Alerts"] --> IDProtection                                   
                 end
                 CA --> RCA
                 IDProtection --> SecureID
