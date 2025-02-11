@@ -4,7 +4,6 @@
                 %% Define core components with clear labels
                     subgraph Core["Zero Trust Core"]
                     Zero["Zero Trust Security Suite"]
-                    Foundation["Zero Trust Foundation"]
                     Data["Data Protection"]
                     Threats["Threat Defense"]
                     SecureID["Advanced Identity Security"]
@@ -47,13 +46,12 @@
                 %% Group Foundation components
                 subgraph Foundationcomponents["Zero Trust Foundation"]
                     direction TB
+                    Foundation["Zero Trust Foundation"]
                     CloudID["Cloud Identity"] --> MFA["MFA"]
                     MFA --> CA["Conditional Access"]
                     IntuneEnroll["Device Enrollment"] --> IntuneCompPol["Compliance Policies"]
                     IntuneCompPol --> CA
                     CA --> Foundation
-                    RCA["Risk-Based CA"] --> IDProtection["Identity Protection"]
-                    CA --> RCA
                     IDProtAlerts["Identity Alerts"] --> IDProtection
                     IDProtection --> SecureID
                 end
@@ -66,14 +64,18 @@
                     GSA["Global Secure Access"]
                     EIA["Internet Access"]
                 end
-                CA --> EPA
-                RCA --> EPA
                 EPAConn --> EPA
                 EPA --> GSA
                 GSA --> SecureID
                 CA --> EIA
                 RCA --> EIA
                 EIA --> GSA
+
+                      %% Group Identity Governance components
+                      subgraph IdentityProtectiongroup["Identity Protection Group"]    
+                               RCA["Risk-Based CA"] --> IDProtection["Identity Protection"]                    
+                      end
+                    CA --> RCA
 
                 %% Group Identity Governance components
                 subgraph IdentityGovernance["Identity Governance"]
