@@ -174,7 +174,7 @@
                 classDef core fill:#e1f5fe,stroke:#0277bd,stroke-width:3px
 
                 %% Apply styles
-                class Core,DataProtection,ThreatProtection,IdentityProtection,NetworkAccess,IdentityGovernance,EndpointManagement,IdentityProtectiongroup,IdentityGovernance, subgraphStyle
-                class Zero,Foundationcomponents,Data,Threats,SecureID,IntuneSuite core
+                class Core,DataProtection,ThreatProtection,IdentityProtection,NetworkAccess,IdentityGovernance,EndpointManagement,IdentityProtectiongroup,IdentityGovernance,Foundationcomponents, subgraphStyle
+                class Zero,Foundation,Data,Threats,SecureID,IntuneSuite core
 
 ```
