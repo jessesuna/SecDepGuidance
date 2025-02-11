@@ -400,7 +400,14 @@
                 text: 'Have you set up App Protection Policies?',
                 description: 'Protect corporate data in mobile applications.',
                 docLink: 'https://learn.microsoft.com/en-us/mem/intune/apps/app-protection-policies'
+            },
+            {
+                id: 'Cloudpki',
+                text: 'Have you set up Intune Cloud PKI?',
+                description: 'Microsoft Cloud PKI is a cloud-based service that simplifies and automates certificate lifecycle management for Intune-managed devices.',
+                docLink: 'https://learn.microsoft.com/en-us/mem/intune/protect/microsoft-cloud-pki-overview'
             }
+            
         ];
 
         // Function to create question elements
@@ -597,11 +604,12 @@
                     direction TB
                     EndpointAnalytics["Analytics"]
                     RemoteHelp["Remote Help"]
-                    EPM["Privilege Management"]
+                    EPM["Endpoint Privilege Management"]
                     SpecializedDevices["Device Management"]
                     AutoPilot["Windows Autopilot"]
-                    AppManagement["App Management"]
+                    AppManagement["Enterprise Application Management"]
                     AppProtection["App Protection"]
+                    Cloudpki["Cloud PKI"]
                 end
                 EndpointAnalytics --> RemoteHelp
                 EndpointAnalytics --> EPM
@@ -610,6 +618,7 @@
                 EndpointAnalytics --> IntuneSuite
                 AutoPilot --> IntuneSuite
                 AppManagement --> IntuneSuite
+                Cloudpki --> IntuneSuite
 
                 %% Add click events for Endpoint Management components
                 click EndpointAnalytics "https://learn.microsoft.com/en-us/mem/analytics/" _blank
@@ -715,6 +724,14 @@
                     '- Implement App Protection Policies\n' +
                     '- Set up application controls\n' +
                     '- Reference: [App Management documentation](https://learn.microsoft.com/en-us/mem/intune/apps/app-management)\n\n';
+            }
+
+            if (!deploymentStatus['CloudPKI']) {
+                recommendations += '### Microsoft Cloud PKI For Intune\n' +
+                    '- Create root CA\n' +
+                    '- Create Issuing CA\n' +
+                    '- Configure Certificate Profiles\n' +
+                    '- Reference: [Cloud PKI Documentation](https://learn.microsoft.com/en-us/mem/intune/protect/microsoft-cloud-pki-overview)\n\n';
             }
 
             // 90-Day Milestone: Advanced Features and Optimization
