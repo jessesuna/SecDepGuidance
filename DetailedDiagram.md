@@ -1,30 +1,30 @@
-'''mermaid         
+```mermaid        
            
             flowchart LR
                 %% Define core components with clear labels
-                subgraph Core["Zero Trust Core"]
+                    subgraph Core["Zero Trust Core"]
                     Zero["Zero Trust Security Suite"]
                     Foundation["Zero Trust Foundation"]
                     Data["Data Protection"]
                     Threats["Threat Defense"]
                     SecureID["Advanced Identity Security"]
                     IntuneSuite["Advanced Endpoint Security"]
-                end
+                    end
 
                 %% Core relationships
-                Foundation --> Zero
-                Data --> Zero
-                Threats --> Zero
-                SecureID --> Zero
-                IntuneSuite --> Zero
+                    Foundation --> Zero
+                    Data --> Zero
+                    Threats --> Zero
+                    SecureID --> Zero
+                    IntuneSuite --> Zero
 
                 %% Group Data Security components
-                subgraph DataProtection["Data Protection"]
-                    direction TB
-                    DSPM["Purview DSPM"]
-                    EndpointDLP["Endpoint DLP"]
-                    PurAud["Purview Audit"]
-                end
+                        subgraph DataProtection["Data Protection"]
+                        direction TB
+                        DSPM["Purview DSPM"]
+                        EndpointDLP["Endpoint DLP"]
+                        PurAud["Purview Audit"]
+                        end
                 DSPM --> Data
                 EndpointDLP --> Data
                 PurAud --> DSPM
@@ -125,4 +125,4 @@
                 class Core,DataProtection,ThreatProtection,IdentityProtection,NetworkAccess,IdentityGovernance,EndpointManagement subgraphStyle
                 class Zero,Foundation,Data,Threats,SecureID,IntuneSuite core
 
-'''
+```

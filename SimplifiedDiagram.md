@@ -1,4 +1,4 @@
-'''mermaid           
+```mermaid       
             flowchart LR
                 %% Core components
                 subgraph Core["Zero Trust Core"]
@@ -58,4 +58,4 @@
                 class Core,KeyIdentity,KeyEndpoint,KeySecurity,KeyData subgraphStyle
                 class Zero,Foundation,Data,Threats,SecureID,IntuneSuite core
 
-'''
+```
