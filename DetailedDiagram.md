@@ -11,8 +11,6 @@
                     end
 
                 %% Core relationships
-                    Foundation --> SecureID
-                    Foundation --> IntuneSuite
                     Data --> Zero
                     Threats --> Zero
                     SecureID --> Zero
@@ -54,6 +52,10 @@
                     IntuneCompPol --> CA
                     CA --> Foundation
                 end
+                Foundation --> VID
+                Foundation --> IDProtection
+                Foundation --> IDGovernance
+                Foundation --> EndpointManagement
 
                 %% Group Network Access components
                 subgraph NetworkAccess["Secure Service Edge"]
