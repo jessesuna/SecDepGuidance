@@ -671,38 +671,38 @@
                     Foundation["Zero Trust Foundation"]
                     Data["Data Protection"]
                     Threats["Threat Defense"]
-                    SecureID["Identity Security"]
-                    IntuneSuite["Endpoint Security"]
                 end
 
                 %% Core relationships
                 Foundation --> Zero
                 Data --> Zero
                 Threats --> Zero
-                SecureID --> Zero
-                IntuneSuite --> Zero
 
                 %% Key Components
-                subgraph KeyIdentity["Identity"]
+                subgraph KeyIdentity["Foundation"]
                     CloudID["Cloud Identity"]
                     MFA["MFA"]
                     CA["Conditional Access"]
+                    IntuneEnroll["Device Enrollment"]
+                    IntuneCompPol["Compliance Policies"]
                 end
                 CloudID --> MFA
                 MFA --> CA
                 CA --> Foundation
-
-                subgraph KeyEndpoint["Endpoint"]
-                    IntuneEnroll["Device Enrollment"]
-                    IntuneCompPol["Compliance Policies"]
-                end
                 IntuneEnroll --> IntuneCompPol
-                IntuneCompPol --> IntuneSuite
+                IntuneCompPol --> CA
 
-                subgraph KeySecurity["Security"]
+
+                subgraph KeySecurity["Threat Protection"]
                     XDR["M365 Defender XDR"]
                     MDVM["Defender VM"]
+                    DID["Defender Identity"]
+                    MDE["Defender Endpoint"]
+                    MDCA["Defender Cloud Apps"]
                 end
+                DID --> XDR
+                MDE --> XDR
+                MDCA --> XDR
                 XDR --> Threats
                 MDVM --> Threats
 
