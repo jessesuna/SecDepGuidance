@@ -54,7 +54,7 @@
                 end
                 Foundation --> VID
                 Foundation --> IDProtection
-                Foundation --> IDGovernance
+                Foundation --> IGA
                 Foundation --> EndpointManagement
 
                 %% Group Network Access components
@@ -125,7 +125,7 @@
                 classDef core fill:#e1f5fe,stroke:#0277bd,stroke-width:3px
 
                 %% Apply styles
-                class Core,DataProtection,ThreatProtection,IdentityProtection,NetworkAccess,IdentityGovernance,EndpointManagement subgraphStyle
+                class Core,DataProtection,ThreatProtection,IdentityProtection,NetworkAccess,IdentityGovernance,EndpointManagement,IdentityProtectiongroup,IdentityGovernance, subgraphStyle
                 class Zero,Foundation,Data,Threats,SecureID,IntuneSuite core
 
 ```
