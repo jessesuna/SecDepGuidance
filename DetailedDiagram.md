@@ -1,4 +1,4 @@
-mermaid'''           
+'''mermaid         
            
             flowchart LR
                 %% Define core components with clear labels
