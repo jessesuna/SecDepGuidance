@@ -148,20 +148,22 @@
                     EPM["Endpoint Privilege Management"]
                     SpecializedDevices["Device Management"]
                     AutoPilot["Windows Autopilot"]
-                    AppManagement["Enterprise Application Management"]
+                    AppManagement["Enterprise App Management"]
                     AppProtection["App Protection"]
                     Cloudpki["Cloud PKI"]
+                    AdvDevice["Advanced Device Management"]
                 end
-                EndpointAnalytics --> RemoteHelp
-                EndpointAnalytics --> EPM
-                SpecializedDevices --> AutoPilot
+
+                SpecializedDevices --> AdvDevice
                 AppManagement --> AppProtection
                 EndpointAnalytics --> IntuneSuite
                 AppManagement --> IntuneSuite
-                Cloudpki --> IntuneSuite
-                AutoPilot --> SpecializedDevices
-                RemoteHelp --> IntuneSuite
-                EPM --> IntuneSuite
+                Cloudpki --> AdvDevice
+                AutoPilot --> AdvDevice
+                RemoteHelp --> AdvDevice
+                EPM --> AdvDevice
+                AdvDevice --> IntuneSuite
+                
 
                 %% Add click events for Endpoint Management components
                 click EndpointAnalytics "https://learn.microsoft.com/en-us/mem/analytics/" _blank
