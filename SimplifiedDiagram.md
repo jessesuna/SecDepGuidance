@@ -1,4 +1,4 @@
-mermaid'''           
+'''mermaid           
             flowchart LR
                 %% Core components
                 subgraph Core["Zero Trust Core"]
