@@ -52,9 +52,8 @@
                     IntuneCompPol --> CA
                     CA --> Foundation
                 end
-                Foundation --> VID
-                Foundation --> IDProtection
-                Foundation --> IGA
+                Foundation --> IdentityProtectiongroup
+                Foundation --> IdentityGovernance
                 Foundation --> EndpointManagement
 
                 %% Group Network Access components
