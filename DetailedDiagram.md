@@ -74,7 +74,6 @@
                     RCA["Risk-Based CA"] --> IDProtection["Identity Protection"]
                     IDProtAlerts["Identity Alerts"] --> IDProtection                                   
                 end
-                CA --> RCA
                 IDProtection --> SecureID
 
                 %% Group Identity Governance components
