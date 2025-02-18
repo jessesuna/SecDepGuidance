@@ -442,15 +442,25 @@
                 deploymentStatus[q.id] = radioValue === 'true';
             });
 
+            // Handle the main diagram
             const mermaidDiv = document.getElementById('mermaidChart');
             const diagram = generateSimplifiedDiagram(deploymentStatus);
             mermaidDiv.innerHTML = `<div class="mermaid">${diagram}</div>`;
 
+            // Generate recommendations and Gantt chart separately
             const recommendationsDiv = document.getElementById('recommendations');
             const recommendationsContent = generateRecommendations(deploymentStatus);
-            recommendationsDiv.innerHTML = marked.parse(recommendationsContent);
+            
+            // Create a separate div for the Gantt chart
+            const ganttChart = generateGanttChart(deploymentStatus);
+            
+            // Combine content but keep Mermaid diagram separate
+            recommendationsDiv.innerHTML = marked.parse(recommendationsContent) + 
+                `<div class="mermaid">
+                    ${ganttChart}
+                </div>`;
 
-            // Re-initialize mermaid to render all diagrams including the Gantt chart
+            // Re-initialize mermaid to render all diagrams
             mermaid.init(undefined, ".mermaid");
             
             document.getElementById('results').style.display = 'block';
@@ -781,17 +791,9 @@
                     '- Follow the [Purview Deployment Models](https://learn.microsoft.com/en-us/purview/deploymentmodels/depmod-overview) guidance\n\n';
             }
 
-            // Add the filtered Gantt chart
+            // Add header for timeline but don't include the chart
             recommendations += '\n## Implementation Timeline\n';
-            recommendations += generateGanttChart(deploymentStatus);
             
-            recommendations += '\n### Next Steps\n' +
-                '1. Focus on completing the 30-day foundation items first\n' +
-                '2. Consider running a [Zero Trust Assessment Workshop] (https://microsoft.github.io/zerotrustassessment/workshop) to build a detailed plan\n' +
-                '3. Use the [Zero Trust Assessment Tool](https://microsoft.github.io/zerotrustassessment/docs/app-permissions) to validate your implementation\n' +
-                '3. Follow the [Zero Trust Rapid Modernization Plan] (https://learn.microsoft.com/en-us/microsoft-365/security/microsoft-365-zero-trust?view=o365-worldwide#zero-trust-rapid-deployment-guide) or the [Zero Trust deployment plan](https://learn.microsoft.com/en-us/microsoft-365/security/microsoft-365-zero-trust?view=o365-worldwide) for detailed steps\n' +
-                '4. Schedule regular reviews of your security posture\n';
-
             return recommendations;
         }
 
@@ -903,7 +905,7 @@
             mermaid.init();
         }
 
-        // Modify the generateRecommendations function to include this filtered Gantt chart
+        // Update the generateGanttChart function to return just the chart content without the mermaid wrapper
         function generateGanttChart(deploymentStatus) {
             // Only include tasks that aren't deployed yet
             let tasks = [];
@@ -957,8 +959,7 @@
                 return '### Congratulations!\nAll security components have been deployed. Focus on monitoring and optimization.';
             }
 
-            return `\`\`\`mermaid
-gantt
+            return `gantt
     title Remaining Security Implementation Timeline
     dateFormat  YYYY-MM-DD
     axisFormat %d
@@ -971,8 +972,7 @@ ${tasks.filter(t => t.includes(':a')).join('\n')}
 ${tasks.filter(t => t.includes(':b')).join('\n')}
 
     section Advanced Features (90 Days)
-${tasks.filter(t => t.includes(':c')).join('\n')}
-\`\`\``;
+${tasks.filter(t => t.includes(':c')).join('\n')}`;
         }
 
         // Make sure mermaid is configured to handle Gantt charts
