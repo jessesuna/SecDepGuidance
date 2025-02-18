@@ -133,6 +133,13 @@
             border-radius: 4px;
             border: 1px solid #ddd;
         }
+        .recommendations .mermaid {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin: 20px 0;
+        }
     </style>
 </head>
 <body>
@@ -780,6 +787,10 @@
                     '- Follow the [Purview Deployment Models](https://learn.microsoft.com/en-us/purview/deploymentmodels/depmod-overview) guidance\n\n';
             }
 
+            // Add the filtered Gantt chart
+            recommendations += '\n## Implementation Timeline\n';
+            recommendations += generateGanttChart(deploymentStatus);
+            
             recommendations += '\n### Next Steps\n' +
                 '1. Focus on completing the 30-day foundation items first\n' +
                 '2. Consider running a [Zero Trust Assessment Workshop] (https://microsoft.github.io/zerotrustassessment/workshop) to build a detailed plan\n' +
@@ -896,6 +907,78 @@
             
             mermaidDiv.innerHTML = `<div class="mermaid">${diagram}</div>`;
             mermaid.init();
+        }
+
+        // Modify the generateRecommendations function to include this filtered Gantt chart
+        function generateGanttChart(deploymentStatus) {
+            // Only include tasks that aren't deployed yet
+            let tasks = [];
+            
+            // Foundation tasks
+            if (!deploymentStatus['CloudID']) 
+                tasks.push('    Cloud Identity Setup       :a1, 0, 7d');
+            if (!deploymentStatus['MFA']) 
+                tasks.push('    MFA Deployment            :a2, after a1, 7d');
+            if (!deploymentStatus['CA']) 
+                tasks.push('    Basic Conditional Access  :a3, after a2, 7d');
+            if (!deploymentStatus['IntuneEnroll']) 
+                tasks.push('    Device Enrollment         :a4, after a1, 14d');
+            if (!deploymentStatus['IntuneCompPol']) 
+                tasks.push('    Basic Compliance Policies :a5, after a4, 7d');
+            if (!deploymentStatus['MDVM']) 
+                tasks.push('    Vulnerability Management  :a6, after a1, 14d');
+
+            // Enhanced Security tasks
+            if (!deploymentStatus['RCA']) 
+                tasks.push('    Risk-based CA            :b1, after a3, 14d');
+            if (!deploymentStatus['IDProtection']) 
+                tasks.push('    Identity Protection      :b2, after b1, 7d');
+            if (!deploymentStatus['XDR']) 
+                tasks.push('    XDR Implementation       :b3, after a6, 14d');
+            if (!deploymentStatus['MDE']) 
+                tasks.push('    Defender for Endpoint    :b4, after b3, 7d');
+            if (!deploymentStatus['EPA']) 
+                tasks.push('    Private Access Setup     :b5, after a5, 14d');
+            if (!deploymentStatus['AppProtection']) 
+                tasks.push('    App Protection Policies  :b6, after b5, 7d');
+
+            // Advanced Features tasks
+            if (!deploymentStatus['IGA']) 
+                tasks.push('    Identity Governance      :c1, after b2, 14d');
+            if (!deploymentStatus['AccessReview']) 
+                tasks.push('    Access Reviews           :c2, after c1, 7d');
+            if (!deploymentStatus['PIM']) 
+                tasks.push('    PIM Implementation      :c3, after c2, 7d');
+            if (!deploymentStatus['GSA']) 
+                tasks.push('    Global Secure Access    :c4, after b5, 14d');
+            if (!deploymentStatus['VID']) 
+                tasks.push('    Verified ID Setup       :c5, after c1, 14d');
+            if (!deploymentStatus['EndpointAnalytics']) 
+                tasks.push('    Advanced Analytics      :c6, after c4, 14d');
+            if (!deploymentStatus['DSPM']) 
+                tasks.push('    DSPM Implementation     :c7, after b4, 21d');
+
+            // Only generate the chart if there are remaining tasks
+            if (tasks.length === 0) {
+                return '### Congratulations!\nAll security components have been deployed. Focus on monitoring and optimization.';
+            }
+
+            return `\`\`\`mermaid
+gantt
+    title Remaining Security Implementation Timeline
+    dateFormat  YYYY-MM-DD
+    axisFormat %d
+    todayMarker off
+
+    section Foundation (30 Days)
+${tasks.filter(t => t.includes(':a')).join('\n')}
+
+    section Enhanced Security (60 Days)
+${tasks.filter(t => t.includes(':b')).join('\n')}
+
+    section Advanced Features (90 Days)
+${tasks.filter(t => t.includes(':c')).join('\n')}
+\`\`\``;
         }
 
         // Initialize when DOM is loaded
