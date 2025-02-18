@@ -447,10 +447,13 @@
             mermaidDiv.innerHTML = `<div class="mermaid">${diagram}</div>`;
 
             const recommendationsDiv = document.getElementById('recommendations');
-            recommendationsDiv.innerHTML = marked.parse(generateRecommendations(deploymentStatus));
+            const recommendationsContent = generateRecommendations(deploymentStatus);
+            recommendationsDiv.innerHTML = marked.parse(recommendationsContent);
 
+            // Re-initialize mermaid to render all diagrams including the Gantt chart
+            mermaid.init(undefined, ".mermaid");
+            
             document.getElementById('results').style.display = 'block';
-            mermaid.init();
             document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
         }
 
@@ -972,9 +975,19 @@ ${tasks.filter(t => t.includes(':c')).join('\n')}
 \`\`\``;
         }
 
-        // Initialize when DOM is loaded
+        // Make sure mermaid is configured to handle Gantt charts
         document.addEventListener('DOMContentLoaded', function() {
-            mermaid.initialize({ startOnLoad: true });
+            mermaid.initialize({ 
+                startOnLoad: true,
+                theme: 'default',
+                gantt: {
+                    titleTopMargin: 25,
+                    barHeight: 20,
+                    barGap: 4,
+                    topPadding: 50,
+                    sidePadding: 75
+                }
+            });
             createQuestionElements();
         });
     </script>
