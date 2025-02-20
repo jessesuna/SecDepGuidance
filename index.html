@@ -6,6 +6,7 @@
     <title>Security Deployment Planner</title>
     <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <link rel="favicon" href="data:;base64,iVBORw0KGgo=">
     <style>
         body {
@@ -140,6 +141,32 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             margin: 20px 0;
         }
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .export-button {
+            background-color: #0066cc;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .export-button:hover {
+            background-color: #0052a3;
+        }
+        @media print {
+            .export-button {
+                display: none;
+            }
+        }
     </style>
 </head>
 <body>
@@ -174,7 +201,10 @@
         <button type="button" onclick="generateResults()">Generate Results</button>
     </form>
     <div id="results" style="display: none;">
-        <h2>Assessment Results</h2>
+        <div class="results-header">
+            <h2>Assessment Results</h2>
+            <button id="exportPDF" class="export-button">Export to PDF</button>
+        </div>
         <div class="switch-container">
             <span>Simplified View</span>
             <label class="switch">
@@ -989,7 +1019,49 @@ ${tasks.filter(t => t.includes(':c')).join('\n')}`;
                 }
             });
             createQuestionElements();
+
+            // Add event listener for PDF export
+            document.getElementById('exportPDF')?.addEventListener('click', exportToPDF);
         });
+
+        async function exportToPDF() {
+            const element = document.getElementById('results');
+            const exportButton = document.getElementById('exportPDF');
+            
+            // Hide the export button temporarily
+            exportButton.style.display = 'none';
+            
+            // Wait for all Mermaid diagrams to render
+            await mermaid.init();
+            
+            // Configure PDF options
+            const opt = {
+                margin: 10,
+                filename: 'security-assessment-results.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { 
+                    scale: 2,
+                    useCORS: true,
+                    logging: false
+                },
+                jsPDF: { 
+                    unit: 'mm', 
+                    format: 'a4', 
+                    orientation: 'portrait' 
+                }
+            };
+
+            // Generate PDF
+            html2pdf().set(opt).from(element).save()
+                .then(() => {
+                    // Show the export button again
+                    exportButton.style.display = 'block';
+                })
+                .catch(err => {
+                    console.error('PDF generation failed:', err);
+                    exportButton.style.display = 'block';
+                });
+        }
     </script>
 </body>
 </html>
