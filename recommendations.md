@@ -10,30 +10,32 @@
 ## First 30 Days: Foundation and Quick Wins {#phase1}
 Focus on establishing core identity and device security.
 
-### Cloud Identity {#CloudID}
-**Why it's important:**
-- Establishes the foundation for secure identity management
-- Enables centralized user authentication and authorization
-- Reduces risk of credential compromise
-- Simplifies user access management
+### Cloud Identity {#CloudID}                                                                    
+**Why it's important:**                                           |  **Implementation Steps:**
+- Establishes the foundation for secure identity management       |1. Configure Azure AD Connect
+- Enables centralized user authentication and authorization       |   - Install latest version of Azure AD Connect
+- Reduces risk of credential compromise                           |   - Choose appropriate authentication method
+- Simplifies user access management                               |   - Configure filtering if needed
+                                                                  |2. Set up password hash synchronization
+                                                                  |   - Enable password hash sync in Azure AD Connect
+                                                                  |   - Configure password writeback if needed
+                                                                  |   - Set up self-service password reset
+                                                                  |3. Enable seamless single sign-on
+                                                                  |   - Configure Kerberos decryption key distribution
+                                                                  |   - Add Azure AD URL to intranet zones
+                                                                  |   - Test SSO functionality
+                                                                  |4. Verify synchronization
+                                                                  |   - Check sync status in Azure portal
+                                                                  |   - Validate user attributes
+                                                                  |   - Test user sign-in
+                                                                  |
+                                                                  |
+                                                                  |
+                                                                  |
+                                                                  |
+                                                                  |
+                                                                  |
 
-**Implementation Steps:**
-1. Configure Azure AD Connect
-   - Install latest version of Azure AD Connect
-   - Choose appropriate authentication method
-   - Configure filtering if needed
-2. Set up password hash synchronization
-   - Enable password hash sync in Azure AD Connect
-   - Configure password writeback if needed
-   - Set up self-service password reset
-3. Enable seamless single sign-on
-   - Configure Kerberos decryption key distribution
-   - Add Azure AD URL to intranet zones
-   - Test SSO functionality
-4. Verify synchronization
-   - Check sync status in Azure portal
-   - Validate user attributes
-   - Test user sign-in
 
 **Learn More:**
 - [Technical Documentation](https://learn.microsoft.com/en-us/entra/fundamentals/whatis)
