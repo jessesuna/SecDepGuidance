@@ -743,7 +743,6 @@
 
         async function exportToPDF() {
             try {
-                // Initialize jsPDF with better default settings
                 const doc = new jspdf.jsPDF({
                     orientation: 'portrait',
                     unit: 'mm',
@@ -751,7 +750,6 @@
                     lineHeight: 1.5
                 });
 
-                // Define margins and content width
                 const margin = 20;
                 const pageWidth = doc.internal.pageSize.width;
                 const pageHeight = doc.internal.pageSize.height;
@@ -759,97 +757,87 @@
                 let yPos = margin;
 
                 // Add title
-                doc.setTextColor(0, 51, 153); // Dark blue color
+                doc.setTextColor(0, 51, 153);
                 doc.setFontSize(24);
                 doc.text('Security Deployment Assessment Results', margin, yPos);
                 yPos += 15;
 
-                // Add date with styling
-                doc.setTextColor(102, 102, 102); // Gray color
+                // Add date
+                doc.setTextColor(102, 102, 102);
                 doc.setFontSize(12);
                 doc.text(`Generated: ${new Date().toLocaleDateString()}`, margin, yPos);
                 yPos += 15;
 
+                // Get Mermaid diagram if it exists
+                const mermaidSvg = document.querySelector('.mermaid svg');
+                if (mermaidSvg) {
+                    try {
+                        // Convert SVG to canvas
+                        const canvas = document.createElement('canvas');
+                        const ctx = canvas.getContext('2d');
+                        const svgData = new XMLSerializer().serializeToString(mermaidSvg);
+                        const img = new Image();
+                        
+                        await new Promise((resolve, reject) => {
+                            img.onload = resolve;
+                            img.onerror = reject;
+                            img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgData)));
+                        });
+
+                        canvas.width = img.width;
+                        canvas.height = img.height;
+                        ctx.drawImage(img, 0, 0);
+                        
+                        const imgData = canvas.toDataURL('image/png');
+                        const pdfWidth = doc.internal.pageSize.width - 40;
+                        const pdfHeight = (img.height * pdfWidth) / img.width;
+                        
+                        doc.addImage(imgData, 'PNG', 20, yPos, pdfWidth, pdfHeight);
+                        yPos += pdfHeight + 20;
+                    } catch (error) {
+                        console.error('Error adding diagram to PDF:', error);
+                    }
+                }
+
                 // Get recommendations content
                 const recommendationsDiv = document.getElementById('recommendations');
-                const sections = recommendationsDiv.getElementsByTagName('h2');
-
-                const showImplementation = document.getElementById('showImplementationSteps').checked;
-
-                Array.from(sections).forEach((section, index) => {
-                    // Add section header with styling
-                    if (yPos > pageHeight - margin) {
-                        doc.addPage();
-                        yPos = margin;
-                    }
-
-                    doc.setTextColor(0, 51, 153); // Dark blue for headers
-                    doc.setFontSize(16);
-                    doc.text(section.textContent.trim(), margin, yPos);
-                    yPos += 10;
-
-                    // Process content
-                    let nextElement = section.nextElementSibling;
-                    while (nextElement && nextElement.tagName !== 'H2') {
-                        // Skip implementation steps if toggle is off
-                        if (!showImplementation && nextElement.classList.contains('implementation-steps')) {
-                            nextElement = nextElement.nextElementSibling;
-                            continue;
+                if (recommendationsDiv) {
+                    const sections = recommendationsDiv.getElementsByTagName('h2');
+                    
+                    Array.from(sections).forEach((section, index) => {
+                        if (yPos > pageHeight - margin) {
+                            doc.addPage();
+                            yPos = margin;
                         }
 
-                        if (nextElement.tagName === 'H3') {
-                            // Subheaders
-                            doc.setTextColor(51, 51, 51);
-                            doc.setFontSize(14);
-                            doc.text(nextElement.textContent.trim(), margin, yPos);
-                            yPos += 7;
-                        } else {
-                            // Regular content
+                        doc.setTextColor(0, 51, 153);
+                        doc.setFontSize(16);
+                        doc.text(section.textContent.trim(), margin, yPos);
+                        yPos += 10;
+
+                        let nextElement = section.nextElementSibling;
+                        while (nextElement && nextElement.tagName !== 'H2') {
+                            if (yPos > pageHeight - margin) {
+                                doc.addPage();
+                                yPos = margin;
+                            }
+
                             doc.setTextColor(0, 0, 0);
                             doc.setFontSize(12);
-                            let content = nextElement.textContent.trim();
-
-                            // Handle links
-                            const links = nextElement.getElementsByTagName('a');
-                            Array.from(links).forEach(link => {
-                                const linkText = link.textContent;
-                                const linkUrl = link.href;
-                                
-                                // Replace link text with a formatted version
-                                content = content.replace(linkText, `${linkText} (${linkUrl})`);
-                                
-                                // Add clickable link
-                                const textWidth = doc.getTextWidth(linkText);
-                                doc.setTextColor(0, 0, 255); // Blue for links
-                                doc.textWithLink(linkText, margin, yPos, {
-                                    url: linkUrl
-                                });
-                            });
-
-                            // Add regular text with word wrapping
+                            const content = nextElement.textContent.trim();
                             const splitText = doc.splitTextToSize(content, contentWidth);
+                            
                             splitText.forEach(line => {
-                                if (yPos > pageHeight - margin) {
-                                    doc.addPage();
-                                    yPos = margin;
-                                }
                                 doc.text(line, margin, yPos);
                                 yPos += 7;
                             });
-                        }
-                        nextElement = nextElement.nextElementSibling;
-                    }
-                    
-                    // Add space between sections
-                    yPos += 10;
 
-                    // Add a divider line except for the last section
-                    if (index < sections.length - 1) {
-                        doc.setDrawColor(200, 200, 200); // Light gray
-                        doc.line(margin, yPos - 5, pageWidth - margin, yPos - 5);
+                            nextElement = nextElement.nextElementSibling;
+                        }
+                        
                         yPos += 10;
-                    }
-                });
+                    });
+                }
 
                 // Save the PDF
                 doc.save('security-assessment-results.pdf');
