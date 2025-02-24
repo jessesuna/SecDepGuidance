@@ -477,21 +477,35 @@
                 const sections = markdown.split('---').map(section => section.trim());
                 
                 // Parse the sections into a recommendations object
-                const recommendations = {};
+                const recommendations = {
+                    keyResources: sections[0],
+                    phases: {
+                        phase1: { title: '', items: {} },
+                        phase2: { title: '', items: {} },
+                        phase3: { title: '', items: {} }
+                    }
+                };
                 
-                // First section is always key resources
-                recommendations.keyResources = sections[0];
+                let currentPhase = null;
                 
                 // Parse remaining sections
                 for (let i = 1; i < sections.length; i++) {
                     const section = sections[i];
-                    // Extract the ID from the header {#ID}
-                    const idMatch = section.match(/\{#(\w+)\}/);
-                    if (idMatch) {
+                    
+                    // Check if this section is a phase header
+                    const phaseMatch = section.match(/^## ([^\n]+) \{#(phase\d+)\}/);
+                    if (phaseMatch) {
+                        currentPhase = phaseMatch[2];
+                        recommendations.phases[currentPhase].title = phaseMatch[1];
+                        continue;
+                    }
+                    
+                    // Extract the component ID and content
+                    const idMatch = section.match(/### [^\n]+ \{#(\w+)\}/);
+                    if (idMatch && currentPhase) {
                         const id = idMatch[1];
-                        // Remove the ID from the content and parse the section
-                        const content = section.replace(/\{#\w+\}/, '').trim();
-                        recommendations[id] = content;
+                        const content = section.trim();
+                        recommendations.phases[currentPhase].items[id] = content;
                     }
                 }
                 
@@ -517,53 +531,29 @@
                 return;
             }
 
-            // Define components for each phase
-            const phases = {
-                foundation: ['CloudID', 'MFA', 'CA', 'IntuneEnroll', 'IntuneCompPol', 'MDVM', 'OnboardDevices'],
-                enhanced: ['RCA', 'XDR', 'EPA', 'IDProtection', 'MDE', 'MDO', 'MDCA', 'PurAud', 'EndpointDLP'],
-                advanced: ['IGA', 'PIM', 'DSPM', 'GSA', 'EndpointAnalytics', 'RemoteHelp', 'EPM', 'SpecializedDevices', 
-                          'AutoPilot', 'AppManagement', 'AppProtection', 'Cloudpki', 'VID', 'VIDCred', 'VIDWorkflow', 
-                          'AccessReview', 'IDProtAlerts', 'EPAConn', 'EIA']
-            };
-
             // Generate recommendations content
             let recommendationsContent = '## Recommended Next Steps\n\n';
             
             // Add key resources
             recommendationsContent += recommendations.keyResources + '\n';
 
-            // Check and add Foundation phase recommendations
-            const foundationNeeded = phases.foundation.some(id => !deploymentStatus[id]);
-            if (foundationNeeded) {
-                recommendationsContent += '\n## First 30 Days: Foundation and Quick Wins\n\n';
-                phases.foundation.forEach(id => {
-                    if (!deploymentStatus[id] && recommendations[id]) {
-                        recommendationsContent += recommendations[id] + '\n\n';
-                    }
-                });
-            }
-
-            // Check and add Enhanced phase recommendations
-            const enhancedNeeded = phases.enhanced.some(id => !deploymentStatus[id]);
-            if (enhancedNeeded) {
-                recommendationsContent += '\n## Days 31-60: Enhanced Security Features\n\n';
-                phases.enhanced.forEach(id => {
-                    if (!deploymentStatus[id] && recommendations[id]) {
-                        recommendationsContent += recommendations[id] + '\n\n';
-                    }
-                });
-            }
-
-            // Check and add Advanced phase recommendations
-            const advancedNeeded = phases.advanced.some(id => !deploymentStatus[id]);
-            if (advancedNeeded) {
-                recommendationsContent += '\n## Days 61-90: Advanced Features and Optimization\n\n';
-                phases.advanced.forEach(id => {
-                    if (!deploymentStatus[id] && recommendations[id]) {
-                        recommendationsContent += recommendations[id] + '\n\n';
-                    }
-                });
-            }
+            // Add recommendations by phase
+            Object.entries(recommendations.phases).forEach(([phaseId, phase]) => {
+                // Check if any items in this phase need to be implemented
+                const hasRecommendations = Object.entries(phase.items).some(([id, _]) => !deploymentStatus[id]);
+                
+                if (hasRecommendations) {
+                    // Add phase header
+                    recommendationsContent += `\n## ${phase.title}\n\n`;
+                    
+                    // Add recommendations for non-deployed items
+                    Object.entries(phase.items).forEach(([id, content]) => {
+                        if (!deploymentStatus[id]) {
+                            recommendationsContent += content + '\n\n';
+                        }
+                    });
+                }
+            });
 
             // Update the UI with diagrams and recommendations
             const mermaidDiv = document.getElementById('mermaidChart');
