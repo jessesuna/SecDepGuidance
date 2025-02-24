@@ -317,106 +317,73 @@
             container.innerHTML = '';
 
             // Create a map of questions for easy access
-            questionMap = new Map(questions.map(q => [q.id, q]));
+            const questionMap = new Map(questions.map(q => [q.id, q]));
 
-            // Find all child IDs to filter them out from top level
-            const allChildIds = new Set();
-            questions.forEach(q => {
-                if (q.children) {
-                    q.children.forEach(childId => allChildIds.add(childId));
-                }
-            });
-
-            // First create parent questions (those that aren't children of any other question)
-            questions.forEach(q => {
-                if (!allChildIds.has(q.id)) {
-                    const questionDiv = createQuestionElement(q);
-                    container.appendChild(questionDiv);
-                }
-            });
-        }
-
-        // Function to create a single question element
-        function createQuestionElement(question) {
-            const questionDiv = document.createElement('div');
-            questionDiv.className = 'question parent-question';
-            questionDiv.setAttribute('data-id', question.id);
-
-            const header = document.createElement('div');
-            header.className = 'question-header';
-
-            const title = document.createElement('h3');
-            title.textContent = question.text;
+            // Find all parent questions (those with children)
+            const parentQuestions = questions.filter(q => q.children);
             
-            const description = document.createElement('p');
-            description.className = 'question-description';
-            description.textContent = question.description;
+            // Create a set of all child IDs for quick lookup
+            const childIds = new Set(parentQuestions.flatMap(q => q.children));
 
-            const radioGroup = document.createElement('div');
-            radioGroup.className = 'radio-group';
-
-            // Create Yes/No radio buttons
-            const yesRadio = createRadioButton(question.id, 'yes', 'Yes');
-            const noRadio = createRadioButton(question.id, 'no', 'No');
-
-            radioGroup.appendChild(yesRadio);
-            radioGroup.appendChild(noRadio);
-
-            // Add doc link
-            const docLink = document.createElement('a');
-            docLink.href = question.docLink;
-            docLink.target = '_blank';
-            docLink.textContent = 'Documentation →';
-            docLink.className = 'doc-link';
-
-            header.appendChild(title);
-            questionDiv.appendChild(header);
-            questionDiv.appendChild(description);
-            questionDiv.appendChild(radioGroup);
-            questionDiv.appendChild(docLink);
-
-            // If this question has children, create a container for them
-            if (question.children) {
-                const childrenContainer = document.createElement('div');
-                childrenContainer.className = 'children-container hidden';
-                question.children.forEach(childId => {
-                    const childQuestion = questionMap.get(childId);
-                    if (childQuestion) {
-                        const childElement = createQuestionElement(childQuestion);
-                        childElement.className = 'question child-question hidden';
-                        childrenContainer.appendChild(childElement);
-                    }
-                });
-                questionDiv.appendChild(childrenContainer);
+            // Function to handle question visibility
+            function updateChildQuestions(parentId, isParentYes) {
+                const parentQuestion = questionMap.get(parentId);
+                if (parentQuestion.children) {
+                    parentQuestion.children.forEach(childId => {
+                        const childElement = document.querySelector(`[data-id="${childId}"]`);
+                        if (childElement) {
+                            if (isParentYes) {
+                                childElement.classList.add('hidden');
+                                const childYesRadio = document.querySelector(`#${childId}_yes`);
+                                if (childYesRadio) childYesRadio.checked = true;
+                            } else {
+                                childElement.classList.remove('hidden');
+                                const childNoRadio = document.querySelector(`#${childId}_no`);
+                                if (childNoRadio) childNoRadio.checked = true;
+                            }
+                            updateChildQuestions(childId, isParentYes);
+                        }
+                    });
+                }
             }
 
-            return questionDiv;
-        }
-
-        // Function to handle radio button changes
-        function handleRadioChange(event) {
-            const questionId = event.target.name.replace('_yes', '').replace('_no', '');
-            const isYes = event.target.value === 'yes';
-            const question = questionMap.get(questionId);
-            
-            if (question.children) {
-                const parentDiv = document.querySelector(`[data-id="${questionId}"]`);
-                const childrenContainer = parentDiv.querySelector('.children-container');
+            // Create and append questions
+            questions.forEach(q => {
+                const questionDiv = document.createElement('div');
+                const isChild = childIds.has(q.id);
                 
-                if (isYes) {
-                    childrenContainer.classList.add('hidden');
-                    question.children.forEach(childId => {
-                        const childRadio = document.querySelector(`#${childId}_yes`);
-                        if (childRadio) childRadio.checked = true;
+                // Apply appropriate classes based on whether it's a parent or child
+                questionDiv.className = `question ${isChild ? 'child-question' : 'parent-question'}`;
+                questionDiv.setAttribute('data-id', q.id);
+
+                // Add visual indicator for child questions
+                const questionContent = `
+                    <div class="question-header ${isChild ? 'child-header' : ''}">
+                        ${isChild ? '<span class="child-indicator">↳</span>' : ''}
+                        <h3>${q.text}</h3>
+                    </div>
+                    <p>${q.description}</p>
+                    <p><a href="${q.docLink}" target="_blank">Learn more</a></p>
+                    <div class="radio-group">
+                        <input type="radio" id="${q.id}_no" name="${q.id}" value="false" checked>
+                        <label for="${q.id}_no">No</label>
+                        <input type="radio" id="${q.id}_yes" name="${q.id}" value="true">
+                        <label for="${q.id}_yes">Yes</label>
+                    </div>
+                `;
+
+                questionDiv.innerHTML = questionContent;
+                container.appendChild(questionDiv);
+
+                // Add event listeners for radio buttons
+                const radioButtons = questionDiv.querySelectorAll('input[type="radio"]');
+                radioButtons.forEach(radio => {
+                    radio.addEventListener('change', (e) => {
+                        const isYes = e.target.value === 'true';
+                        updateChildQuestions(q.id, isYes);
                     });
-                } else {
-                    childrenContainer.classList.remove('hidden');
-                    question.children.forEach(childId => {
-                        const childRadio = document.querySelector(`#${childId}_no`);
-                        if (childRadio) childRadio.checked = true;
-                    });
-                }
-            }
+                });
+            });
         }
 
         // Function to load recommendations from markdown file
