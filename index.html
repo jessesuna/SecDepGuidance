@@ -167,6 +167,19 @@
                 display: none;
             }
         }
+        .implementation-steps {
+            transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
+            max-height: 1000px;
+            opacity: 1;
+            overflow: hidden;
+        }
+
+        .implementation-steps.hidden {
+            max-height: 0;
+            opacity: 0;
+            margin: 0;
+            padding: 0;
+        }
     </style>
 </head>
 <body>
@@ -712,6 +725,20 @@
 
             // Add event listener for PDF export
             document.getElementById('exportPDF')?.addEventListener('click', exportToPDF);
+
+            // Add toggle functionality
+            const implementationToggle = document.getElementById('showImplementationSteps');
+            
+            implementationToggle.addEventListener('change', function() {
+                const steps = document.querySelectorAll('.implementation-steps');
+                steps.forEach(step => {
+                    if (this.checked) {
+                        step.classList.remove('hidden');
+                    } else {
+                        step.classList.add('hidden');
+                    }
+                });
+            });
         });
 
         async function exportToPDF() {
@@ -747,6 +774,8 @@
                 const recommendationsDiv = document.getElementById('recommendations');
                 const sections = recommendationsDiv.getElementsByTagName('h2');
 
+                const showImplementation = document.getElementById('showImplementationSteps').checked;
+
                 Array.from(sections).forEach((section, index) => {
                     // Add section header with styling
                     if (yPos > pageHeight - margin) {
@@ -762,6 +791,12 @@
                     // Process content
                     let nextElement = section.nextElementSibling;
                     while (nextElement && nextElement.tagName !== 'H2') {
+                        // Skip implementation steps if toggle is off
+                        if (!showImplementation && nextElement.classList.contains('implementation-steps')) {
+                            nextElement = nextElement.nextElementSibling;
+                            continue;
+                        }
+
                         if (nextElement.tagName === 'H3') {
                             // Subheaders
                             doc.setTextColor(51, 51, 51);
