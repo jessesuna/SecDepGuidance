@@ -569,8 +569,29 @@
                 }
             });
 
-            // Update the diagram
-            await updateDiagram();
+            // Generate and update the diagram
+            const mermaidDiv = document.getElementById('mermaidChart');
+            const isDetailed = document.getElementById('diagramToggle').checked;
+            
+            try {
+                // Clear existing diagram
+                mermaidDiv.innerHTML = '';
+                
+                // Generate new diagram
+                const diagram = isDetailed ? 
+                    await generateMermaidDiagram(deploymentStatus) : 
+                    await generateSimplifiedDiagram(deploymentStatus);
+                
+                // Create new diagram container
+                mermaidDiv.innerHTML = `<div class="mermaid">${diagram}</div>`;
+                
+                // Initialize Mermaid with a slight delay
+                setTimeout(() => {
+                    mermaid.init(undefined, ".mermaid");
+                }, 100);
+            } catch (error) {
+                console.error('Error generating diagram:', error);
+            }
 
             // Update recommendations
             const recommendationsDiv = document.getElementById('recommendations');
@@ -653,7 +674,7 @@
                         .join('\n                    ')}`;
         }
 
-        // Update the updateDiagram function to handle async
+        // Update the updateDiagram function for consistency
         async function updateDiagram() {
             const deploymentStatus = {};
             questions.forEach(q => {
@@ -665,12 +686,21 @@
             const isDetailed = document.getElementById('diagramToggle').checked;
             
             try {
+                // Clear existing diagram
+                mermaidDiv.innerHTML = '';
+                
+                // Generate new diagram
                 const diagram = isDetailed ? 
                     await generateMermaidDiagram(deploymentStatus) : 
                     await generateSimplifiedDiagram(deploymentStatus);
                 
+                // Create new diagram container
                 mermaidDiv.innerHTML = `<div class="mermaid">${diagram}</div>`;
-                await mermaid.init(undefined, ".mermaid");
+                
+                // Initialize Mermaid with a slight delay
+                setTimeout(() => {
+                    mermaid.init(undefined, ".mermaid");
+                }, 100);
             } catch (error) {
                 console.error('Error updating diagram:', error);
             }
