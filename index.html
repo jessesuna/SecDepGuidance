@@ -579,10 +579,6 @@
                 // Generate question elements
                 createQuestionElements(questions);
                 
-                // Initialize other components
-                await loadRecommendations();
-                initializeToggles();
-                
             } catch (error) {
                 console.error('Error during initialization:', error);
                 alert('Failed to load assessment questions. Please refresh the page.');
