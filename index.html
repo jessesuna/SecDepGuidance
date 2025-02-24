@@ -500,15 +500,17 @@
                         continue;
                     }
                     
-                    // Extract the component ID and content
-                    const idMatch = section.match(/### [^\n]+ \{#(\w+)\}/);
-                    if (idMatch && currentPhase) {
-                        const id = idMatch[1];
-                        const content = section.trim();
-                        recommendations.phases[currentPhase].items[id] = content;
+                    // Extract the component ID and content if we're in a phase
+                    if (currentPhase) {
+                        const idMatch = section.match(/### [^\n]+ \{#(\w+)\}/);
+                        if (idMatch) {
+                            const id = idMatch[1];
+                            recommendations.phases[currentPhase].items[id] = section;
+                        }
                     }
                 }
-                
+
+                console.log('Parsed recommendations:', recommendations); // Debug log
                 return recommendations;
             } catch (error) {
                 console.error('Error loading recommendations:', error);
@@ -554,6 +556,8 @@
                     });
                 }
             });
+
+            console.log('Generated content:', recommendationsContent); // Debug log
 
             // Update the UI with diagrams and recommendations
             const mermaidDiv = document.getElementById('mermaidChart');
