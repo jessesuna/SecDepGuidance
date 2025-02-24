@@ -209,14 +209,24 @@
         <p><strong>Note:</strong> This tool is in development and should not be used for production deployments. For detailed implementation guidance, refer to the official Microsoft documentation.</p>
     </div>
 
-    <div class="container">
-        <div id="questions"></div>
-        <div class="controls">
-            <label>
-                <input type="checkbox" id="showImplementationSteps" checked>
-                Show Implementation Steps
-            </label>
+    <form id="assessmentForm">
+        <div id="questionsContainer"></div>
+        <button type="button" onclick="generateResults()">Generate Results</button>
+    </form>
+    <div id="results" style="display: none;">
+        <div class="results-header">
+            <h2>Assessment Results</h2>
+            <button id="exportPDF" class="export-button">Export to PDF</button>
         </div>
+        <div class="switch-container">
+            <span>Simplified View</span>
+            <label class="switch">
+                <input type="checkbox" id="diagramToggle" onchange="updateDiagram()">
+                <span class="slider"></span>
+            </label>
+            <span>Detailed View</span>
+        </div>
+        <div id="mermaidChart"></div>
         <div id="recommendations"></div>
     </div>
 
@@ -441,43 +451,29 @@
             }
         ];
 
-        // Function to generate questions
-        function generateQuestions() {
-            const questionsContainer = document.getElementById('questions');
-            if (!questionsContainer) {
-                console.error('Questions container not found');
+        // Function to create question elements
+        function createQuestionElements() {
+            const container = document.getElementById('questionsContainer');
+            if (!container) {
+                console.error('Questions container not found!');
                 return;
             }
-            
-            questionsContainer.innerHTML = ''; // Clear existing questions
 
-            questions.forEach((q, index) => {
+            questions.forEach(q => {
                 const questionDiv = document.createElement('div');
                 questionDiv.className = 'question';
-                questionDiv.setAttribute('data-id', q.id);
-
-                const questionText = document.createElement('p');
-                questionText.textContent = q.text;
-                questionDiv.appendChild(questionText);
-
-                const radioGroup = document.createElement('div');
-                radioGroup.className = 'radio-group';
-
-                // Create Yes/No radio buttons
-                ['Yes', 'No'].forEach(option => {
-                    const label = document.createElement('label');
-                    const input = document.createElement('input');
-                    input.type = 'radio';
-                    input.name = q.id;
-                    input.value = option.toLowerCase() === 'yes' ? 'true' : 'false';
-                    
-                    label.appendChild(input);
-                    label.appendChild(document.createTextNode(' ' + option));
-                    radioGroup.appendChild(label);
-                });
-
-                questionDiv.appendChild(radioGroup);
-                questionsContainer.appendChild(questionDiv);
+                questionDiv.innerHTML = `
+                    <h3>${q.text}</h3>
+                    <p>${q.description}</p>
+                    <p><a href="${q.docLink}" target="_blank">Learn more</a></p>
+                    <div class="radio-group">
+                        <input type="radio" id="${q.id}_no" name="${q.id}" value="false" checked>
+                        <label for="${q.id}_no">No</label>
+                        <input type="radio" id="${q.id}_yes" name="${q.id}" value="true">
+                        <label for="${q.id}_yes">Yes</label>
+                    </div>
+                `;
+                container.appendChild(questionDiv);
             });
         }
 
@@ -712,39 +708,42 @@
             }
         }
 
-        // Toggle functionality for implementation steps visibility
-        function initializeToggles() {
+        // Make sure mermaid is configured to handle Gantt charts
+        document.addEventListener('DOMContentLoaded', function() {
+            mermaid.initialize({ 
+                startOnLoad: true,
+                theme: 'default',
+                gantt: {
+                    titleTopMargin: 25,
+                    barHeight: 20,
+                    barGap: 4,
+                    topPadding: 50,
+                    sidePadding: 75
+                }
+            });
+            createQuestionElements();
+
+            // Add event listener for PDF export
+            document.getElementById('exportPDF')?.addEventListener('click', exportToPDF);
+
+            // Add toggle functionality
             const implementationToggle = document.getElementById('showImplementationSteps');
             
-            if (implementationToggle) {
-                implementationToggle.addEventListener('change', function() {
-                    const steps = document.querySelectorAll('.implementation-steps');
-                    steps.forEach(step => {
-                        if (this.checked) {
-                            step.classList.remove('hidden');
-                        } else {
-                            step.classList.add('hidden');
-                        }
-                    });
+            implementationToggle.addEventListener('change', function() {
+                const steps = document.querySelectorAll('.implementation-steps');
+                steps.forEach(step => {
+                    if (this.checked) {
+                        step.classList.remove('hidden');
+                    } else {
+                        step.classList.add('hidden');
+                    }
                 });
-            } else {
-                console.warn('Implementation toggle not found - check HTML structure');
-            }
-        }
-
-        // Initialize when DOM is loaded
-        document.addEventListener('DOMContentLoaded', async function() {
-            try {
-                generateQuestions();
-                await loadRecommendations();
-                initializeToggles();
-            } catch (error) {
-                console.error('Error during initialization:', error);
-            }
+            });
         });
 
         async function exportToPDF() {
             try {
+                // Initialize jsPDF with better default settings
                 const doc = new jspdf.jsPDF({
                     orientation: 'portrait',
                     unit: 'mm',
@@ -752,38 +751,26 @@
                     lineHeight: 1.5
                 });
 
-                // Get the Mermaid diagram SVG
-                const mermaidSvg = document.querySelector('.mermaid svg');
-                if (mermaidSvg) {
-                    // Convert SVG to canvas
-                    const canvas = document.createElement('canvas');
-                    const ctx = canvas.getContext('2d');
-                    const svgData = new XMLSerializer().serializeToString(mermaidSvg);
-                    const img = new Image();
-                    
-                    await new Promise((resolve, reject) => {
-                        img.onload = resolve;
-                        img.onerror = reject;
-                        img.src = 'data:image/svg+xml;base64,' + btoa(svgData);
-                    });
+                // Define margins and content width
+                const margin = 20;
+                const pageWidth = doc.internal.pageSize.width;
+                const pageHeight = doc.internal.pageSize.height;
+                const contentWidth = pageWidth - (margin * 2);
+                let yPos = margin;
 
-                    // Set canvas size to match SVG
-                    canvas.width = img.width;
-                    canvas.height = img.height;
-                    
-                    // Draw SVG to canvas
-                    ctx.drawImage(img, 0, 0);
-                    
-                    // Add diagram to PDF
-                    const imgData = canvas.toDataURL('image/png');
-                    const pdfWidth = doc.internal.pageSize.width - 40; // margins
-                    const pdfHeight = (img.height * pdfWidth) / img.width;
-                    
-                    doc.addImage(imgData, 'PNG', 20, 20, pdfWidth, pdfHeight);
-                    doc.addPage();
-                }
+                // Add title
+                doc.setTextColor(0, 51, 153); // Dark blue color
+                doc.setFontSize(24);
+                doc.text('Security Deployment Assessment Results', margin, yPos);
+                yPos += 15;
 
-                // Continue with existing PDF content
+                // Add date with styling
+                doc.setTextColor(102, 102, 102); // Gray color
+                doc.setFontSize(12);
+                doc.text(`Generated: ${new Date().toLocaleDateString()}`, margin, yPos);
+                yPos += 15;
+
+                // Get recommendations content
                 const recommendationsDiv = document.getElementById('recommendations');
                 const sections = recommendationsDiv.getElementsByTagName('h2');
 
@@ -791,14 +778,14 @@
 
                 Array.from(sections).forEach((section, index) => {
                     // Add section header with styling
-                    if (yPos > doc.internal.pageSize.height - 20) {
+                    if (yPos > pageHeight - margin) {
                         doc.addPage();
-                        yPos = 20;
+                        yPos = margin;
                     }
 
                     doc.setTextColor(0, 51, 153); // Dark blue for headers
                     doc.setFontSize(16);
-                    doc.text(section.textContent.trim(), 20, yPos);
+                    doc.text(section.textContent.trim(), margin, yPos);
                     yPos += 10;
 
                     // Process content
@@ -814,7 +801,7 @@
                             // Subheaders
                             doc.setTextColor(51, 51, 51);
                             doc.setFontSize(14);
-                            doc.text(nextElement.textContent.trim(), 20, yPos);
+                            doc.text(nextElement.textContent.trim(), margin, yPos);
                             yPos += 7;
                         } else {
                             // Regular content
@@ -834,19 +821,19 @@
                                 // Add clickable link
                                 const textWidth = doc.getTextWidth(linkText);
                                 doc.setTextColor(0, 0, 255); // Blue for links
-                                doc.textWithLink(linkText, 20, yPos, {
+                                doc.textWithLink(linkText, margin, yPos, {
                                     url: linkUrl
                                 });
                             });
 
                             // Add regular text with word wrapping
-                            const splitText = doc.splitTextToSize(content, doc.internal.pageSize.width - 40);
+                            const splitText = doc.splitTextToSize(content, contentWidth);
                             splitText.forEach(line => {
-                                if (yPos > doc.internal.pageSize.height - 20) {
+                                if (yPos > pageHeight - margin) {
                                     doc.addPage();
-                                    yPos = 20;
+                                    yPos = margin;
                                 }
-                                doc.text(line, 20, yPos);
+                                doc.text(line, margin, yPos);
                                 yPos += 7;
                             });
                         }
@@ -859,7 +846,7 @@
                     // Add a divider line except for the last section
                     if (index < sections.length - 1) {
                         doc.setDrawColor(200, 200, 200); // Light gray
-                        doc.line(20, yPos - 5, doc.internal.pageSize.width - 20, yPos - 5);
+                        doc.line(margin, yPos - 5, pageWidth - margin, yPos - 5);
                         yPos += 10;
                     }
                 });
