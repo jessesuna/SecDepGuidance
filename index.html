@@ -505,11 +505,9 @@
         // Function to generate results
         async function generateResults() {
             const deploymentStatus = {};
-            questions.forEach(category => {
-                category.questions.forEach(q => {
-                    const radioValue = document.querySelector(`input[name="${q.id}"]:checked`).value;
-                    deploymentStatus[q.id] = radioValue === 'true';
-                });
+            questions.forEach(q => {
+                const radioValue = document.querySelector(`input[name="${q.id}"]:checked`).value;
+                deploymentStatus[q.id] = radioValue === 'true';
             });
 
             // Load recommendations from markdown file
@@ -519,34 +517,53 @@
                 return;
             }
 
+            // Define components for each phase
+            const phases = {
+                foundation: ['CloudID', 'MFA', 'CA', 'IntuneEnroll', 'IntuneCompPol', 'MDVM', 'OnboardDevices'],
+                enhanced: ['RCA', 'XDR', 'EPA', 'IDProtection', 'MDE', 'MDO', 'MDCA', 'PurAud', 'EndpointDLP'],
+                advanced: ['IGA', 'PIM', 'DSPM', 'GSA', 'EndpointAnalytics', 'RemoteHelp', 'EPM', 'SpecializedDevices', 
+                          'AutoPilot', 'AppManagement', 'AppProtection', 'Cloudpki', 'VID', 'VIDCred', 'VIDWorkflow', 
+                          'AccessReview', 'IDProtAlerts', 'EPAConn', 'EIA']
+            };
+
             // Generate recommendations content
             let recommendationsContent = '## Recommended Next Steps\n\n';
             
             // Add key resources
             recommendationsContent += recommendations.keyResources + '\n';
 
-            // Add section headers based on what's not deployed
-            if (!deploymentStatus['CloudID'] || !deploymentStatus['MFA'] || !deploymentStatus['CA'] || 
-                !deploymentStatus['IntuneEnroll'] || !deploymentStatus['IntuneCompPol'] || !deploymentStatus['MDVM']) {
+            // Check and add Foundation phase recommendations
+            const foundationNeeded = phases.foundation.some(id => !deploymentStatus[id]);
+            if (foundationNeeded) {
                 recommendationsContent += '\n## First 30 Days: Foundation and Quick Wins\n\n';
+                phases.foundation.forEach(id => {
+                    if (!deploymentStatus[id] && recommendations[id]) {
+                        recommendationsContent += recommendations[id] + '\n\n';
+                    }
+                });
             }
 
-            if (!deploymentStatus['RCA'] || !deploymentStatus['XDR'] || !deploymentStatus['EPA'] || 
-                !deploymentStatus['IDProtection'] || !deploymentStatus['MDE']) {
-                recommendationsContent += '\n## Enhanced Security Features\n\n';
+            // Check and add Enhanced phase recommendations
+            const enhancedNeeded = phases.enhanced.some(id => !deploymentStatus[id]);
+            if (enhancedNeeded) {
+                recommendationsContent += '\n## Days 31-60: Enhanced Security Features\n\n';
+                phases.enhanced.forEach(id => {
+                    if (!deploymentStatus[id] && recommendations[id]) {
+                        recommendationsContent += recommendations[id] + '\n\n';
+                    }
+                });
             }
 
-            if (!deploymentStatus['IGA'] || !deploymentStatus['PIM'] || !deploymentStatus['DSPM'] || 
-                !deploymentStatus['GSA'] || !deploymentStatus['EndpointAnalytics']) {
-                recommendationsContent += '\n## Advanced Features and Optimization\n\n';
+            // Check and add Advanced phase recommendations
+            const advancedNeeded = phases.advanced.some(id => !deploymentStatus[id]);
+            if (advancedNeeded) {
+                recommendationsContent += '\n## Days 61-90: Advanced Features and Optimization\n\n';
+                phases.advanced.forEach(id => {
+                    if (!deploymentStatus[id] && recommendations[id]) {
+                        recommendationsContent += recommendations[id] + '\n\n';
+                    }
+                });
             }
-
-            // Add specific recommendations based on deployment status
-            Object.entries(deploymentStatus).forEach(([id, isDeployed]) => {
-                if (!isDeployed && recommendations[id]) {
-                    recommendationsContent += recommendations[id] + '\n\n';
-                }
-            });
 
             // Update the UI with diagrams and recommendations
             const mermaidDiv = document.getElementById('mermaidChart');
