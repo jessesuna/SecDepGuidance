@@ -708,38 +708,32 @@
             }
         }
 
-        // Make sure mermaid is configured to handle Gantt charts
-        document.addEventListener('DOMContentLoaded', function() {
-            mermaid.initialize({ 
-                startOnLoad: true,
-                theme: 'default',
-                gantt: {
-                    titleTopMargin: 25,
-                    barHeight: 20,
-                    barGap: 4,
-                    topPadding: 50,
-                    sidePadding: 75
-                }
-            });
-            createQuestionElements();
-
-            // Add event listener for PDF export
-            document.getElementById('exportPDF')?.addEventListener('click', exportToPDF);
-
-            // Add toggle functionality
+        // Wrap the code in a function to ensure DOM is loaded
+        function initializeToggles() {
             const implementationToggle = document.getElementById('showImplementationSteps');
             
-            implementationToggle.addEventListener('change', function() {
-                const steps = document.querySelectorAll('.implementation-steps');
-                steps.forEach(step => {
-                    if (this.checked) {
-                        step.classList.remove('hidden');
-                    } else {
-                        step.classList.add('hidden');
-                    }
+            if (implementationToggle) {
+                implementationToggle.addEventListener('change', function() {
+                    const steps = document.querySelectorAll('.implementation-steps');
+                    steps.forEach(step => {
+                        if (this.checked) {
+                            step.classList.remove('hidden');
+                        } else {
+                            step.classList.add('hidden');
+                        }
+                    });
                 });
-            });
-        });
+            } else {
+                console.warn('Implementation toggle not found in DOM');
+            }
+        }
+
+        // Wait for DOM to be fully loaded
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeToggles);
+        } else {
+            initializeToggles();
+        }
 
         async function exportToPDF() {
             try {
