@@ -4,7 +4,22 @@
             "id": "CloudID",
             "text": "Have you configured Cloud Identity?",
             "description": "Cloud Identity provides the foundation for managing user identities and access in Microsoft 365.",
-            "docLink": "https://learn.microsoft.com/en-us/entra/fundamentals/whatis"
+            "docLink": "https://learn.microsoft.com/en-us/entra/fundamentals/whatis",
+            "children": ["MFA", "CA", "IDProtection", "IGA", "PIM", "RCA"]
+        },
+        {
+            "id": "IntuneEnroll",
+            "text": "Have you configured Intune enrollment?",
+            "description": "Device enrollment enables device management in Microsoft Intune.",
+            "docLink": "https://learn.microsoft.com/en-us/mem/intune/enrollment/device-enrollment",
+            "children": ["IntuneCompPol", "AppProtection", "EPM", "CloudPKI", "RemoteHelp", "SpecializedDevices", "AutoPilot", "AppManagement"]
+        },
+        {
+            "id": "MDE",
+            "text": "Have you deployed Microsoft Defender for Endpoint?",
+            "description": "Defender for Endpoint provides advanced endpoint protection against cyber threats.",
+            "docLink": "https://learn.microsoft.com/en-us/microsoft-365/security/defender-endpoint/microsoft-defender-endpoint",
+            "children": ["MDVM", "XDR", "EndpointDLP"]
         },
         {
             "id": "MFA",
@@ -17,12 +32,6 @@
             "text": "Have you configured Conditional Access Policies?",
             "description": "Conditional Access helps you manage access to your resources based on specific conditions.",
             "docLink": "https://learn.microsoft.com/en-us/entra/identity/conditional-access/overview"
-        },
-        {
-            "id": "IntuneEnroll",
-            "text": "Have you configured Intune enrollment?",
-            "description": "Device enrollment enables device management in Microsoft Intune.",
-            "docLink": "https://learn.microsoft.com/en-us/mem/intune/enrollment/device-enrollment"
         },
         {
             "id": "IntuneCompPol",
@@ -113,12 +122,6 @@
             "text": "Have you configured Enterprise App Management?",
             "description": "Enterprise App Management helps deploy and manage applications across your organization.",
             "docLink": "https://learn.microsoft.com/en-us/mem/intune/apps/"
-        },
-        {
-            "id": "MDE",
-            "text": "Have you deployed Microsoft Defender for Endpoint?",
-            "description": "Defender for Endpoint provides advanced endpoint protection against cyber threats.",
-            "docLink": "https://learn.microsoft.com/en-us/microsoft-365/security/defender-endpoint/microsoft-defender-endpoint"
         },
         {
             "id": "RCA",
