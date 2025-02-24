@@ -286,14 +286,6 @@
             <span>Detailed View</span>
         </div>
         <div id="mermaidChart"></div>
-        <div class="switch-container">
-            <span>Simplified View</span>
-            <label class="switch">
-                <input type="checkbox" id="recommendationsToggle" onchange="updateRecommendations()">
-                <span class="slider"></span>
-            </label>
-            <span>Detailed View</span>
-        </div>
         <div id="recommendations"></div>
     </div>
 
@@ -625,9 +617,8 @@
             }
         }
 
-        // Add this new function
+        // Update the updateRecommendations function
         async function updateRecommendations() {
-            const isDetailed = document.getElementById('recommendationsToggle').checked;
             const deploymentStatus = {};
             const questions = await loadQuestions();
             questions.forEach(q => {
@@ -650,8 +641,6 @@
 
             // Add recommendations by phase
             Object.entries(recommendations.phases).forEach(([phaseId, phase]) => {
-                console.log(`Processing phase ${phaseId}:`, phase);
-                
                 const pendingItems = Object.entries(phase.items)
                     .filter(([id, _]) => !deploymentStatus[id]);
                 
@@ -659,12 +648,7 @@
                     recommendationsContent += `\n## ${phase.title}\n\n`;
                     
                     pendingItems.forEach(([id, content]) => {
-                        if (!isDetailed) {
-                            // For simplified view, remove Implementation Steps section and any content up to the next heading
-                            content = content.replace(/### Implementation Steps[\s\S]*?(?=###|$)/g, '');
-                        }
                         recommendationsContent += content + '\n\n';
-                        console.log(`Added recommendation for ${id}, isDetailed: ${isDetailed}`);
                     });
                 }
             });
