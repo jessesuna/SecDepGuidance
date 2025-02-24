@@ -1,12 +1,6 @@
 {
     "questions": [
         {
-            "id": "MDE",
-            "text": "Have you deployed Microsoft Defender for Endpoint?",
-            "description": "Defender for Endpoint provides advanced endpoint protection against cyber threats.",
-            "docLink": "https://learn.microsoft.com/en-us/microsoft-365/security/defender-endpoint/microsoft-defender-endpoint"
-        },
-        {
             "id": "CA",
             "text": "Have you configured Conditional Access Policies?",
             "description": "Conditional Access helps you manage access to your resources based on specific conditions.",
@@ -33,6 +27,12 @@
             "children": ["IntuneEnroll", "AppProtection"]
         },
         {
+            "id": "AppProtection",
+            "text": "Have you configured App Protection Policies?",
+            "description": "App protection policies help protect organization data within managed apps.",
+            "docLink": "https://learn.microsoft.com/en-us/mem/intune/apps/app-protection-policies"
+        },
+        {
             "id": "IntuneEnroll",
             "text": "Have you configured Intune enrollment?",
             "description": "Device enrollment enables device management in Microsoft Intune.",
@@ -49,7 +49,19 @@
             "text": "Have you implemented Extended Detection and Response (XDR)?",
             "description": "XDR provides unified security incident detection and response across endpoints, identities, and cloud apps.",
             "docLink": "https://learn.microsoft.com/en-us/microsoft-365/security/defender/microsoft-365-defender",
-            "children": ["DID", "MDO", "MDCA", "MDE", "MDVM"]
+            "children": ["MDO", "MDE"]
+        },
+        {
+            "id": "MDO",
+            "text": "Have you deployed Defender for Office 365?",
+            "description": "Protects your organization against malicious threats from email messages, links and collaboration tools.",
+            "docLink": "https://learn.microsoft.com/en-us/microsoft-365/security/office-365-security/defender-for-office-365"
+        },
+        {
+            "id": "MDE",
+            "text": "Have you deployed Microsoft Defender for Endpoint?",
+            "description": "Defender for Endpoint provides advanced endpoint protection against cyber threats.",
+            "docLink": "https://learn.microsoft.com/en-us/microsoft-365/security/defender-endpoint/microsoft-defender-endpoint"
         },
         {
             "id": "IDProtection",
@@ -57,12 +69,6 @@
             "description": "Identity Protection uses machine learning to detect and prevent identity risks.",
             "docLink": "https://learn.microsoft.com/en-us/entra/id-protection/overview-identity-protection",
             "children": ["IDProtAlerts"]
-        },
-        {
-            "id": "AppProtection",
-            "text": "Have you configured App Protection Policies?",
-            "description": "App protection policies help protect organization data within managed apps.",
-            "docLink": "https://learn.microsoft.com/en-us/mem/intune/apps/app-protection-policies"
         },
         {
             "id": "IGA",
@@ -156,12 +162,6 @@
             "text": "Have you deployed Defender for Identity?",
             "description": "Defender for Identity protects your on-premises Active Directory identities.",
             "docLink": "https://learn.microsoft.com/en-us/defender-for-identity/what-is"
-        },
-        {
-            "id": "MDO",
-            "text": "Have you deployed Defender for Office 365?",
-            "description": "Protects your organization against malicious threats from email messages, links and collaboration tools.",
-            "docLink": "https://learn.microsoft.com/en-us/microsoft-365/security/office-365-security/defender-for-office-365"
         },
         {
             "id": "MDCA",
