@@ -286,6 +286,14 @@
             <span>Detailed View</span>
         </div>
         <div id="mermaidChart"></div>
+        <div class="switch-container">
+            <span>Simplified View</span>
+            <label class="switch">
+                <input type="checkbox" id="recommendationsToggle" onchange="updateRecommendations()">
+                <span class="slider"></span>
+            </label>
+            <span>Detailed View</span>
+        </div>
         <div id="recommendations"></div>
     </div>
 
@@ -506,9 +514,7 @@
             }
 
             // Update recommendations
-            const recommendationsDiv = document.getElementById('recommendations');
-            recommendationsDiv.innerHTML = marked.parse(recommendationsContent);
-            console.log('Updated recommendations');
+            await updateRecommendations();
 
             // Show results
             document.getElementById('results').style.display = 'block';
@@ -617,6 +623,52 @@
             } catch (error) {
                 console.error('Error updating diagram:', error);
             }
+        }
+
+        // Add this new function
+        async function updateRecommendations() {
+            const isDetailed = document.getElementById('recommendationsToggle').checked;
+            const deploymentStatus = {};
+            const questions = await loadQuestions();
+            questions.forEach(q => {
+                const radioValue = document.querySelector(`input[name="${q.id}"]:checked`).value;
+                deploymentStatus[q.id] = radioValue === 'true';
+            });
+
+            // Load recommendations from markdown file
+            const recommendations = await loadRecommendations();
+            if (!recommendations) {
+                console.error('Failed to load recommendations');
+                return;
+            }
+
+            // Generate recommendations content
+            let recommendationsContent = '## Recommended Next Steps\n\n';
+            
+            // Add key resources
+            recommendationsContent += recommendations.keyResources + '\n';
+
+            // Add recommendations by phase
+            Object.entries(recommendations.phases).forEach(([phaseId, phase]) => {
+                const pendingItems = Object.entries(phase.items)
+                    .filter(([id, _]) => !deploymentStatus[id]);
+                
+                if (pendingItems.length > 0) {
+                    recommendationsContent += `\n## ${phase.title}\n\n`;
+                    
+                    pendingItems.forEach(([id, content]) => {
+                        if (!isDetailed) {
+                            // For simplified view, remove Implementation Steps section
+                            content = content.replace(/### Implementation Steps:[\s\S]*?(?=\n### |$)/g, '');
+                        }
+                        recommendationsContent += content + '\n\n';
+                    });
+                }
+            });
+
+            // Update recommendations
+            const recommendationsDiv = document.getElementById('recommendations');
+            recommendationsDiv.innerHTML = marked.parse(recommendationsContent);
         }
 
         // Update the initialization code
