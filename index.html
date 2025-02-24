@@ -467,14 +467,17 @@
         // Function to load recommendations from markdown file
         async function loadRecommendations() {
             try {
+                console.log('Starting to load recommendations');
                 const response = await fetch('./recommendations.md');
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 const markdown = await response.text();
+                console.log('Loaded markdown file:', markdown.substring(0, 100) + '...'); 
                 
                 // Split the markdown into sections based on horizontal rules
                 const sections = markdown.split('---').map(section => section.trim());
+                console.log('Split sections count:', sections.length);
                 
                 // Parse the sections into a recommendations object
                 const recommendations = {
@@ -487,30 +490,42 @@
                 };
                 
                 let currentPhase = null;
+                let currentSection = '';
                 
                 // Parse remaining sections
                 for (let i = 1; i < sections.length; i++) {
                     const section = sections[i];
                     
                     // Check if this section is a phase header
-                    const phaseMatch = section.match(/^## ([^\n]+) \{#(phase\d+)\}/);
+                    const phaseMatch = section.match(/## ([^\n]+) \{#(phase\d+)\}/);
                     if (phaseMatch) {
                         currentPhase = phaseMatch[2];
                         recommendations.phases[currentPhase].title = phaseMatch[1];
+                        console.log('Found phase:', currentPhase, 'with title:', phaseMatch[1]);
+                        currentSection = section;
                         continue;
                     }
                     
-                    // Extract the component ID and content if we're in a phase
-                    if (currentPhase) {
-                        const idMatch = section.match(/### [^\n]+ \{#(\w+)\}/);
-                        if (idMatch) {
-                            const id = idMatch[1];
-                            recommendations.phases[currentPhase].items[id] = section;
-                        }
+                    // Extract the component ID and content
+                    const idMatch = section.match(/### [^\n]+ \{#(\w+)\}/);
+                    if (idMatch && currentPhase) {
+                        const id = idMatch[1];
+                        // Remove the ID tag from the content
+                        const content = section.replace(/\{#\w+\}/, '').trim();
+                        recommendations.phases[currentPhase].items[id] = content;
+                        console.log('Added recommendation for:', id, 'in phase:', currentPhase);
                     }
                 }
 
-                console.log('Parsed recommendations:', recommendations); // Debug log
+                // Debug log the structure of recommendations
+                Object.entries(recommendations.phases).forEach(([phaseId, phase]) => {
+                    console.log(`Phase ${phaseId}:`, {
+                        title: phase.title,
+                        itemCount: Object.keys(phase.items).length,
+                        items: Object.keys(phase.items)
+                    });
+                });
+
                 return recommendations;
             } catch (error) {
                 console.error('Error loading recommendations:', error);
@@ -520,11 +535,13 @@
 
         // Function to generate results
         async function generateResults() {
+            console.log('Starting generateResults');
             const deploymentStatus = {};
             questions.forEach(q => {
                 const radioValue = document.querySelector(`input[name="${q.id}"]:checked`).value;
                 deploymentStatus[q.id] = radioValue === 'true';
             });
+            console.log('Deployment status:', deploymentStatus);
 
             // Load recommendations from markdown file
             const recommendations = await loadRecommendations();
@@ -541,25 +558,26 @@
 
             // Add recommendations by phase
             Object.entries(recommendations.phases).forEach(([phaseId, phase]) => {
-                // Check if any items in this phase need to be implemented
-                const hasRecommendations = Object.entries(phase.items).some(([id, _]) => !deploymentStatus[id]);
+                console.log(`Processing phase ${phaseId}:`, phase);
                 
-                if (hasRecommendations) {
+                // Check if any items in this phase need to be implemented
+                const pendingItems = Object.entries(phase.items)
+                    .filter(([id, _]) => !deploymentStatus[id]);
+                
+                if (pendingItems.length > 0) {
+                    console.log(`Found ${pendingItems.length} pending items in ${phaseId}`);
                     // Add phase header
                     recommendationsContent += `\n## ${phase.title}\n\n`;
                     
                     // Add recommendations for non-deployed items
-                    Object.entries(phase.items).forEach(([id, content]) => {
-                        if (!deploymentStatus[id]) {
-                            recommendationsContent += content + '\n\n';
-                        }
+                    pendingItems.forEach(([id, content]) => {
+                        recommendationsContent += content + '\n\n';
+                        console.log('Added recommendation for:', id);
                     });
                 }
             });
 
-            console.log('Generated content:', recommendationsContent); // Debug log
-
-            // Update the UI with diagrams and recommendations
+            // Update the UI
             const mermaidDiv = document.getElementById('mermaidChart');
             const diagram = generateSimplifiedDiagram(deploymentStatus);
             mermaidDiv.innerHTML = `<div class="mermaid">${diagram}</div>`;
