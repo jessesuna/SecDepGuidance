@@ -7,7 +7,7 @@
     <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="https://unpkg.com/jspdf@latest/dist/jspdf.umd.min.js"></script>
-    <link rel="favicon" href="data:;base64,iVBORw0KGgo=">
+    <link rel="icon" href="data:,">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -785,161 +785,174 @@
         }
 
         // Add event listener for PDF export button
-        document.getElementById('exportPDF').addEventListener('click', async function() {
-            // Create new jsPDF instance with more space for diagrams
-            const doc = new jsPDF('p', 'mm', 'a4');
+        document.addEventListener('DOMContentLoaded', function() {
+            // Wait for jsPDF to load
+            window.jsPDF = window.jspdf.jsPDF;
             
-            // Add title with styling
-            doc.setFontSize(24);
-            doc.setTextColor(0, 102, 204); // #0066cc
-            doc.text('Security Deployment Assessment', 20, 20);
-            
-            // Add date with styling
-            doc.setFontSize(12);
-            doc.setTextColor(102, 102, 102); // Gray
-            const date = new Date().toLocaleDateString();
-            doc.text(`Generated: ${date}`, 20, 30);
-            
-            // Add diagram
-            try {
-                // Get the Mermaid SVG
-                const mermaidDiv = document.querySelector('.mermaid svg');
-                if (mermaidDiv) {
-                    // Convert SVG to canvas
-                    const canvas = await html2canvas(mermaidDiv, {
-                        backgroundColor: null,
-                        scale: 2 // Higher quality
-                    });
-                    
-                    // Add to PDF with proper scaling
-                    const imgData = canvas.toDataURL('image/png');
-                    const imgWidth = 170; // Max width on A4
-                    const imgHeight = (canvas.height * imgWidth) / canvas.width;
-                    
-                    doc.addPage();
-                    doc.text('Current Deployment Status', 20, 20);
-                    doc.addImage(imgData, 'PNG', 20, 30, imgWidth, imgHeight);
-                }
-            } catch (error) {
-                console.error('Error adding diagram:', error);
-            }
-            
-            // Add deployment status with sections
-            doc.addPage();
-            doc.setFontSize(16);
-            doc.setTextColor(0, 102, 204);
-            doc.text('Deployment Status Details', 20, 20);
-            
-            // Get all questions and their status
-            const questions = await loadQuestions();
-            let yPos = 35;
-            
-            // Group questions by parent-child relationship
-            const questionMap = new Map(questions.map(q => [q.id, q]));
-            const parentQuestions = questions.filter(q => !Array.from(questionMap.values())
-                .some(other => other.children && other.children.includes(q.id)));
-            
-            // Function to add a question and its children to the PDF
-            const addQuestionToPDF = (question, indent = 0) => {
-                if (yPos > 270) {
-                    doc.addPage();
-                    yPos = 20;
+            document.getElementById('exportPDF').addEventListener('click', async function() {
+                // Create new jsPDF instance with more space for diagrams
+                const doc = new jsPDF('p', 'mm', 'a4');
+                
+                // Add title with styling
+                doc.setFontSize(24);
+                doc.setTextColor(0, 102, 204); // #0066cc
+                doc.text('Security Deployment Assessment', 20, 20);
+                
+                // Add date with styling
+                doc.setFontSize(12);
+                doc.setTextColor(102, 102, 102); // Gray
+                const date = new Date().toLocaleDateString();
+                doc.text(`Generated: ${date}`, 20, 30);
+                
+                // Add diagram
+                try {
+                    // Get the Mermaid SVG
+                    const mermaidDiv = document.querySelector('.mermaid svg');
+                    if (mermaidDiv) {
+                        // Convert SVG to canvas
+                        const canvas = await html2canvas(mermaidDiv, {
+                            backgroundColor: null,
+                            scale: 2 // Higher quality
+                        });
+                        
+                        // Add to PDF with proper scaling
+                        const imgData = canvas.toDataURL('image/png');
+                        const imgWidth = 170; // Max width on A4
+                        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+                        
+                        doc.addPage();
+                        doc.text('Current Deployment Status', 20, 20);
+                        doc.addImage(imgData, 'PNG', 20, 30, imgWidth, imgHeight);
+                    }
+                } catch (error) {
+                    console.error('Error adding diagram:', error);
                 }
                 
-                const status = document.querySelector(`input[name="${question.id}"]:checked`).value === 'yes';
+                // Add deployment status with sections
+                doc.addPage();
+                doc.setFontSize(16);
+                doc.setTextColor(0, 102, 204);
+                doc.text('Deployment Status Details', 20, 20);
                 
-                // Question text
-                doc.setFontSize(11);
-                doc.setTextColor(0, 0, 0);
-                const statusSymbol = status ? '✓' : '✗';
-                const statusColor = status ? [0, 153, 0] : [204, 0, 0];
-                doc.text('  '.repeat(indent) + question.text, 25, yPos);
+                // Get all questions and their status
+                const questions = await loadQuestions();
+                let yPos = 35;
                 
-                // Status symbol
-                doc.setTextColor(...statusColor);
-                doc.text(statusSymbol, 20, yPos);
+                // Group questions by parent-child relationship
+                const questionMap = new Map(questions.map(q => [q.id, q]));
+                const parentQuestions = questions.filter(q => !Array.from(questionMap.values())
+                    .some(other => other.children && other.children.includes(q.id)));
                 
-                yPos += 7;
-                
-                // Add description in smaller, gray text
-                doc.setFontSize(9);
-                doc.setTextColor(102, 102, 102);
-                const descLines = doc.splitTextToSize(question.description, 160 - (indent * 5));
-                descLines.forEach(line => {
+                // Function to add a question and its children to the PDF
+                const addQuestionToPDF = (question, indent = 0) => {
                     if (yPos > 270) {
                         doc.addPage();
                         yPos = 20;
                     }
-                    doc.text('  '.repeat(indent + 1) + line, 25, yPos);
-                    yPos += 5;
-                });
-                
-                yPos += 3;
-                
-                // Recursively add children
-                if (question.children) {
-                    question.children.forEach(childId => {
-                        const childQuestion = questionMap.get(childId);
-                        if (childQuestion) {
-                            addQuestionToPDF(childQuestion, indent + 1);
-                        }
-                    });
-                }
-            };
-            
-            // Add all parent questions and their children
-            parentQuestions.forEach(q => addQuestionToPDF(q));
-            
-            // Add recommendations
-            doc.addPage();
-            doc.setFontSize(16);
-            doc.setTextColor(0, 102, 204);
-            doc.text('Recommended Next Steps', 20, 20);
-            
-            // Get recommendations content
-            const recommendationsDiv = document.getElementById('recommendations');
-            const sections = recommendationsDiv.querySelectorAll('h2, h3, p, li');
-            
-            yPos = 35;
-            
-            sections.forEach(section => {
-                if (yPos > 270) {
-                    doc.addPage();
-                    yPos = 20;
-                }
-                
-                if (section.tagName === 'H2') {
-                    doc.setFontSize(14);
-                    doc.setTextColor(0, 102, 204);
-                    yPos += 5;
-                } else if (section.tagName === 'H3') {
-                    doc.setFontSize(12);
+                    
+                    const status = document.querySelector(`input[name="${question.id}"]:checked`).value === 'yes';
+                    
+                    // Question text
+                    doc.setFontSize(11);
                     doc.setTextColor(0, 0, 0);
-                } else {
-                    doc.setFontSize(10);
-                    doc.setTextColor(51, 51, 51);
-                }
+                    const statusSymbol = status ? '✓' : '✗';
+                    const statusColor = status ? [0, 153, 0] : [204, 0, 0];
+                    doc.text('  '.repeat(indent) + question.text, 25, yPos);
+                    
+                    // Status symbol
+                    doc.setTextColor(...statusColor);
+                    doc.text(statusSymbol, 20, yPos);
+                    
+                    yPos += 7;
+                    
+                    // Add description in smaller, gray text
+                    doc.setFontSize(9);
+                    doc.setTextColor(102, 102, 102);
+                    const descLines = doc.splitTextToSize(question.description, 160 - (indent * 5));
+                    descLines.forEach(line => {
+                        if (yPos > 270) {
+                            doc.addPage();
+                            yPos = 20;
+                        }
+                        doc.text('  '.repeat(indent + 1) + line, 25, yPos);
+                        yPos += 5;
+                    });
+                    
+                    yPos += 3;
+                    
+                    // Recursively add children
+                    if (question.children) {
+                        question.children.forEach(childId => {
+                            const childQuestion = questionMap.get(childId);
+                            if (childQuestion) {
+                                addQuestionToPDF(childQuestion, indent + 1);
+                            }
+                        });
+                    }
+                };
                 
-                const lines = doc.splitTextToSize(section.textContent, 170);
-                lines.forEach(line => {
+                // Add all parent questions and their children
+                parentQuestions.forEach(q => addQuestionToPDF(q));
+                
+                // Add recommendations
+                doc.addPage();
+                doc.setFontSize(16);
+                doc.setTextColor(0, 102, 204);
+                doc.text('Recommended Next Steps', 20, 20);
+                
+                // Get recommendations content
+                const recommendationsDiv = document.getElementById('recommendations');
+                const sections = recommendationsDiv.querySelectorAll('h2, h3, p, li');
+                
+                yPos = 35;
+                
+                sections.forEach(section => {
                     if (yPos > 270) {
                         doc.addPage();
                         yPos = 20;
                     }
-                    const indent = section.tagName === 'LI' ? 25 : 20;
-                    doc.text(line, indent, yPos);
-                    yPos += 7;
+                    
+                    if (section.tagName === 'H2') {
+                        doc.setFontSize(14);
+                        doc.setTextColor(0, 102, 204);
+                        yPos += 5;
+                    } else if (section.tagName === 'H3') {
+                        doc.setFontSize(12);
+                        doc.setTextColor(0, 0, 0);
+                    } else {
+                        doc.setFontSize(10);
+                        doc.setTextColor(51, 51, 51);
+                    }
+                    
+                    const lines = doc.splitTextToSize(section.textContent, 170);
+                    lines.forEach(line => {
+                        if (yPos > 270) {
+                            doc.addPage();
+                            yPos = 20;
+                        }
+                        const indent = section.tagName === 'LI' ? 25 : 20;
+                        doc.text(line, indent, yPos);
+                        yPos += 7;
+                    });
                 });
+                
+                // Save the PDF
+                doc.save('SecurityAssessment.pdf');
             });
-            
-            // Save the PDF
-            doc.save('SecurityAssessment.pdf');
         });
 
-        // Add jsPDF to the page
-        const jsPDFScript = document.createElement('script');
-        jsPDFScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
-        document.head.appendChild(jsPDFScript);
+        // Add required scripts to the page
+        const scripts = [
+            'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js',
+            'https://html2canvas.hertzen.com/dist/html2canvas.min.js'
+        ];
+
+        scripts.forEach(src => {
+            const script = document.createElement('script');
+            script.src = src;
+            script.async = true;
+            document.head.appendChild(script);
+        });
     </script>
 </body>
 </html>
