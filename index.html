@@ -552,52 +552,45 @@
 
         // Function to generate results
         async function generateResults() {
-            console.log('Starting generateResults');
+            // Clear previous results
+            const mermaidDiv = document.getElementById('mermaidChart');
+            mermaidDiv.innerHTML = '';
+
+            // Get deployment status
             const deploymentStatus = {};
             questions.forEach(q => {
                 const radioValue = document.querySelector(`input[name="${q.id}"]:checked`).value;
                 deploymentStatus[q.id] = radioValue === 'true';
             });
-            console.log('Deployment status:', deploymentStatus);
 
-            // Load recommendations from markdown file
+            // Load recommendations and generate content
             const recommendations = await loadRecommendations();
             if (!recommendations) {
                 console.error('Failed to load recommendations');
                 return;
             }
 
-            // Generate recommendations content
             let recommendationsContent = '## Recommended Next Steps\n\n';
-            
-            // Add key resources
             recommendationsContent += recommendations.keyResources + '\n';
 
-            // Add recommendations by phase
             Object.entries(recommendations.phases).forEach(([phaseId, phase]) => {
-                console.log(`Processing phase ${phaseId}:`, phase);
-                
-                // Check if any items in this phase need to be implemented
                 const pendingItems = Object.entries(phase.items)
                     .filter(([id, _]) => !deploymentStatus[id]);
                 
                 if (pendingItems.length > 0) {
-                    console.log(`Found ${pendingItems.length} pending items in ${phaseId}`);
-                    // Add phase header
                     recommendationsContent += `\n## ${phase.title}\n\n`;
-                    
-                    // Add recommendations for non-deployed items
                     pendingItems.forEach(([id, content]) => {
                         recommendationsContent += content + '\n\n';
-                        console.log('Added recommendation for:', id);
                     });
                 }
             });
 
-            // Generate and update the diagram
-            const mermaidDiv = document.getElementById('mermaidChart');
+            // Update recommendations
+            const recommendationsDiv = document.getElementById('recommendations');
+            recommendationsDiv.innerHTML = marked.parse(recommendationsContent);
+
+            // Generate and render initial diagram
             const isDetailed = document.getElementById('diagramToggle').checked;
-            
             try {
                 const diagram = isDetailed ? 
                     await generateMermaidDiagram(deploymentStatus) : 
@@ -607,11 +600,6 @@
             } catch (error) {
                 console.error('Error generating diagram:', error);
             }
-
-            // Update recommendations
-            const recommendationsDiv = document.getElementById('recommendations');
-            recommendationsDiv.innerHTML = marked.parse(recommendationsContent);
-            console.log('Updated recommendations');
 
             // Show results
             document.getElementById('results').style.display = 'block';
@@ -711,18 +699,12 @@
             }
         }
 
-        // Make sure mermaid is configured to handle Gantt charts
-        document.addEventListener('DOMContentLoaded', function() {
-            mermaid.initialize({ 
+        // Make sure Mermaid is initialized properly
+        document.addEventListener('DOMContentLoaded', () => {
+            mermaid.initialize({
                 startOnLoad: true,
-                theme: 'default',
-                gantt: {
-                    titleTopMargin: 25,
-                    barHeight: 20,
-                    barGap: 4,
-                    topPadding: 50,
-                    sidePadding: 75
-                }
+                securityLevel: 'loose',
+                theme: 'default'
             });
             createQuestionElements();
 
@@ -797,14 +779,19 @@
             `;
 
             try {
+                // Clear any existing Mermaid diagrams
+                mermaid.contentLoaded();
+                
                 // Wait for next frame to ensure DOM is ready
                 await new Promise(resolve => requestAnimationFrame(resolve));
                 
                 // Initialize Mermaid
                 await mermaid.init(undefined, mermaidDiv.querySelector(".mermaid"));
                 
-                // Remove loading state
-                mermaidDiv.className = 'mermaid-container';
+                // Remove loading state after successful initialization
+                requestAnimationFrame(() => {
+                    mermaidDiv.className = 'mermaid-container';
+                });
             } catch (error) {
                 console.error('Error rendering diagram:', error);
                 mermaidDiv.innerHTML = '<div class="error">Error rendering diagram</div>';
