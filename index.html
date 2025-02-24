@@ -306,7 +306,7 @@
             },
             {
                 id: 'MDVM',
-                text: 'Have you deployed Microsoft Defender for Volnerability Management',
+                text: 'Have you deployed Microsoft Defender for Vulnerability Management',
                 description: 'Microsoft Defender Vulnerability Management standalone is a comprehensive vulnerability management solution to access continuous asset visibility, in-depth vulnerability assessments, and risk-based prioritization to help teams address critical vulnerabilities and misconfigurations.',
                 docLink: 'https://learn.microsoft.com/en-us/defender-vulnerability-management/'
             },
@@ -690,140 +690,159 @@
         }
 
         // Function to generate recommendations
+        const markdownContent = {
+            keyResources: `
+### Key Resources
+- [Zero Trust Rapid Deployment Plan](https://learn.microsoft.com/en-us/security/zero-trust/zero-trust-ramp-overview)
+- [Zero Trust deployment plan with Microsoft 365](https://learn.microsoft.com/en-us/microsoft-365/security/microsoft-365-zero-trust?view=o365-worldwide)
+- [Zero Trust Assessment Workshop](https://microsoft.github.io/zerotrustassessment/)
+- [Zero Trust Assessment Tool](https://microsoft.github.io/zerotrustassessment/docs/app-permissions)
+- [Purview Deployment Models](https://learn.microsoft.com/en-us/purview/deploymentmodels/depmod-overview)
+`,
+
+            recommendations: {
+                // Identity and Access Management
+                CloudID: {
+                    title: '### Identity Foundation Priority',
+                    content: `- Configure Cloud Identity as your foundation
+- Review Entra ID Protection features
+- Implement basic identity management
+- Reference: [Zero Trust deployment plan](https://learn.microsoft.com/en-us/microsoft-365/security/microsoft-365-zero-trust?view=o365-worldwide#identity)
+`
+                },
+                MFA: {
+                    title: '### Critical Security Enhancement',
+                    content: `- Deploy Multifactor Authentication immediately
+- Configure MFA for all users
+- Set up conditional access policies
+- Use the [Zero Trust Assessment Tool](https://microsoft.github.io/zerotrustassessment/docs/app-permissions) to validate your MFA configuration
+`
+                },
+                CA: {
+                    title: '### Conditional Access Implementation',
+                    content: `- Configure basic Conditional Access policies
+- Set up risk-based policies
+- Implement device-based access controls
+- Reference: [Conditional Access documentation](https://learn.microsoft.com/en-us/entra/identity/conditional-access/overview)
+`
+                },
+
+                // Device Management
+                IntuneEnroll: {
+                    title: '### Device Enrollment',
+                    content: `- Begin device enrollment in Intune
+- Configure enrollment restrictions
+- Set up device categories
+- Reference: [Intune enrollment guide](https://learn.microsoft.com/en-us/mem/intune/enrollment/)
+`
+                },
+                IntuneCompPol: {
+                    title: '### Compliance Policies',
+                    content: `- Configure basic compliance policies
+- Set up compliance policy rules
+- Define actions for non-compliance
+- Reference: [Device compliance policies](https://learn.microsoft.com/en-us/mem/intune/protect/device-compliance-get-started)
+`
+                },
+
+                // Threat Protection
+                XDR: {
+                    title: '### Enhanced Threat Protection',
+                    content: `- Deploy Microsoft 365 Defender (XDR)
+- Configure EDR capabilities
+- Set up advanced threat protection
+- Enable automated investigation and response
+- Reference: [Microsoft 365 Defender](https://learn.microsoft.com/en-us/microsoft-365/security/defender/microsoft-365-defender)
+`
+                },
+                MDVM: {
+                    title: '### Vulnerability Management',
+                    content: `- Deploy Defender for Vulnerability Management
+- Run initial vulnerability assessment
+- Create preliminary remediation plan
+- Reference: [Defender Vulnerability Management](https://learn.microsoft.com/en-us/defender-vulnerability-management/)
+`
+                },
+
+                // Data Protection
+                DSPM: {
+                    title: '### Data Security Posture Management',
+                    content: `- Deploy Microsoft Purview DSPM
+- Configure data discovery and classification
+- Set up sensitive information types
+- Reference: [Purview DSPM](https://learn.microsoft.com/en-us/purview/data-security-posture-management)
+`
+                },
+                EndpointDLP: {
+                    title: '### Data Loss Prevention',
+                    content: `- Configure Endpoint DLP policies
+- Set up DLP rules and actions
+- Monitor DLP alerts and incidents
+- Reference: [Endpoint DLP](https://learn.microsoft.com/en-us/purview/endpoint-dlp-learn-about)
+`
+                },
+
+                // Advanced Features
+                IGA: {
+                    title: '### Identity Governance',
+                    content: `- Deploy Identity Governance
+- Configure access reviews
+- Set up entitlement management
+- Reference: [Identity Governance](https://learn.microsoft.com/en-us/entra/id-governance/)
+`
+                },
+                PIM: {
+                    title: '### Privileged Identity Management',
+                    content: `- Configure PIM roles and assignments
+- Set up approval workflows
+- Implement just-in-time access
+- Reference: [PIM documentation](https://learn.microsoft.com/en-us/entra/id-governance/privileged-identity-management/)
+`
+                },
+                
+                // Additional components...
+                EndpointAnalytics: {
+                    title: '### Advanced Analytics',
+                    content: `- Deploy Advanced Endpoint Analytics
+- Configure proactive remediations
+- Set up performance monitoring
+- Reference: [Endpoint Analytics](https://learn.microsoft.com/en-us/mem/analytics/)
+`
+                },
+                Cloudpki: {
+                    title: '### Microsoft Cloud PKI',
+                    content: `- Create root CA
+- Create Issuing CA
+- Configure Certificate Profiles
+- Reference: [Cloud PKI Documentation](https://learn.microsoft.com/en-us/mem/intune/protect/microsoft-cloud-pki-overview)
+`
+                }
+                // Add more components as needed...
+            }
+        };
+
         function generateRecommendations(deploymentStatus) {
             let recommendations = '## Recommended Next Steps\n\n';
             
-            // Add key resources section at the top
-            recommendations += '### Key Resources\n' +
-                '- [Zero Trust Rapid Deployment Plan](https://learn.microsoft.com/en-us/security/zero-trust/zero-trust-ramp-overview)\n' +
-                '- [Zero Trust deployment plan with Microsoft 365](https://learn.microsoft.com/en-us/microsoft-365/security/microsoft-365-zero-trust?view=o365-worldwide)\n' +
-                '- [Zero Trust Assessment Workshop](https://microsoft.github.io/zerotrustassessment/)\n' +
-                '- [Zero Trust Assessment Tool](https://microsoft.github.io/zerotrustassessment/docs/app-permissions)\n' +
-                '- [Purview Deployment Models](https://learn.microsoft.com/en-us/purview/deploymentmodels/depmod-overview)\n\n';
+            // Add key resources
+            recommendations += markdownContent.keyResources + '\n';
 
-            // First 30 Days: Foundation and Quick Wins
-            recommendations += '## First 30 Days: Foundation and Quick Wins\n\n';
-
-            if (!deploymentStatus['CloudID']) {
-                recommendations += '### Identity Foundation Priority\n' +
-                    '- Configure Cloud Identity as your foundation\n' +
-                    '- Review Entra ID Protection features\n' +
-                    '- Implement basic identity management\n' +
-                    '- Reference: [Zero Trust deployment plan](https://learn.microsoft.com/en-us/microsoft-365/security/microsoft-365-zero-trust?view=o365-worldwide#identity)\n\n';
+            // Foundation (30 Days)
+            let foundationNeeded = false;
+            if (!deploymentStatus['CloudID'] || !deploymentStatus['MFA'] || !deploymentStatus['CA'] || 
+                !deploymentStatus['IntuneEnroll'] || !deploymentStatus['IntuneCompPol'] || !deploymentStatus['MDVM']) {
+                recommendations += '## First 30 Days: Foundation and Quick Wins\n\n';
+                foundationNeeded = true;
             }
 
-            if (!deploymentStatus['MFA']) {
-                recommendations += '### Critical Security Enhancement\n' +
-                    '- Deploy Multifactor Authentication immediately\n' +
-                    '- Configure MFA for all users\n' +
-                    '- Set up conditional access policies\n' +
-                    '- Use the [Zero Trust Assessment Tool](https://microsoft.github.io/zerotrustassessment/docs/app-permissions) to validate your MFA configuration\n\n';
-            }
+            // Add specific recommendations based on deployment status
+            Object.entries(deploymentStatus).forEach(([id, isDeployed]) => {
+                if (!isDeployed && markdownContent.recommendations[id]) {
+                    recommendations += markdownContent.recommendations[id].title + '\n';
+                    recommendations += markdownContent.recommendations[id].content + '\n';
+                }
+            });
 
-            if (!deploymentStatus['IntuneEnroll'] || !deploymentStatus['IntuneCompPol']) {
-                recommendations += '### Basic Device Management\n' +
-                    '- Begin device enrollment in Intune\n' +
-                    '- Configure basic device compliance policies\n' +
-                    '- Set up essential device management policies\n' +
-                    '- Follow the [Zero Trust deployment plan device guidance](https://learn.microsoft.com/en-us/microsoft-365/security/microsoft-365-zero-trust?view=o365-worldwide#devices)\n\n';
-            }
-
-            if (!deploymentStatus['MDVM']) {
-                recommendations += '### Basic Security Posture\n' +
-                    '- Deploy Defender for Vulnerability Management\n' +
-                    '- Run initial vulnerability assessment\n' +
-                    '- Create preliminary remediation plan\n\n';
-            }
-
-            // 60-Day Milestone: Enhanced Security
-            recommendations += '## 60-Day Milestone: Enhanced Security\n\n';
-
-            if (!deploymentStatus['RCA'] || !deploymentStatus['IDProtection']) {
-                recommendations += '### Enhanced Identity Protection\n' +
-                    '- Configure Risk-based Conditional Access\n' +
-                    '- Deploy Entra Identity Protection\n' +
-                    '- Set up Identity Protection alerts and monitoring\n' +
-                    '- Reference: [Identity Protection documentation](https://learn.microsoft.com/en-us/entra/id-protection/)\n\n';
-            }
-
-            if (!deploymentStatus['XDR'] || !deploymentStatus['MDE']) {
-                recommendations += '### Enhanced Threat Protection\n' +
-                    '- Deploy Microsoft 365 Defender (XDR)\n' +
-                    '- Configure EDR capabilities\n' +
-                    '- Set up advanced threat protection\n' +
-                    '- Enable automated investigation and response\n\n';
-            }
-
-            if (!deploymentStatus['EPA'] || !deploymentStatus['EPAConn']) {
-                recommendations += '### Network Security Enhancement\n' +
-                    '- Deploy Entra Private Access\n' +
-                    '- Set up Private Access Connector\n' +
-                    '- Configure secure application access\n' +
-                    '- Reference: [Private Access documentation](https://learn.microsoft.com/en-us/entra/identity/private-access/)\n\n';
-            }
-
-            if (!deploymentStatus['AppManagement'] || !deploymentStatus['AppProtection']) {
-                recommendations += '### Enhanced App Management\n' +
-                    '- Configure Advanced App Management\n' +
-                    '- Implement App Protection Policies\n' +
-                    '- Set up application controls\n' +
-                    '- Reference: [App Management documentation](https://learn.microsoft.com/en-us/mem/intune/apps/app-management)\n\n';
-            }
-
-            if (!deploymentStatus['CloudPKI']) {
-                recommendations += '### Microsoft Cloud PKI For Intune\n' +
-                    '- Create root CA\n' +
-                    '- Create Issuing CA\n' +
-                    '- Configure Certificate Profiles\n' +
-                    '- Reference: [Cloud PKI Documentation](https://learn.microsoft.com/en-us/mem/intune/protect/microsoft-cloud-pki-overview)\n\n';
-            }
-
-            // 90-Day Milestone: Advanced Features and Optimization
-            recommendations += '## 90-Day Milestone: Advanced Features and Optimization\n\n';
-
-            if (!deploymentStatus['IGA'] || !deploymentStatus['AccessReview'] || !deploymentStatus['PIM']) {
-                recommendations += '### Advanced Identity Governance\n' +
-                    '- Deploy Identity Governance\n' +
-                    '- Configure Access Reviews\n' +
-                    '- Implement Privileged Identity Management\n' +
-                    '- Reference: [Identity Governance documentation](https://learn.microsoft.com/en-us/entra/id-governance/)\n\n';
-            }
-
-            if (!deploymentStatus['GSA'] || !deploymentStatus['EIA']) {
-                recommendations += '### Advanced Network Security\n' +
-                    '- Configure Global Secure Access\n' +
-                    '- Deploy Entra Internet Access\n' +
-                    '- Set up secure connectivity\n' +
-                    '- Reference: [Global Secure Access documentation](https://learn.microsoft.com/en-us/entra/global-secure-access/)\n\n';
-            }
-
-            if (!deploymentStatus['VID'] || !deploymentStatus['VIDCred'] || !deploymentStatus['VIDWorkflow']) {
-                recommendations += '### Advanced Identity Features\n' +
-                    '- Deploy Entra Verified ID\n' +
-                    '- Configure Verified Credentials\n' +
-                    '- Set up verification workflows\n' +
-                    '- Reference: [Verified ID documentation](https://learn.microsoft.com/en-us/entra/verified-id/)\n\n';
-            }
-
-            if (!deploymentStatus['EndpointAnalytics']) {
-                recommendations += '### Advanced Endpoint Management\n' +
-                    '- Deploy Advanced Endpoint Analytics\n' +
-                    '- Configure proactive remediations\n' +
-                    '- Set up performance monitoring\n' +
-                    '- Reference: [Endpoint Analytics documentation](https://learn.microsoft.com/en-us/mem/analytics/)\n\n';
-            }
-
-            if (!deploymentStatus['DSPM'] || !deploymentStatus['EndpointDLP'] || !deploymentStatus['PurAud']) {
-                recommendations += '### Advanced Data Protection\n' +
-                    '- Deploy Microsoft Purview DSPM\n' +
-                    '- Configure comprehensive Data Security\n' +
-                    '- Set up advanced auditing\n' +
-                    '- Follow the [Purview Deployment Models](https://learn.microsoft.com/en-us/purview/deploymentmodels/depmod-overview) guidance\n\n';
-            }
-
-            // Add header for timeline but don't include the chart
-            recommendations += '\n## Implementation Timeline\n';
-            
             return recommendations;
         }
 
@@ -955,34 +974,39 @@
                 tasks.push('    Vulnerability Management  :a6, after a1, 14d');
 
             // Enhanced Security tasks
-            if (!deploymentStatus['RCA']) 
+            if (!deploymentStatus['RCA'] || !deploymentStatus['IDProtection']) {
                 tasks.push('    Risk-based CA            :b1, after a3, 14d');
-            if (!deploymentStatus['IDProtection']) 
                 tasks.push('    Identity Protection      :b2, after b1, 7d');
-            if (!deploymentStatus['XDR']) 
+            }
+            if (!deploymentStatus['XDR'] || !deploymentStatus['MDE']) {
                 tasks.push('    XDR Implementation       :b3, after a6, 14d');
-            if (!deploymentStatus['MDE']) 
                 tasks.push('    Defender for Endpoint    :b4, after b3, 7d');
-            if (!deploymentStatus['EPA']) 
+            }
+            if (!deploymentStatus['EPA'] || !deploymentStatus['EPAConn']) {
                 tasks.push('    Private Access Setup     :b5, after a5, 14d');
-            if (!deploymentStatus['AppProtection']) 
+            }
+            if (!deploymentStatus['AppProtection']) {
                 tasks.push('    App Protection Policies  :b6, after b5, 7d');
+            }
 
             // Advanced Features tasks
-            if (!deploymentStatus['IGA']) 
+            if (!deploymentStatus['IGA'] || !deploymentStatus['AccessReview'] || !deploymentStatus['PIM']) {
                 tasks.push('    Identity Governance      :c1, after b2, 14d');
-            if (!deploymentStatus['AccessReview']) 
                 tasks.push('    Access Reviews           :c2, after c1, 7d');
-            if (!deploymentStatus['PIM']) 
                 tasks.push('    PIM Implementation      :c3, after c2, 7d');
-            if (!deploymentStatus['GSA']) 
+            }
+            if (!deploymentStatus['GSA'] || !deploymentStatus['EIA']) {
                 tasks.push('    Global Secure Access    :c4, after b5, 14d');
-            if (!deploymentStatus['VID']) 
+            }
+            if (!deploymentStatus['VID'] || !deploymentStatus['VIDCred'] || !deploymentStatus['VIDWorkflow']) {
                 tasks.push('    Verified ID Setup       :c5, after c1, 14d');
-            if (!deploymentStatus['EndpointAnalytics']) 
+            }
+            if (!deploymentStatus['EndpointAnalytics']) {
                 tasks.push('    Advanced Analytics      :c6, after c4, 14d');
-            if (!deploymentStatus['DSPM']) 
+            }
+            if (!deploymentStatus['DSPM'] || !deploymentStatus['EndpointDLP'] || !deploymentStatus['PurAud']) {
                 tasks.push('    DSPM Implementation     :c7, after b4, 21d');
+            }
 
             // Only generate the chart if there are remaining tasks
             if (tasks.length === 0) {
