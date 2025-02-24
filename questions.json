@@ -1,28 +1,10 @@
 {
     "questions": [
         {
-            "id": "CloudID",
-            "text": "Have you configured Cloud Identity?",
-            "description": "Cloud Identity provides the foundation for managing user identities and access in Microsoft 365.",
-            "docLink": "https://learn.microsoft.com/en-us/entra/fundamentals/whatis"
-        },
-        {
-            "id": "IntuneEnroll",
-            "text": "Have you configured Intune enrollment?",
-            "description": "Device enrollment enables device management in Microsoft Intune.",
-            "docLink": "https://learn.microsoft.com/en-us/mem/intune/enrollment/device-enrollment"
-        },
-        {
             "id": "MDE",
             "text": "Have you deployed Microsoft Defender for Endpoint?",
             "description": "Defender for Endpoint provides advanced endpoint protection against cyber threats.",
             "docLink": "https://learn.microsoft.com/en-us/microsoft-365/security/defender-endpoint/microsoft-defender-endpoint"
-        },
-        {
-            "id": "MFA",
-            "text": "Have you deployed Multifactor Authentication?",
-            "description": "MFA adds an additional layer of security by requiring two or more verification methods.",
-            "docLink": "https://learn.microsoft.com/en-us/entra/identity/authentication/concept-mfa-howitworks"
         },
         {
             "id": "CA",
@@ -32,11 +14,29 @@
             "children": ["MFA", "CloudID"]
         },
         {
+            "id": "CloudID",
+            "text": "Have you configured Cloud Identity?",
+            "description": "Cloud Identity provides the foundation for managing user identities and access in Microsoft 365.",
+            "docLink": "https://learn.microsoft.com/en-us/entra/fundamentals/whatis"
+        },
+        {
+            "id": "MFA",
+            "text": "Have you deployed Multifactor Authentication?",
+            "description": "MFA adds an additional layer of security by requiring two or more verification methods.",
+            "docLink": "https://learn.microsoft.com/en-us/entra/identity/authentication/concept-mfa-howitworks"
+        },
+        {
             "id": "IntuneCompPol",
             "text": "Have you configured Intune compliance policies?",
             "description": "Compliance policies define the rules and settings devices must meet to be compliant.",
             "docLink": "https://learn.microsoft.com/en-us/mem/intune/protect/device-compliance-get-started",
             "children": ["IntuneEnroll", "AppProtection"]
+        },
+        {
+            "id": "IntuneEnroll",
+            "text": "Have you configured Intune enrollment?",
+            "description": "Device enrollment enables device management in Microsoft Intune.",
+            "docLink": "https://learn.microsoft.com/en-us/mem/intune/enrollment/device-enrollment"
         },
         {
             "id": "MDVM",
