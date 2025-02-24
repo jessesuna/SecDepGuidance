@@ -167,6 +167,31 @@
                 display: none;
             }
         }
+        .loading-spinner {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(0,0,0,.1);
+            border-radius: 50%;
+            border-top-color: #0066cc;
+            animation: spin 1s ease-in-out infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .mermaid-container {
+            position: relative;
+            min-height: 100px;
+        }
+        .mermaid-container.loading .mermaid {
+            visibility: hidden;
+        }
+        .mermaid-container .loading-spinner {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
     </style>
 </head>
 <body>
@@ -574,21 +599,11 @@
             const isDetailed = document.getElementById('diagramToggle').checked;
             
             try {
-                // Clear existing diagram
-                mermaidDiv.innerHTML = '';
-                
-                // Generate new diagram
                 const diagram = isDetailed ? 
                     await generateMermaidDiagram(deploymentStatus) : 
                     await generateSimplifiedDiagram(deploymentStatus);
                 
-                // Create new diagram container
-                mermaidDiv.innerHTML = `<div class="mermaid">${diagram}</div>`;
-                
-                // Initialize Mermaid with a slight delay
-                setTimeout(() => {
-                    mermaid.init(undefined, ".mermaid");
-                }, 100);
+                await renderDiagram(mermaidDiv, diagram);
             } catch (error) {
                 console.error('Error generating diagram:', error);
             }
@@ -686,21 +701,11 @@
             const isDetailed = document.getElementById('diagramToggle').checked;
             
             try {
-                // Clear existing diagram
-                mermaidDiv.innerHTML = '';
-                
-                // Generate new diagram
                 const diagram = isDetailed ? 
                     await generateMermaidDiagram(deploymentStatus) : 
                     await generateSimplifiedDiagram(deploymentStatus);
                 
-                // Create new diagram container
-                mermaidDiv.innerHTML = `<div class="mermaid">${diagram}</div>`;
-                
-                // Initialize Mermaid with a slight delay
-                setTimeout(() => {
-                    mermaid.init(undefined, ".mermaid");
-                }, 100);
+                await renderDiagram(mermaidDiv, diagram);
             } catch (error) {
                 console.error('Error updating diagram:', error);
             }
@@ -725,43 +730,85 @@
             document.getElementById('exportPDF')?.addEventListener('click', exportToPDF);
         });
 
-        async function exportToPDF() {
-            const element = document.getElementById('results');
-            const exportButton = document.getElementById('exportPDF');
+        function formatContentForPDF(content) {
+            // Remove any HTML tags
+            let text = content.replace(/<[^>]+>/g, '');
             
-            // Hide the export button temporarily
-            exportButton.style.display = 'none';
+            // Replace HTML entities
+            text = text.replace(/&nbsp;/g, ' ')
+                       .replace(/&amp;/g, '&')
+                       .replace(/&lt;/g, '<')
+                       .replace(/&gt;/g, '>')
+                       .replace(/&quot;/g, '"');
             
-            // Wait for all Mermaid diagrams to render
-            await mermaid.init();
+            // Clean up multiple spaces and lines
+            text = text.replace(/\s+/g, ' ')
+                       .replace(/\n\s*\n/g, '\n')
+                       .trim();
             
-            // Configure PDF options
-            const opt = {
-                margin: 10,
-                filename: 'security-assessment-results.pdf',
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { 
-                    scale: 2,
-                    useCORS: true,
-                    logging: false
-                },
-                jsPDF: { 
-                    unit: 'mm', 
-                    format: 'a4', 
-                    orientation: 'portrait' 
-                }
-            };
+            return text;
+        }
 
-            // Generate PDF
-            html2pdf().set(opt).from(element).save()
-                .then(() => {
-                    // Show the export button again
-                    exportButton.style.display = 'block';
-                })
-                .catch(err => {
-                    console.error('PDF generation failed:', err);
-                    exportButton.style.display = 'block';
+        // Updated exportToPDF function
+        async function exportToPDF() {
+            try {
+                const doc = new jsPDF();
+                
+                // Add title and date
+                doc.setFontSize(16);
+                doc.text('Security Deployment Assessment Results', 20, 20);
+                
+                doc.setFontSize(10);
+                doc.text(`Generated: ${new Date().toLocaleDateString()}`, 20, 30);
+
+                // Get and format recommendations
+                const recommendationsDiv = document.getElementById('recommendations');
+                const formattedText = formatContentForPDF(recommendationsDiv.innerHTML);
+                
+                // Add content with proper formatting
+                doc.setFontSize(12);
+                const lines = doc.splitTextToSize(formattedText, 170);
+                
+                let y = 40;
+                lines.forEach(line => {
+                    if (y > 280) {
+                        doc.addPage();
+                        y = 20;
+                    }
+                    doc.text(line, 20, y);
+                    y += 7;
                 });
+
+                // Save the PDF
+                doc.save('security-assessment-results.pdf');
+            } catch (error) {
+                console.error('Error generating PDF:', error);
+                alert('Failed to generate PDF. Please try again.');
+            }
+        }
+
+        // Update the renderDiagram function
+        async function renderDiagram(mermaidDiv, diagram) {
+            // Show loading state
+            mermaidDiv.className = 'mermaid-container loading';
+            mermaidDiv.innerHTML = `
+                <div class="loading-spinner"></div>
+                <div class="mermaid">${diagram}</div>
+            `;
+
+            try {
+                // Wait for next frame to ensure DOM is ready
+                await new Promise(resolve => requestAnimationFrame(resolve));
+                
+                // Initialize Mermaid
+                await mermaid.init(undefined, mermaidDiv.querySelector(".mermaid"));
+                
+                // Remove loading state
+                mermaidDiv.className = 'mermaid-container';
+            } catch (error) {
+                console.error('Error rendering diagram:', error);
+                mermaidDiv.innerHTML = '<div class="error">Error rendering diagram</div>';
+            }
         }
     </script>
 </body>
