@@ -569,21 +569,10 @@
                 }
             });
 
-            // Update the UI
-            const mermaidDiv = document.getElementById('mermaidChart');
-            const isDetailed = document.getElementById('diagramToggle').checked;
-            const diagram = isDetailed ? 
-                await generateMermaidDiagram(deploymentStatus) : 
-                await generateSimplifiedDiagram(deploymentStatus);
-            
-            mermaidDiv.innerHTML = `<div class="mermaid">${diagram}</div>`;
+            // Update the diagram
+            await updateDiagram();
 
-            const recommendationsDiv = document.getElementById('recommendations');
-            recommendationsDiv.innerHTML = marked.parse(recommendationsContent);
-
-            // Re-initialize mermaid
-            mermaid.init(undefined, ".mermaid");
-            
+            // Show results
             document.getElementById('results').style.display = 'block';
             document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
         }
@@ -614,16 +603,24 @@
             const diagram = await loadDiagram('DetailedDiagram.md');
             if (!diagram) return '';
             
-            // Replace the deployment status in the loaded diagram
-            return diagram.replace(
-                /%% Apply deployment status[\s\S]*$/m,
-                `%% Apply deployment status\n${
-                    Object.entries(deploymentStatus)
-                        .map(([id, isDeployed]) => 
-                            `class ${id} ${isDeployed ? 'deployed' : 'notDeployed'}`
-                        ).join('\n')
-                }`
-            );
+            // Ensure we keep all content up to the class definitions
+            const [diagramContent] = diagram.split('classDef deployed');
+            
+            // Rebuild the diagram with deployment status
+            return `${diagramContent}
+                    classDef deployed fill:#90EE90,stroke:#333,stroke-width:2px
+                    classDef notDeployed fill:#FFB6C1,stroke:#333,stroke-width:2px
+                    classDef subgraphStyle fill:#f5f5f5,stroke:#666,stroke-width:2px
+                    classDef core fill:#e1f5fe,stroke:#0277bd,stroke-width:3px
+
+                    %% Apply styles
+                    class Core,DataProtection,ThreatProtection,IdentityProtection,NetworkAccess,IdentityGovernance,EndpointManagement,IdentityProtectiongroup,IdentityGovernance,Foundationcomponents subgraphStyle
+                    class Zero,Foundation,Data,Threats,SecureID,IntuneSuite core
+
+                    %% Apply deployment status
+                    ${Object.entries(deploymentStatus)
+                        .map(([id, isDeployed]) => `class ${id} ${isDeployed ? 'deployed' : 'notDeployed'}`)
+                        .join('\n                    ')}`;
         }
 
         // Update the generateSimplifiedDiagram function
@@ -631,16 +628,24 @@
             const diagram = await loadDiagram('SimplifiedDiagram.md');
             if (!diagram) return '';
             
-            // Replace the deployment status in the loaded diagram
-            return diagram.replace(
-                /%% Apply deployment status[\s\S]*$/m,
-                `%% Apply deployment status\n${
-                    Object.entries(deploymentStatus)
-                        .map(([id, isDeployed]) => 
-                            `class ${id} ${isDeployed ? 'deployed' : 'notDeployed'}`
-                        ).join('\n')
-                }`
-            );
+            // Ensure we keep all content up to the class definitions
+            const [diagramContent] = diagram.split('classDef deployed');
+            
+            // Rebuild the diagram with deployment status
+            return `${diagramContent}
+                    classDef deployed fill:#90EE90,stroke:#333,stroke-width:2px
+                    classDef notDeployed fill:#FFB6C1,stroke:#333,stroke-width:2px
+                    classDef subgraphStyle fill:#f5f5f5,stroke:#666,stroke-width:2px
+                    classDef core fill:#e1f5fe,stroke:#0277bd,stroke-width:3px
+
+                    %% Apply styles
+                    class Core,KeyIdentity,KeyEndpoint,KeySecurity,KeyData subgraphStyle
+                    class Zero,Foundation,Data,Threats core
+
+                    %% Apply deployment status
+                    ${Object.entries(deploymentStatus)
+                        .map(([id, isDeployed]) => `class ${id} ${isDeployed ? 'deployed' : 'notDeployed'}`)
+                        .join('\n                    ')}`;
         }
 
         // Update the updateDiagram function to handle async
@@ -653,12 +658,17 @@
 
             const mermaidDiv = document.getElementById('mermaidChart');
             const isDetailed = document.getElementById('diagramToggle').checked;
-            const diagram = isDetailed ? 
-                await generateMermaidDiagram(deploymentStatus) : 
-                await generateSimplifiedDiagram(deploymentStatus);
             
-            mermaidDiv.innerHTML = `<div class="mermaid">${diagram}</div>`;
-            mermaid.init();
+            try {
+                const diagram = isDetailed ? 
+                    await generateMermaidDiagram(deploymentStatus) : 
+                    await generateSimplifiedDiagram(deploymentStatus);
+                
+                mermaidDiv.innerHTML = `<div class="mermaid">${diagram}</div>`;
+                await mermaid.init(undefined, ".mermaid");
+            } catch (error) {
+                console.error('Error updating diagram:', error);
+            }
         }
 
         // Make sure mermaid is configured to handle Gantt charts
