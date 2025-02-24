@@ -231,228 +231,23 @@
     </div>
 
     <script>
-        // Define questions array in global scope
-        const questions = [
-            {
-                id: 'CloudID',
-                text: 'Have you configured Cloud Identity?',
-                description: 'Cloud Identity provides the foundation for managing user identities and access in Microsoft 365.',
-                docLink: 'https://learn.microsoft.com/en-us/entra/fundamentals/whatis'
-            },
-            {
-                id: 'MFA',
-                text: 'Have you deployed Multifactor Authentication?',
-                description: 'MFA adds an additional layer of security by requiring two or more verification methods.',
-                docLink: 'https://learn.microsoft.com/en-us/entra/identity/authentication/concept-mfa-howitworks'
-            },
-            {
-                id: 'CA',
-                text: 'Have you configured Conditional Access Policies?',
-                description: 'Conditional Access helps you manage access to your resources based on specific conditions.',
-                docLink: 'https://learn.microsoft.com/en-us/entra/identity/conditional-access/overview'
-            },
-            {
-                id: 'IntuneEnroll',
-                text: 'Have you enrolled devices into management?',
-                description: 'Device enrollment allows you to manage and secure your organizations devices.',
-                docLink: 'https://learn.microsoft.com/en-us/mem/intune/enrollment/'
-            },
-            {
-                id: 'IntuneCompPol',
-                text: 'Have you configured compliance policies?',
-                description: 'Compliance policies define the rules and settings devices must meet to be considered compliant.',
-                docLink: 'https://learn.microsoft.com/en-us/mem/intune/protect/device-compliance-get-started'
-            },
-            {
-                id: 'OnboardDevices',
-                text: 'Have you onboarded Windows devices into Microsoft 365?',
-                description: 'Onboarding connects your Windows devices to Microsoft 365 security services.',
-                docLink: 'https://learn.microsoft.com/en-us/purview/device-onboarding-overview'
-            },
-            {
-                id: 'DSPM',
-                text: 'Have you deployed Microsoft Purview Data Security Posture Management?',
-                description: 'DSPM helps you discover, classify, and protect sensitive data across your organization.',
-                docLink: 'https://learn.microsoft.com/en-us/purview/data-security-posture-management'
-            },
-            {
-                id: 'EndpointDLP',
-                text: 'Have you configured Endpoint DLP Policy?',
-                description: 'Endpoint DLP helps prevent sensitive information from being shared inappropriately.',
-                docLink: 'https://learn.microsoft.com/en-us/purview/endpoint-dlp-learn-about'
-            },
-            {
-                id: 'XDR',
-                text: 'Have you deployed M365 Defender for XDR?',
-                description: 'Extended Detection and Response (XDR) provides unified security incident detection and response.',
-                docLink: 'https://learn.microsoft.com/en-us/microsoft-365/security/defender/microsoft-365-defender'
-            },
-            {
-                id: 'DID',
-                text: 'Have you deployed Defender for Identity?',
-                description: 'Defender for Identity protects your on-premises Active Directory identities.',
-                docLink: 'https://learn.microsoft.com/en-us/defender-for-identity/what-is'
-            },
-            {
-                id: 'MDO',
-                text: 'Have you deployed Defender for Office 365?',
-                description: 'Protects your organization against malicious threats from email messages, links and collaboration tools.',
-                docLink: 'https://learn.microsoft.com/en-us/microsoft-365/security/office-365-security/defender-for-office-365'
-            },
-            {
-                id: 'MDCA',
-                text: 'Have you deployed Defender for Cloud Apps?',
-                description: 'Cloud Access Security Broker that provides rich visibility and control over data travel.',
-                docLink: 'https://learn.microsoft.com/en-us/defender-cloud-apps/what-is-defender-for-cloud-apps'
-            },
-            {
-                id: 'PurAud',
-                text: 'Have you deployed Purview Audit?',
-                description: 'Microsoft Purview auditing solutions provide an integrated solution to help organizations effectively respond to security events, forensic investigations, internal investigations, and compliance obligations.',
-                docLink: 'https://learn.microsoft.com/en-us/purview/audit-solutions-overview'
-            },
-            {
-                id: 'MDE',
-                text: 'Have you deployed Microsoft Defender for Endpoint?',
-                description: 'Microsoft Defender for Endpoint is an enterprise endpoint security platform that helps defend against advanced persistent threats.',
-                docLink: 'https://learn.microsoft.com/en-us/defender-endpoint/production-deployment'
-            },
-            {
-                id: 'MDVM',
-                text: 'Have you deployed Microsoft Defender for Vulnerability Management',
-                description: 'Microsoft Defender Vulnerability Management standalone is a comprehensive vulnerability management solution to access continuous asset visibility, in-depth vulnerability assessments, and risk-based prioritization to help teams address critical vulnerabilities and misconfigurations.',
-                docLink: 'https://learn.microsoft.com/en-us/defender-vulnerability-management/'
-            },
-            {
-                id: 'RCA',
-                text: 'Have you configured Risk-Based Conditional Access?',
-                description: 'Risk-based Conditional Access helps protect your organization by analyzing signals in real-time to detect and respond to risks.',
-                docLink: 'https://learn.microsoft.com/en-us/entra/identity/conditional-access/howto-conditional-access-policy-risk'
-            },
-            {
-                id: 'IDProtection',
-                text: 'Have you deployed Entra Identity Protection?',
-                description: 'Identity Protection uses machine learning to detect and prevent identity-based risks.',
-                docLink: 'https://learn.microsoft.com/en-us/entra/id-protection/overview-identity-protection'
-            },
-            {
-                id: 'IDProtAlerts',
-                text: 'Have you configured Identity Protection Alerts and Monitoring?',
-                description: 'Set up alerts and monitoring for identity risks and suspicious activities.',
-                docLink: 'https://learn.microsoft.com/en-us/entra/id-protection/howto-identity-protection-configure-notifications'
-            },
-            {
-                id: 'EPA',
-                text: 'Have you deployed Entra Private Access?',
-                description: 'Entra Private Access provides secure access to private applications without VPNs.',
-                docLink: 'https://learn.microsoft.com/en-us/entra/identity/private-access/private-access-overview'
-            },
-            {
-                id: 'EPAConn',
-                text: 'Have you deployed Entra Private Access Connector?',
-                description: 'The connector enables secure access to on-premises applications.',
-                docLink: 'https://learn.microsoft.com/en-us/entra/identity/private-access/deployment-guide'
-            },
-            {
-                id: 'GSA',
-                text: 'Have you configured Entra Global Secure Access SSE?',
-                description: 'Global Secure Access provides secure connectivity for remote workers.',
-                docLink: 'https://learn.microsoft.com/en-us/entra/global-secure-access/overview'
-            },
-            {
-                id: 'EIA',
-                text: 'Have you deployed Entra Internet Access?',
-                description: 'Secure internet access and web filtering for your organization.',
-                docLink: 'https://learn.microsoft.com/en-us/entra/internet-access/overview'
-            },
-            {
-                id: 'VID',
-                text: 'Have you deployed Entra Verified ID?',
-                description: 'Enables issuance and verification of decentralized identity credentials.',
-                docLink: 'https://learn.microsoft.com/en-us/entra/verified-id/overview'
-            },
-            {
-                id: 'VIDCred',
-                text: 'Have you configured Verified Credentials?',
-                description: 'Set up and manage verifiable credentials for your organization.',
-                docLink: 'https://learn.microsoft.com/en-us/entra/verified-id/verifiable-credentials-configure'
-            },
-            {
-                id: 'VIDWorkflow',
-                text: 'Have you configured Verification Workflow?',
-                description: 'Set up workflows for issuing and verifying credentials.',
-                docLink: 'https://learn.microsoft.com/en-us/entra/verified-id/verifiable-credentials-configure-workflow'
-            },
-            {
-                id: 'IGA',
-                text: 'Have you deployed Entra Identity Governance?',
-                description: 'Manage identity lifecycle, access reviews, and entitlements.',
-                docLink: 'https://learn.microsoft.com/en-us/entra/id-governance/'
-            },
-            {
-                id: 'AccessReview',
-                text: 'Have you configured Access Reviews?',
-                description: 'Regular reviews of user access rights to maintain security.',
-                docLink: 'https://learn.microsoft.com/en-us/entra/id-governance/access-reviews-overview'
-            },
-            {
-                id: 'PIM',
-                text: 'Have you implemented Privileged Identity Management?',
-                description: 'Just-in-time privileged access management and controls.',
-                docLink: 'https://learn.microsoft.com/en-us/entra/id-governance/privileged-identity-management/pim-configure'
-            },
-            {
-                id: 'EndpointAnalytics',
-                text: 'Have you deployed Advanced Endpoint Analytics?',
-                description: 'Monitor and improve end-user experience with proactive insights and recommendations.',
-                docLink: 'https://learn.microsoft.com/en-us/mem/analytics/'
-            },
-            {
-                id: 'RemoteHelp',
-                text: 'Have you implemented Remote Help?',
-                description: 'Secure remote assistance solution for your help desk to support end users.',
-                docLink: 'https://learn.microsoft.com/en-us/mem/intune/remote-actions/remote-help'
-            },
-            {
-                id: 'EPM',
-                text: 'Have you configured Endpoint Privilege Management?',
-                description: 'Manage administrative privileges on Windows and macOS devices.',
-                docLink: 'https://learn.microsoft.com/en-us/mem/intune/protect/endpoint-privilege-management'
-            },
-            {
-                id: 'SpecializedDevices',
-                text: 'Have you configured Specialized Device Management?',
-                description: 'Manage multi-user devices, kiosks, and other specialized scenarios.',
-                docLink: 'https://learn.microsoft.com/en-us/mem/intune/configuration/device-restrictions-configure'
-            },
-            {
-                id: 'AutoPilot',
-                text: 'Have you implemented Windows Autopilot?',
-                description: 'Zero-touch device provisioning and deployment.',
-                docLink: 'https://learn.microsoft.com/en-us/mem/autopilot/windows-autopilot'
-            },
-            {
-                id: 'AppManagement',
-                text: 'Have you configured Advanced App Management?',
-                description: 'Comprehensive application lifecycle management and protection.',
-                docLink: 'https://learn.microsoft.com/en-us/mem/intune/apps/app-management'
-            },
-            {
-                id: 'AppProtection',
-                text: 'Have you set up App Protection Policies?',
-                description: 'Protect corporate data in mobile applications.',
-                docLink: 'https://learn.microsoft.com/en-us/mem/intune/apps/app-protection-policies'
-            },
-            {
-                id: 'Cloudpki',
-                text: 'Have you set up Intune Cloud PKI?',
-                description: 'Microsoft Cloud PKI is a cloud-based service that simplifies and automates certificate lifecycle management for Intune-managed devices.',
-                docLink: 'https://learn.microsoft.com/en-us/mem/intune/protect/microsoft-cloud-pki-overview'
+        // Replace the existing questions array with a function to load questions
+        async function loadQuestions() {
+            try {
+                const response = await fetch('./questions.json');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                return data.questions;
+            } catch (error) {
+                console.error('Error loading questions:', error);
+                return [];
             }
-        ];
+        }
 
         // Function to create question elements
-        function createQuestionElements() {
+        function createQuestionElements(questions) {
             const container = document.getElementById('questionsContainer');
             if (!container) {
                 console.error('Questions container not found!');
@@ -531,6 +326,7 @@
         async function generateResults() {
             console.log('Starting generateResults');
             const deploymentStatus = {};
+            const questions = await loadQuestions();
             questions.forEach(q => {
                 const radioValue = document.querySelector(`input[name="${q.id}"]:checked`).value;
                 deploymentStatus[q.id] = radioValue === 'true';
@@ -679,6 +475,7 @@
         // Update the updateDiagram function for consistency
         async function updateDiagram() {
             const deploymentStatus = {};
+            const questions = await loadQuestions();
             questions.forEach(q => {
                 const radioValue = document.querySelector(`input[name="${q.id}"]:checked`).value;
                 deploymentStatus[q.id] = radioValue === 'true';
@@ -708,37 +505,26 @@
             }
         }
 
-        // Make sure mermaid is configured to handle Gantt charts
-        document.addEventListener('DOMContentLoaded', function() {
-            mermaid.initialize({ 
-                startOnLoad: true,
-                theme: 'default',
-                gantt: {
-                    titleTopMargin: 25,
-                    barHeight: 20,
-                    barGap: 4,
-                    topPadding: 50,
-                    sidePadding: 75
+        // Update the initialization code
+        document.addEventListener('DOMContentLoaded', async function() {
+            try {
+                // Load questions first
+                const questions = await loadQuestions();
+                if (!questions.length) {
+                    throw new Error('Failed to load questions');
                 }
-            });
-            createQuestionElements();
 
-            // Add event listener for PDF export
-            document.getElementById('exportPDF')?.addEventListener('click', exportToPDF);
-
-            // Add toggle functionality
-            const implementationToggle = document.getElementById('showImplementationSteps');
-            
-            implementationToggle.addEventListener('change', function() {
-                const steps = document.querySelectorAll('.implementation-steps');
-                steps.forEach(step => {
-                    if (this.checked) {
-                        step.classList.remove('hidden');
-                    } else {
-                        step.classList.add('hidden');
-                    }
-                });
-            });
+                // Generate question elements
+                createQuestionElements(questions);
+                
+                // Initialize other components
+                await loadRecommendations();
+                initializeToggles();
+                
+            } catch (error) {
+                console.error('Error during initialization:', error);
+                alert('Failed to load assessment questions. Please refresh the page.');
+            }
         });
 
         /**
