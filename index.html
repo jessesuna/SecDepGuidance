@@ -464,33 +464,94 @@
             });
         }
 
-        // Function to generate results
-        function generateResults() {
+        // Add this function to load and parse the markdown file
+        async function loadRecommendations() {
+            try {
+                const response = await fetch('recommendations.md');
+                const markdown = await response.text();
+                
+                // Split the markdown into sections based on horizontal rules
+                const sections = markdown.split('---').map(section => section.trim());
+                
+                // Parse the sections into a recommendations object
+                const recommendations = {};
+                
+                // First section is always key resources
+                recommendations.keyResources = sections[0];
+                
+                // Parse remaining sections
+                for (let i = 1; i < sections.length; i++) {
+                    const section = sections[i];
+                    // Extract the ID from the header {#ID}
+                    const idMatch = section.match(/\{#(\w+)\}/);
+                    if (idMatch) {
+                        const id = idMatch[1];
+                        // Remove the ID from the content
+                        const content = section.replace(/\{#\w+\}/, '').trim();
+                        // Split into title and content
+                        const titleMatch = content.match(/^### [^\n]+/);
+                        if (titleMatch) {
+                            recommendations[id] = {
+                                title: titleMatch[0],
+                                content: content.replace(titleMatch[0], '').trim()
+                            };
+                        }
+                    }
+                }
+                
+                return recommendations;
+            } catch (error) {
+                console.error('Error loading recommendations:', error);
+                return null;
+            }
+        }
+
+        // Update the generateResults function to use the loaded recommendations
+        async function generateResults() {
             const deploymentStatus = {};
             questions.forEach(q => {
                 const radioValue = document.querySelector(`input[name="${q.id}"]:checked`).value;
                 deploymentStatus[q.id] = radioValue === 'true';
             });
 
-            // Handle the main diagram
+            // Load recommendations
+            const recommendations = await loadRecommendations();
+            if (!recommendations) {
+                console.error('Failed to load recommendations');
+                return;
+            }
+
+            // Generate recommendations content
+            let recommendationsContent = '## Recommended Next Steps\n\n';
+            
+            // Add key resources
+            recommendationsContent += recommendations.keyResources + '\n';
+
+            // Foundation (30 Days)
+            let foundationNeeded = false;
+            if (!deploymentStatus['CloudID'] || !deploymentStatus['MFA'] || !deploymentStatus['CA'] || 
+                !deploymentStatus['IntuneEnroll'] || !deploymentStatus['IntuneCompPol'] || !deploymentStatus['MDVM']) {
+                recommendationsContent += '## First 30 Days: Foundation and Quick Wins\n\n';
+                foundationNeeded = true;
+            }
+
+            // Add specific recommendations based on deployment status
+            Object.entries(deploymentStatus).forEach(([id, isDeployed]) => {
+                if (!isDeployed && recommendations[id]) {
+                    recommendationsContent += recommendations[id].title + '\n';
+                    recommendationsContent += recommendations[id].content + '\n';
+                }
+            });
+
+            // Update the UI
             const mermaidDiv = document.getElementById('mermaidChart');
             const diagram = generateSimplifiedDiagram(deploymentStatus);
             mermaidDiv.innerHTML = `<div class="mermaid">${diagram}</div>`;
 
-            // Generate recommendations and Gantt chart separately
             const recommendationsDiv = document.getElementById('recommendations');
-            const recommendationsContent = generateRecommendations(deploymentStatus);
-            
-            // Create a separate div for the Gantt chart
-            const ganttChart = generateGanttChart(deploymentStatus);
-            
-            // Combine content but keep Mermaid diagram separate
-            recommendationsDiv.innerHTML = marked.parse(recommendationsContent) + 
-                `<div class="mermaid">
-                    ${ganttChart}
-                </div>`;
+            recommendationsDiv.innerHTML = marked.parse(recommendationsContent);
 
-            // Re-initialize mermaid to render all diagrams
+            // Re-initialize mermaid
             mermaid.init(undefined, ".mermaid");
             
             document.getElementById('results').style.display = 'block';
@@ -682,254 +743,6 @@
                 %% Apply styles
                 class Core,DataProtection,ThreatProtection,IdentityProtection,NetworkAccess,IdentityGovernance,EndpointManagement,IdentityProtectiongroup,IdentityGovernance,Foundationcomponents, subgraphStyle
                 class Zero,Foundation,Data,Threats,SecureID,IntuneSuite core
-                %% Apply deployment status
-                ${Object.entries(deploymentStatus).map(([id, isDeployed]) => 
-                    `class ${id} ${isDeployed ? 'deployed' : 'notDeployed'}`
-                ).join('\n')}
-            `;
-        }
-
-        // Function to generate recommendations
-        const markdownContent = {
-            keyResources: `
-### Key Resources
-- [Zero Trust Rapid Deployment Plan](https://learn.microsoft.com/en-us/security/zero-trust/zero-trust-ramp-overview)
-- [Zero Trust deployment plan with Microsoft 365](https://learn.microsoft.com/en-us/microsoft-365/security/microsoft-365-zero-trust?view=o365-worldwide)
-- [Zero Trust Assessment Workshop](https://microsoft.github.io/zerotrustassessment/)
-- [Zero Trust Assessment Tool](https://microsoft.github.io/zerotrustassessment/docs/app-permissions)
-- [Purview Deployment Models](https://learn.microsoft.com/en-us/purview/deploymentmodels/depmod-overview)
-`,
-
-            recommendations: {
-                // Identity and Access Management
-                CloudID: {
-                    title: '### Identity Foundation Priority',
-                    content: `- Configure Cloud Identity as your foundation
-- Review Entra ID Protection features
-- Implement basic identity management
-- Reference: [Zero Trust deployment plan](https://learn.microsoft.com/en-us/microsoft-365/security/microsoft-365-zero-trust?view=o365-worldwide#identity)
-`
-                },
-                MFA: {
-                    title: '### Critical Security Enhancement',
-                    content: `- Deploy Multifactor Authentication immediately
-- Configure MFA for all users
-- Set up conditional access policies
-- Use the [Zero Trust Assessment Tool](https://microsoft.github.io/zerotrustassessment/docs/app-permissions) to validate your MFA configuration
-`
-                },
-                CA: {
-                    title: '### Conditional Access Implementation',
-                    content: `- Configure basic Conditional Access policies
-- Set up risk-based policies
-- Implement device-based access controls
-- Reference: [Conditional Access documentation](https://learn.microsoft.com/en-us/entra/identity/conditional-access/overview)
-`
-                },
-
-                // Device Management
-                IntuneEnroll: {
-                    title: '### Device Enrollment',
-                    content: `- Begin device enrollment in Intune
-- Configure enrollment restrictions
-- Set up device categories
-- Reference: [Intune enrollment guide](https://learn.microsoft.com/en-us/mem/intune/enrollment/)
-`
-                },
-                IntuneCompPol: {
-                    title: '### Compliance Policies',
-                    content: `- Configure basic compliance policies
-- Set up compliance policy rules
-- Define actions for non-compliance
-- Reference: [Device compliance policies](https://learn.microsoft.com/en-us/mem/intune/protect/device-compliance-get-started)
-`
-                },
-
-                // Threat Protection
-                XDR: {
-                    title: '### Enhanced Threat Protection',
-                    content: `- Deploy Microsoft 365 Defender (XDR)
-- Configure EDR capabilities
-- Set up advanced threat protection
-- Enable automated investigation and response
-- Reference: [Microsoft 365 Defender](https://learn.microsoft.com/en-us/microsoft-365/security/defender/microsoft-365-defender)
-`
-                },
-                MDVM: {
-                    title: '### Vulnerability Management',
-                    content: `- Deploy Defender for Vulnerability Management
-- Run initial vulnerability assessment
-- Create preliminary remediation plan
-- Reference: [Defender Vulnerability Management](https://learn.microsoft.com/en-us/defender-vulnerability-management/)
-`
-                },
-
-                // Data Protection
-                DSPM: {
-                    title: '### Data Security Posture Management',
-                    content: `- Deploy Microsoft Purview DSPM
-- Configure data discovery and classification
-- Set up sensitive information types
-- Reference: [Purview DSPM](https://learn.microsoft.com/en-us/purview/data-security-posture-management)
-`
-                },
-                EndpointDLP: {
-                    title: '### Data Loss Prevention',
-                    content: `- Configure Endpoint DLP policies
-- Set up DLP rules and actions
-- Monitor DLP alerts and incidents
-- Reference: [Endpoint DLP](https://learn.microsoft.com/en-us/purview/endpoint-dlp-learn-about)
-`
-                },
-
-                // Advanced Features
-                IGA: {
-                    title: '### Identity Governance',
-                    content: `- Deploy Identity Governance
-- Configure access reviews
-- Set up entitlement management
-- Reference: [Identity Governance](https://learn.microsoft.com/en-us/entra/id-governance/)
-`
-                },
-                PIM: {
-                    title: '### Privileged Identity Management',
-                    content: `- Configure PIM roles and assignments
-- Set up approval workflows
-- Implement just-in-time access
-- Reference: [PIM documentation](https://learn.microsoft.com/en-us/entra/id-governance/privileged-identity-management/)
-`
-                },
-                
-                // Additional components...
-                EndpointAnalytics: {
-                    title: '### Advanced Analytics',
-                    content: `- Deploy Advanced Endpoint Analytics
-- Configure proactive remediations
-- Set up performance monitoring
-- Reference: [Endpoint Analytics](https://learn.microsoft.com/en-us/mem/analytics/)
-`
-                },
-                Cloudpki: {
-                    title: '### Microsoft Cloud PKI',
-                    content: `- Create root CA
-- Create Issuing CA
-- Configure Certificate Profiles
-- Reference: [Cloud PKI Documentation](https://learn.microsoft.com/en-us/mem/intune/protect/microsoft-cloud-pki-overview)
-`
-                }
-                // Add more components as needed...
-            }
-        };
-
-        function generateRecommendations(deploymentStatus) {
-            let recommendations = '## Recommended Next Steps\n\n';
-            
-            // Add key resources
-            recommendations += markdownContent.keyResources + '\n';
-
-            // Foundation (30 Days)
-            let foundationNeeded = false;
-            if (!deploymentStatus['CloudID'] || !deploymentStatus['MFA'] || !deploymentStatus['CA'] || 
-                !deploymentStatus['IntuneEnroll'] || !deploymentStatus['IntuneCompPol'] || !deploymentStatus['MDVM']) {
-                recommendations += '## First 30 Days: Foundation and Quick Wins\n\n';
-                foundationNeeded = true;
-            }
-
-            // Add specific recommendations based on deployment status
-            Object.entries(deploymentStatus).forEach(([id, isDeployed]) => {
-                if (!isDeployed && markdownContent.recommendations[id]) {
-                    recommendations += markdownContent.recommendations[id].title + '\n';
-                    recommendations += markdownContent.recommendations[id].content + '\n';
-                }
-            });
-
-            return recommendations;
-        }
-
-        function generateSimplifiedDiagram(deploymentStatus) {
-            return `
-            flowchart LR
-                %% Core components
-                subgraph Core["Zero Trust Core"]
-                    Zero["Zero Trust Security Suite"]
-                    Foundation["Zero Trust Foundation"]
-                    Data["Data Protection"]
-                    Threats["Threat Defense"]
-                end
-
-                %% Core relationships
-                Foundation --> Zero
-                Data --> Zero
-                Threats --> Zero
-
-                %% Add click events for core components
-                click Zero "https://learn.microsoft.com/en-us/security/zero-trust/zero-trust-overview" _blank
-                click Foundation "https://learn.microsoft.com/en-us/security/zero-trust/zero-trust-overview" _blank
-                click Data "https://learn.microsoft.com/en-us/purview/data-protection" _blank
-                click Threats "https://learn.microsoft.com/en-us/microsoft-365/security/defender/microsoft-365-defender" _blank
-
-                %% Key Components
-                subgraph KeyIdentity["Foundation"]
-                    CloudID["Cloud Identity"]
-                    MFA["MFA"]
-                    CA["Conditional Access"]
-                    IntuneEnroll["Device Enrollment"]
-                    IntuneCompPol["Compliance Policies"]
-                end
-                CloudID --> MFA
-                MFA --> CA
-                CA --> Foundation
-                IntuneEnroll --> IntuneCompPol
-                IntuneCompPol --> CA
-
-                %% Add click events for Foundation components
-                click CloudID "https://learn.microsoft.com/en-us/entra/fundamentals/whatis" _blank
-                click MFA "https://learn.microsoft.com/en-us/entra/identity/authentication/concept-mfa-howitworks" _blank
-                click CA "https://learn.microsoft.com/en-us/entra/identity/conditional-access/overview" _blank
-                click IntuneEnroll "https://learn.microsoft.com/en-us/mem/intune/enrollment/" _blank
-                click IntuneCompPol "https://learn.microsoft.com/en-us/mem/intune/protect/device-compliance-get-started" _blank
-
-                subgraph KeySecurity["Threat Protection"]
-                    XDR["M365 Defender XDR"]
-                    MDVM["Defender VM"]
-                    DID["Defender Identity"]
-                    MDE["Defender Endpoint"]
-                    MDCA["Defender Cloud Apps"]
-                end
-                DID --> XDR
-                MDE --> XDR
-                MDCA --> XDR
-                XDR --> Threats
-                MDVM --> Threats
-
-                %% Add click events for Threat Protection components
-                click XDR "https://learn.microsoft.com/en-us/microsoft-365/security/defender/microsoft-365-defender" _blank
-                click MDVM "https://learn.microsoft.com/en-us/defender-vulnerability-management/" _blank
-                click DID "https://learn.microsoft.com/en-us/defender-for-identity/what-is" _blank
-                click MDE "https://learn.microsoft.com/en-us/microsoft-365/security/defender-endpoint/microsoft-defender-endpoint" _blank
-                click MDCA "https://learn.microsoft.com/en-us/defender-cloud-apps/what-is-defender-for-cloud-apps" _blank
-
-                subgraph KeyData["Data"]
-                    DSPM["Purview DSPM"]
-                    EndpointDLP["Endpoint DLP"]
-                end
-                DSPM --> Data
-                EndpointDLP --> Data
-
-                %% Add click events for Data Protection components
-                click DSPM "https://learn.microsoft.com/en-us/purview/data-security-posture-management" _blank
-                click EndpointDLP "https://learn.microsoft.com/en-us/purview/endpoint-dlp-learn-about" _blank
-
-                %% Styling
-                classDef deployed fill:#90EE90,stroke:#333,stroke-width:2px
-                classDef notDeployed fill:#FFB6C1,stroke:#333,stroke-width:2px
-                classDef subgraphStyle fill:#f5f5f5,stroke:#666,stroke-width:2px
-                classDef core fill:#e1f5fe,stroke:#0277bd,stroke-width:3px
-
-                %% Apply styles
-                class Core,KeyIdentity,KeyEndpoint,KeySecurity,KeyData subgraphStyle
-                class Zero,Foundation,Data,Threats,SecureID,IntuneSuite core
-
                 %% Apply deployment status
                 ${Object.entries(deploymentStatus).map(([id, isDeployed]) => 
                     `class ${id} ${isDeployed ? 'deployed' : 'notDeployed'}`
