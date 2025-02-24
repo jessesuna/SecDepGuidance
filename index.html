@@ -822,21 +822,60 @@
                                 yPos = margin;
                             }
 
-                            doc.setTextColor(0, 0, 0);
-                            doc.setFontSize(12);
-                            const content = nextElement.textContent.trim();
-                            const splitText = doc.splitTextToSize(content, contentWidth);
-                            
-                            splitText.forEach(line => {
-                                doc.text(line, margin, yPos);
-                                yPos += 7;
+                            // Handle links
+                            if (nextElement.tagName === 'A') {
+                                const linkText = nextElement.textContent.trim();
+                                const linkUrl = nextElement.href;
+                                
+                                doc.setTextColor(0, 102, 204);
+                                doc.setFontSize(12);
+                                const splitText = doc.splitTextToSize(linkText, contentWidth);
+                                
+                                splitText.forEach(line => {
+                                    doc.textWithLink(line, margin, yPos, {
+                                        url: linkUrl
+                                    });
+                                    yPos += 7;
+                                });
+                                
+                                doc.setTextColor(0, 0, 0);
+                            } else {
+                                // Regular text
+                                doc.setTextColor(0, 0, 0);
+                                doc.setFontSize(12);
+                                const content = nextElement.textContent.trim();
+                                const splitText = doc.splitTextToSize(content, contentWidth);
+                                
+                                splitText.forEach(line => {
+                                    doc.text(line, margin, yPos);
+                                    yPos += 7;
+                                });
+                            }
+
+                            // Find and handle nested links
+                            const links = nextElement.getElementsByTagName('a');
+                            Array.from(links).forEach(link => {
+                                const linkText = link.textContent.trim();
+                                const linkUrl = link.href;
+                                
+                                doc.setTextColor(0, 102, 204);
+                                doc.setFontSize(12);
+                                const splitText = doc.splitTextToSize(linkText, contentWidth);
+                                
+                                splitText.forEach(line => {
+                                    doc.textWithLink(line, margin, yPos, {
+                                        url: linkUrl
+                                    });
+                                    yPos += 7;
+                                });
                             });
 
                             nextElement = nextElement.nextElementSibling;
                         }
-                        
-                        yPos += 10;
-                    });
+                            
+                            yPos += 10;
+                        });
+                    }
                 }
 
                 // Save the PDF
