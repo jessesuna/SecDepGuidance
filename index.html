@@ -463,12 +463,13 @@
                 const radioGroup = document.createElement('div');
                 radioGroup.className = 'radio-group';
 
-                q.options.forEach(option => {
+                // Create Yes/No radio buttons
+                ['Yes', 'No'].forEach(option => {
                     const label = document.createElement('label');
                     const input = document.createElement('input');
                     input.type = 'radio';
                     input.name = q.id;
-                    input.value = option.toLowerCase();
+                    input.value = option.toLowerCase() === 'yes' ? 'true' : 'false';
                     
                     label.appendChild(input);
                     label.appendChild(document.createTextNode(' ' + option));
