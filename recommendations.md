@@ -11,35 +11,9 @@
 Focus on establishing core identity and device security.
 
 ### Cloud Identity {#CloudID}
-**Why it's important:**
-- Establishes the foundation for secure identity management
-- Enables centralized user authentication and authorization
-- Reduces risk of credential compromise
-- Simplifies user access management
-
-**Implementation Steps:**
-1. Configure Azure AD Connect
-   - Install latest version of Azure AD Connect
-   - Choose appropriate authentication method
-   - Configure filtering if needed
-2. Set up password hash synchronization
-   - Enable password hash sync in Azure AD Connect
-   - Configure password writeback if needed
-   - Set up self-service password reset
-3. Enable seamless single sign-on
-   - Configure Kerberos decryption key distribution
-   - Add Azure AD URL to intranet zones
-   - Test SSO functionality
-4. Verify synchronization
-   - Check sync status in Azure portal
-   - Validate user attributes
-   - Test user sign-in
-
-**Learn More:**
-- [Technical Documentation](https://learn.microsoft.com/en-us/entra/fundamentals/whatis)
-- [Microsoft Learn Path: Implement Identity Synchronization](https://learn.microsoft.com/en-us/training/paths/implement-identity-synchronization/)
-- [Video Tutorial: Azure AD Connect Setup](https://www.youtube.com/watch?v=MeXuPdJUqD0)
-- [Best Practices Guide](https://learn.microsoft.com/en-us/entra/identity/hybrid/connect/plan-connect-topologies)
+| Why it's important | Implementation Steps | Learn More |
+|-------------------|---------------------|------------|
+| • Establishes the foundation for secure identity management<br>• Enables centralized user authentication and authorization<br>• Reduces risk of credential compromise<br>• Simplifies user access management | 1. Configure Azure AD Connect<br>   • Install latest version of Azure AD Connect<br>   • Choose appropriate authentication method<br>   • Configure filtering if needed<br>2. Set up password hash synchronization<br>   • Enable password hash sync in Azure AD Connect<br>   • Configure password writeback if needed<br>   • Set up self-service password reset<br>3. Enable seamless single sign-on<br>   • Configure Kerberos decryption key distribution<br>   • Add Azure AD URL to intranet zones<br>   • Test SSO functionality<br>4. Verify synchronization<br>   • Check sync status in Azure portal<br>   • Validate user attributes<br>   • Test user sign-in | • [Technical Documentation](https://learn.microsoft.com/en-us/entra/fundamentals/whatis)<br>• [Microsoft Learn Path: Implement Identity Synchronization](https://learn.microsoft.com/en-us/training/paths/implement-identity-synchronization/)<br>• [Video Tutorial: Azure AD Connect Setup](https://www.youtube.com/watch?v=MeXuPdJUqD0)<br>• [Best Practices Guide](https://learn.microsoft.com/en-us/entra/identity/hybrid/connect/plan-connect-topologies) |
 
 ### Multi-Factor Authentication {#MFA}
 **Why it's important:**
