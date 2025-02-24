@@ -650,6 +650,8 @@
 
             // Add recommendations by phase
             Object.entries(recommendations.phases).forEach(([phaseId, phase]) => {
+                console.log(`Processing phase ${phaseId}:`, phase);
+                
                 const pendingItems = Object.entries(phase.items)
                     .filter(([id, _]) => !deploymentStatus[id]);
                 
@@ -658,10 +660,11 @@
                     
                     pendingItems.forEach(([id, content]) => {
                         if (!isDetailed) {
-                            // For simplified view, remove Implementation Steps section
-                            content = content.replace(/### Implementation Steps:[\s\S]*?(?=\n### |$)/g, '');
+                            // For simplified view, remove Implementation Steps section and any content up to the next heading
+                            content = content.replace(/### Implementation Steps[\s\S]*?(?=###|$)/g, '');
                         }
                         recommendationsContent += content + '\n\n';
+                        console.log(`Added recommendation for ${id}, isDetailed: ${isDetailed}`);
                     });
                 }
             });
