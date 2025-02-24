@@ -293,11 +293,10 @@ Build on the foundation with advanced security capabilities.
    - Implement custom risk detections
 
 **Learn More:**
-- [Technical Documentation](https://learn.microsoft.com/en-us/entra/id-protection/)
-- [Microsoft Learn Path: Identity Protection](https://learn.microsoft.com/en-us/training/modules/implement-identity-protection/)
-- [Video Tutorial: Identity Protection Setup](https://www.youtube.com/watch?v=zEklUV2MPxs)
-- [Risk Detection Guide](https://learn.microsoft.com/en-us/entra/id-protection/concept-identity-protection-risks)
-- [Best Practices](https://learn.microsoft.com/en-us/entra/id-protection/howto-identity-protection-configure)
+- [Identity Protection Overview](https://learn.microsoft.com/en-us/entra/id-protection/overview-identity-protection)
+- [Configure Risk Policies](https://learn.microsoft.com/en-us/entra/id-protection/howto-identity-protection-configure)
+- [Investigate Risk Detections](https://learn.microsoft.com/en-us/entra/id-protection/howto-identity-protection-investigate-risk)
+- [Monitor Identity Protection](https://learn.microsoft.com/en-us/entra/id-protection/howto-identity-protection-monitor)
 
 ### App and Data Protection {#AppProtection}
 **Why it's important:**
@@ -487,6 +486,42 @@ Implement comprehensive governance and management.
 - [Deployment Guide](https://learn.microsoft.com/en-us/microsoft-365/compliance/endpoint-dlp-getting-started)
 - [Best Practices](https://learn.microsoft.com/en-us/microsoft-365/compliance/dlp-configure-endpoints)
 
+### Endpoint Privilege Management {#EPM}
+**Why it's important:**
+- Implements least privilege access
+- Reduces security risks
+- Enables just-in-time elevation
+- Improves user experience
+- Maintains productivity while enhancing security
+
+**Implementation Steps:**
+1. Plan privilege management
+   - Define elevation scenarios
+   - Identify privileged operations
+   - Plan security policies
+   - Document requirements
+2. Configure elevation policies
+   - Set up elevation rules
+   - Configure approval workflows
+   - Define time limitations
+   - Enable audit logging
+3. Implement security controls
+   - Configure authentication requirements
+   - Set up application controls
+   - Enable policy enforcement
+   - Configure monitoring
+4. Monitor and maintain
+   - Review elevation requests
+   - Track policy effectiveness
+   - Monitor compliance
+   - Update security policies
+
+**Learn More:**
+- [EPM Overview](https://learn.microsoft.com/en-us/mem/intune/protect/endpoint-privilege-management)
+- [Configure EPM](https://learn.microsoft.com/en-us/mem/intune/protect/endpoint-privilege-management-configure)
+- [Monitor EPM](https://learn.microsoft.com/en-us/mem/intune/protect/endpoint-privilege-management-monitor)
+- [Troubleshoot EPM](https://learn.microsoft.com/en-us/mem/intune/protect/endpoint-privilege-management-troubleshoot)
+
 ### Cloud PKI {#CloudPKI}
 **Why it's important:**
 - Enables secure certificate management
@@ -518,11 +553,10 @@ Implement comprehensive governance and management.
    - Plan certificate renewal
 
 **Learn More:**
-- [Technical Documentation](https://learn.microsoft.com/en-us/mem/intune/protect/microsoft-cloud-pki-overview)
-- [Microsoft Learn Path: Cloud PKI](https://learn.microsoft.com/en-us/training/modules/implement-cloud-pki/)
-- [Video Tutorial: Cloud PKI Setup](https://www.youtube.com/watch?v=example)
-- [Implementation Guide](https://learn.microsoft.com/en-us/mem/intune/protect/cloud-pki-deploy)
-- [Best Practices](https://learn.microsoft.com/en-us/mem/intune/protect/cloud-pki-best-practices)
+- [Certificate Management Overview](https://learn.microsoft.com/en-us/mem/intune/protect/certificates-configure)
+- [Configure Certificate Profiles](https://learn.microsoft.com/en-us/mem/intune/protect/certificates-profile-configure)
+- [SCEP Certificate Profiles](https://learn.microsoft.com/en-us/mem/intune/protect/certificates-scep-configure)
+- [Certificate Connectors](https://learn.microsoft.com/en-us/mem/intune/protect/certificate-connectors)
 
 ### Remote Help {#RemoteHelp}
 **Why it's important:**
@@ -555,11 +589,10 @@ Implement comprehensive governance and management.
    - Update policies
 
 **Learn More:**
-- [Technical Documentation](https://learn.microsoft.com/en-us/mem/intune/remote-actions/remote-help)
-- [Microsoft Learn Path: Remote Help](https://learn.microsoft.com/en-us/training/modules/implement-remote-help/)
-- [Video Tutorial: Remote Help Setup](https://www.youtube.com/watch?v=example)
-- [Implementation Guide](https://learn.microsoft.com/en-us/mem/intune/remote-actions/remote-help-setup)
-- [Best Practices](https://learn.microsoft.com/en-us/mem/intune/remote-actions/remote-help-best-practices)
+- [Remote Help Overview](https://learn.microsoft.com/en-us/mem/intune/remote-actions/remote-help)
+- [Configure Remote Help](https://learn.microsoft.com/en-us/mem/intune/remote-actions/remote-help-setup)
+- [Remote Help Roles](https://learn.microsoft.com/en-us/mem/intune/remote-actions/remote-help-roles)
+- [Monitor Remote Help](https://learn.microsoft.com/en-us/mem/intune/remote-actions/remote-help-monitor)
 
 ### Specialized Device Management {#SpecializedDevices}
 **Why it's important:**
@@ -592,11 +625,10 @@ Implement comprehensive governance and management.
    - Monitor performance
 
 **Learn More:**
-- [Technical Documentation](https://learn.microsoft.com/en-us/mem/intune/configuration/device-restrictions-configure)
-- [Microsoft Learn Path: Device Configuration](https://learn.microsoft.com/en-us/training/modules/configure-intune-device-restrictions/)
-- [Video Tutorial: Specialized Device Setup](https://www.youtube.com/watch?v=example)
-- [Implementation Guide](https://learn.microsoft.com/en-us/mem/intune/configuration/device-restrictions-windows-10)
-- [Best Practices](https://learn.microsoft.com/en-us/mem/intune/fundamentals/best-practices-device-configuration)
+- [Device Restrictions Overview](https://learn.microsoft.com/en-us/mem/intune/configuration/device-restrictions-configure)
+- [Kiosk Settings](https://learn.microsoft.com/en-us/mem/intune/configuration/kiosk-settings)
+- [Shared Device Configuration](https://learn.microsoft.com/en-us/mem/intune/configuration/shared-device-settings-configure)
+- [Device Feature Settings](https://learn.microsoft.com/en-us/mem/intune/configuration/device-features-configure)
 
 ### Windows Autopilot {#AutoPilot}
 **Why it's important:**
@@ -629,11 +661,10 @@ Implement comprehensive governance and management.
    - Refine configurations
 
 **Learn More:**
-- [Technical Documentation](https://learn.microsoft.com/en-us/mem/autopilot/windows-autopilot)
-- [Microsoft Learn Path: Autopilot Deployment](https://learn.microsoft.com/en-us/training/modules/deploy-windows-autopilot/)
-- [Video Tutorial: Autopilot Setup](https://www.youtube.com/watch?v=example)
-- [Implementation Guide](https://learn.microsoft.com/en-us/mem/autopilot/demonstrate-deployment-on-vm)
-- [Best Practices](https://learn.microsoft.com/en-us/mem/autopilot/best-practices)
+- [Autopilot Documentation](https://learn.microsoft.com/en-us/mem/autopilot/)
+- [Register Devices in Autopilot](https://learn.microsoft.com/en-us/mem/autopilot/add-devices)
+- [Configure Deployment Profiles](https://learn.microsoft.com/en-us/mem/autopilot/profiles)
+- [Troubleshooting Guide](https://learn.microsoft.com/en-us/mem/autopilot/troubleshooting)
 
 ### Enterprise App Management {#AppManagement}
 **Why it's important:**
@@ -666,47 +697,79 @@ Implement comprehensive governance and management.
    - Update app configurations
 
 **Learn More:**
-- [Technical Documentation](https://learn.microsoft.com/en-us/mem/intune/apps/app-management)
-- [Microsoft Learn Path: App Management](https://learn.microsoft.com/en-us/training/modules/manage-apps-intune/)
-- [Video Tutorial: App Deployment](https://www.youtube.com/watch?v=example)
-- [Implementation Guide](https://learn.microsoft.com/en-us/mem/intune/apps/app-deployment)
-- [Best Practices](https://learn.microsoft.com/en-us/mem/intune/apps/app-deployment-best-practices)
+- [Technical Documentation](https://learn.microsoft.com/en-us/mem/intune/apps/)
+- [Configure and Manage Apps](https://learn.microsoft.com/en-us/mem/intune/apps/app-configuration-policies-overview)
+- [App Protection Policies](https://learn.microsoft.com/en-us/mem/intune/apps/app-protection-policies)
+- [Deployment Troubleshooting](https://learn.microsoft.com/en-us/mem/intune/apps/troubleshoot-app-install)
 
-### Endpoint Privilege Management {#EPM}
+### Defender for Endpoint {#MDE}
 **Why it's important:**
-- Implements least privilege access
-- Reduces security risks
-- Enables just-in-time elevation
-- Improves user experience
-- Maintains productivity while enhancing security
+- Provides advanced endpoint protection
+- Enables threat hunting capabilities
+- Automates threat response
+- Reduces security incident impact
+- Improves security team efficiency
 
 **Implementation Steps:**
-1. Plan privilege management
-   - Define elevation scenarios
-   - Identify privileged operations
-   - Plan security policies
-   - Document requirements
-2. Configure elevation policies
-   - Set up elevation rules
-   - Configure approval workflows
-   - Define time limitations
-   - Enable audit logging
-3. Implement security controls
-   - Configure authentication requirements
-   - Set up application controls
-   - Enable policy enforcement
-   - Configure monitoring
-4. Monitor and maintain
-   - Review elevation requests
-   - Track policy effectiveness
-   - Monitor compliance
-   - Update security policies
+1. Plan deployment architecture
+   - Assess environment requirements
+   - Define deployment method
+   - Plan network configuration
+   - Prepare pilot group
+2. Configure device onboarding
+   - Set up deployment rings
+   - Configure onboarding packages
+   - Test pilot deployment
+   - Plan full rollout
+3. Implement security policies
+   - Configure attack surface reduction
+   - Set up device control
+   - Enable web protection
+   - Configure exploit protection
+4. Enable advanced features
+   - Set up EDR in block mode
+   - Configure automated investigation
+   - Enable advanced hunting
+   - Implement custom detections
 
 **Learn More:**
-- [Technical Documentation](https://learn.microsoft.com/en-us/mem/intune/protect/endpoint-privilege-management)
-- [Microsoft Learn Path: Privilege Management](https://learn.microsoft.com/en-us/training/modules/implement-endpoint-privilege-management/)
-- [Video Tutorial: EPM Setup](https://www.youtube.com/watch?v=example)
-- [Implementation Guide](https://learn.microsoft.com/en-us/mem/intune/protect/endpoint-privilege-management-setup)
-- [Best Practices](https://learn.microsoft.com/en-us/mem/intune/protect/endpoint-privilege-management-best-practices)
+- [MDE Overview](https://learn.microsoft.com/en-us/microsoft-365/security/defender-endpoint/microsoft-defender-endpoint)
+- [Deployment Guide](https://learn.microsoft.com/en-us/microsoft-365/security/defender-endpoint/deployment-strategy)
+- [Security Baselines](https://learn.microsoft.com/en-us/microsoft-365/security/defender-endpoint/security-baseline)
+- [Advanced Features](https://learn.microsoft.com/en-us/microsoft-365/security/defender-endpoint/advanced-features)
 
-Would you like me to proceed with the detailed content for each consolidated section? 
+### Risk-Based Conditional Access {#RCA}
+**Why it's important:**
+- Enables dynamic access decisions
+- Adapts to real-time risk signals
+- Reduces unauthorized access risk
+- Automates security responses
+- Improves user experience
+
+**Implementation Steps:**
+1. Configure risk detection
+   - Enable Identity Protection
+   - Set up risk detection levels
+   - Configure risk evaluation
+   - Define risk indicators
+2. Implement risk-based policies
+   - Create sign-in risk policies
+   - Set up user risk policies
+   - Configure authentication strength
+   - Define remediation actions
+3. Set up monitoring
+   - Enable risk detection alerts
+   - Configure reporting
+   - Set up incident notifications
+   - Monitor policy effectiveness
+4. Plan remediation processes
+   - Define user communication
+   - Set up self-remediation
+   - Configure admin workflows
+   - Document exception handling
+
+**Learn More:**
+- [Risk-Based CA Overview](https://learn.microsoft.com/en-us/entra/identity/conditional-access/howto-conditional-access-policy-risk)
+- [Configure Risk Policies](https://learn.microsoft.com/en-us/entra/identity/conditional-access/howto-conditional-access-policy-risk-user)
+- [Authentication Strength](https://learn.microsoft.com/en-us/entra/identity/authentication/concept-authentication-strengths)
+- [Monitor Risk Policies](https://learn.microsoft.com/en-us/entra/identity/conditional-access/howto-conditional-access-insights-reporting)
