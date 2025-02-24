@@ -572,6 +572,11 @@
             // Update the diagram
             await updateDiagram();
 
+            // Update recommendations
+            const recommendationsDiv = document.getElementById('recommendations');
+            recommendationsDiv.innerHTML = marked.parse(recommendationsContent);
+            console.log('Updated recommendations');
+
             // Show results
             document.getElementById('results').style.display = 'block';
             document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
