@@ -192,6 +192,53 @@
         .radio-group {
             margin-top: 10px;
         }
+        .question {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+        
+        .parent-question {
+            background-color: #f8f9fa;
+            border-left: 4px solid #0066cc;
+        }
+        
+        .child-question {
+            margin-left: 40px;
+            border-left: 2px solid #6c757d;
+            background-color: #ffffff;
+        }
+        
+        .question-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .child-indicator {
+            color: #6c757d;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        
+        .question.hidden {
+            display: none;
+        }
+        
+        .radio-group {
+            margin-top: 10px;
+        }
+        
+        .question h3 {
+            margin: 0;
+            color: #333;
+        }
+        
+        .parent-question h3 {
+            color: #0066cc;
+        }
     </style>
 </head>
 <body>
@@ -272,6 +319,12 @@
             // Create a map of questions for easy access
             const questionMap = new Map(questions.map(q => [q.id, q]));
 
+            // Find all parent questions (those with children)
+            const parentQuestions = questions.filter(q => q.children);
+            
+            // Create a set of all child IDs for quick lookup
+            const childIds = new Set(parentQuestions.flatMap(q => q.children));
+
             // Function to handle question visibility
             function updateChildQuestions(parentId, isParentYes) {
                 const parentQuestion = questionMap.get(parentId);
@@ -297,20 +350,18 @@
             // Create and append questions
             questions.forEach(q => {
                 const questionDiv = document.createElement('div');
-                questionDiv.className = 'question';
+                const isChild = childIds.has(q.id);
+                
+                // Apply appropriate classes based on whether it's a parent or child
+                questionDiv.className = `question ${isChild ? 'child-question' : 'parent-question'}`;
                 questionDiv.setAttribute('data-id', q.id);
 
-                // Hide child questions initially if parent exists
-                if (q.parent) {
-                    const parentQuestion = questionMap.get(q.parent);
-                    const parentYes = document.querySelector(`#${q.parent}_yes`);
-                    if (parentYes && parentYes.checked) {
-                        questionDiv.classList.add('hidden');
-                    }
-                }
-
-                questionDiv.innerHTML = `
-                    <h3>${q.text}</h3>
+                // Add visual indicator for child questions
+                const questionContent = `
+                    <div class="question-header ${isChild ? 'child-header' : ''}">
+                        ${isChild ? '<span class="child-indicator">↳</span>' : ''}
+                        <h3>${q.text}</h3>
+                    </div>
                     <p>${q.description}</p>
                     <p><a href="${q.docLink}" target="_blank">Learn more</a></p>
                     <div class="radio-group">
@@ -321,6 +372,7 @@
                     </div>
                 `;
 
+                questionDiv.innerHTML = questionContent;
                 container.appendChild(questionDiv);
 
                 // Add event listeners for radio buttons
