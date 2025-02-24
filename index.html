@@ -467,7 +467,7 @@
         // Add this function to load and parse the markdown file
         async function loadRecommendations() {
             try {
-                const response = await fetch('recommendations.md');
+                const response = await fetch('./recommendations.md');
                 const markdown = await response.text();
                 
                 // Split the markdown into sections based on horizontal rules
