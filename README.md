@@ -27,17 +27,36 @@ Each security component in `recommendations.md` follows this structure:
 ```
 
 ### Assessment Questions
-Questions are defined in the `questions` array in `index.html`:
-```javascript
-const questions = [
-    {
-        id: 'ComponentID',  // Matches the ID in recommendations.md
-        text: 'Question text?',
-        description: 'Additional context for the question',
-        docLink: 'https://learn.microsoft.com/...'
-    }
-];
+Questions are defined in `questions.json`:
+```json
+{
+    "questions": [
+        {
+            "id": "ComponentID",  // Matches the ID in recommendations.md
+            "text": "Question text?",
+            "description": "Additional context for the question",
+            "docLink": "https://learn.microsoft.com/...",
+            "children": ["ChildID1", "ChildID2"]  // Optional: IDs of dependent components
+        }
+    ]
+}
 ```
+
+#### Parent-Child Relationships
+- Use the `children` property to define dependencies between components
+- Only define relationships on the parent question
+- Child questions will be automatically hidden when parent is marked as "Yes"
+- Example relationships:
+  ```json
+  {
+      "id": "CA",  // Conditional Access
+      "children": ["MFA", "CloudID"]  // CA depends on MFA and Cloud Identity
+  },
+  {
+      "id": "XDR",  // Extended Detection and Response
+      "children": ["DID", "MDO", "MDCA", "MDE", "MDVM"]  // XDR includes multiple Defender products
+  }
+  ```
 
 ### Features
 - **Implementation Steps Toggle:** Show/hide detailed implementation steps
@@ -53,6 +72,7 @@ const questions = [
 
 ### File Organization
 - `index.html`: Main application and UI logic
+- `questions.json`: Assessment questions and component relationships
 - `recommendations.md`: Component documentation and implementation steps
 - `DetailedDiagram.md`: Full deployment visualization
 - `SimplifiedDiagram.md`: Condensed deployment visualization
@@ -61,20 +81,24 @@ const questions = [
 
 ### Adding a New Component
 1. Add component documentation to `recommendations.md`
-2. Add assessment question to the `questions` array
-3. Update Mermaid diagrams in both `DetailedDiagram.md` and `SimplifiedDiagram.md`
-4. Add component to appropriate deployment phase
+2. Add assessment question to `questions.json`
+3. Update parent-child relationships if needed
+4. Update Mermaid diagrams in both `DetailedDiagram.md` and `SimplifiedDiagram.md`
+5. Add component to appropriate deployment phase
 
 ### Updating Existing Content
 1. Locate the component in `recommendations.md`
 2. Update documentation while maintaining the established format
-3. Update corresponding question if needed
-4. Update diagram relationships if component dependencies change
+3. Update corresponding question in `questions.json`
+4. Update parent-child relationships if dependencies change
+5. Update diagram relationships if component dependencies change
 
 ### Best Practices
 - Maintain consistent component IDs across all files
+- Define relationships only on parent components
 - Keep implementation steps clear and actionable
 - Verify all documentation links
+- Test parent-child behavior after making relationship changes
 - Test PDF export after making changes
 - Update both detailed and simplified diagrams
 
