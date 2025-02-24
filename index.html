@@ -746,14 +746,10 @@
                 const doc = new jspdf.jsPDF({
                     orientation: 'portrait',
                     unit: 'mm',
-                    format: 'a4',
-                    lineHeight: 1.5
+                    format: 'a4'
                 });
 
                 const margin = 20;
-                const pageWidth = doc.internal.pageSize.width;
-                const pageHeight = doc.internal.pageSize.height;
-                const contentWidth = pageWidth - (margin * 2);
                 let yPos = margin;
 
                 // Add title
@@ -799,47 +795,77 @@
                     }
                 }
 
-                // Get recommendations content
+                // Process recommendations and links
                 const recommendationsDiv = document.getElementById('recommendations');
                 if (recommendationsDiv) {
-                    const sections = recommendationsDiv.getElementsByTagName('h2');
+                    // Process each section
+                    const sections = recommendationsDiv.querySelectorAll('h2, p, ul, li, a');
                     
-                    Array.from(sections).forEach((section, index) => {
-                        if (yPos > pageHeight - margin) {
+                    sections.forEach(element => {
+                        // Check if we need a new page
+                        if (yPos > 270) {  // Leave margin at bottom
                             doc.addPage();
                             yPos = margin;
                         }
 
-                        doc.setTextColor(0, 51, 153);
-                        doc.setFontSize(16);
-                        doc.text(section.textContent.trim(), margin, yPos);
-                        yPos += 10;
+                        switch(element.tagName.toLowerCase()) {
+                            case 'h2':
+                                doc.setFontSize(16);
+                                doc.setTextColor(0, 51, 153);
+                                doc.text(element.textContent.trim(), margin, yPos);
+                                yPos += 10;
+                                break;
 
-                        let nextElement = section.nextElementSibling;
-                        while (nextElement && nextElement.tagName !== 'H2') {
-                            if (yPos > pageHeight - margin) {
-                                doc.addPage();
-                                yPos = margin;
-                            }
-
-                            doc.setTextColor(0, 0, 0);
-                            doc.setFontSize(12);
-                            const content = nextElement.textContent.trim();
-                            const splitText = doc.splitTextToSize(content, contentWidth);
-                            
-                            splitText.forEach(line => {
-                                doc.text(line, margin, yPos);
+                            case 'a':
+                                // Handle links
+                                doc.setFontSize(12);
+                                doc.setTextColor(0, 0, 255);  // Blue for links
+                                const linkText = element.textContent.trim();
+                                const linkUrl = element.href;
+                                
+                                // Add clickable link
+                                doc.link(margin, yPos - 5, doc.getTextWidth(linkText), 5, { url: linkUrl });
+                                doc.text(linkText, margin, yPos);
                                 yPos += 7;
-                            });
+                                break;
 
-                            nextElement = nextElement.nextElementSibling;
+                            case 'li':
+                                doc.setFontSize(12);
+                                doc.setTextColor(0, 0, 0);
+                                const liText = element.childNodes[0].textContent.trim();
+                                doc.text('• ' + liText, margin + 5, yPos);
+                                
+                                // Handle any links within the list item
+                                const liLinks = element.getElementsByTagName('a');
+                                if (liLinks.length > 0) {
+                                    yPos += 7;
+                                    Array.from(liLinks).forEach(link => {
+                                        doc.setTextColor(0, 0, 255);
+                                        const linkText = link.textContent.trim();
+                                        doc.link(margin + 10, yPos - 5, doc.getTextWidth(linkText), 5, { url: link.href });
+                                        doc.text(linkText, margin + 10, yPos);
+                                        yPos += 7;
+                                    });
+                                } else {
+                                    yPos += 7;
+                                }
+                                break;
+
+                            default:
+                                doc.setFontSize(12);
+                                doc.setTextColor(0, 0, 0);
+                                const text = element.textContent.trim();
+                                if (text) {
+                                    const splitText = doc.splitTextToSize(text, 170);
+                                    splitText.forEach(line => {
+                                        doc.text(line, margin, yPos);
+                                        yPos += 7;
+                                    });
+                                }
                         }
-                        
-                        yPos += 10;
                     });
                 }
 
-                // Save the PDF
                 doc.save('security-assessment-results.pdf');
 
             } catch (error) {
