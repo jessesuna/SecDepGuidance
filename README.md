@@ -1,6 +1,6 @@
 # Security Deployment Guidance Tool
 
-This repository contains experimental deployment guidance for Microsoft's suite of security products.
+This tool provides deployment guidance for Microsoft's security products and helps track implementation progress.
 
 ## Content Structure
 
@@ -9,16 +9,16 @@ Each security component in `recommendations.md` follows this structure:
 ```markdown
 ### Component Name {#ComponentID}
 **Why it's important:**
-- Benefit 1
-- Benefit 2
-- ...
+- Key benefit 1
+- Key benefit 2
+- Additional benefits...
 
 **Implementation Steps:**
-1. Step One
-   - Sub-step
-   - Sub-step
+1. Major Step One
+   - Sub-step detail
+   - Sub-step detail
    ...
-2. Step Two
+2. Major Step Two
    ...
 
 **Learn More:**
@@ -26,87 +26,70 @@ Each security component in `recommendations.md` follows this structure:
 - [Additional Resources](url)
 ```
 
-### Content Organization
-- Components are grouped into deployment phases (First 30 Days, Days 31-60, Days 61-90)
-- Each component has a unique ID for reference
-- Implementation steps can be toggled for simplified viewing
-- Documentation links point to official Microsoft resources
-
-## Code Organization and Best Practices
-
-### JavaScript Structure
+### Assessment Questions
+Questions are defined in the `questions` array in `index.html`:
 ```javascript
-// Configuration and Constants
-const config = {
-    phases: ['phase1', 'phase2', 'phase3'],
-    styles: {
-        deployed: 'fill:#90EE90,stroke:#333,stroke-width:2px',
-        notDeployed: 'fill:#FFB6C1,stroke:#333,stroke-width:2px'
+const questions = [
+    {
+        id: 'ComponentID',  // Matches the ID in recommendations.md
+        text: 'Question text?',
+        description: 'Additional context for the question',
+        docLink: 'https://learn.microsoft.com/...'
     }
-};
-
-// Content Loading and Processing
-async function loadRecommendations() {...}
-async function generateResults() {...}
-
-// Toggle Functionality
-function initializeToggles() {...}
-
-// PDF Export
-async function exportToPDF() {...}
-
-// Utility Functions
-function parseMarkdown(content) {...}
+];
 ```
 
-### Feature Documentation
+### Features
+- **Implementation Steps Toggle:** Show/hide detailed implementation steps
+- **PDF Export:** Generate a formatted PDF including:
+  - Current deployment status
+  - Mermaid diagram visualization
+  - Prioritized recommendations
+  - Clickable documentation links
+- **Deployment Visualization:** Interactive diagram showing:
+  - Deployed components (green)
+  - Pending components (pink)
+  - Component relationships
 
-#### Implementation Steps Toggle
-The toggle functionality allows users to show/hide implementation steps:
-```javascript
-// Toggle initialization
-const implementationToggle = document.getElementById('showImplementationSteps');
-implementationToggle.addEventListener('change', function() {
-    const steps = document.querySelectorAll('.implementation-steps');
-    steps.forEach(step => {
-        if (this.checked) {
-            step.classList.remove('hidden');
-        } else {
-            step.classList.add('hidden');
-        }
-    });
-});
-```
+### File Organization
+- `index.html`: Main application and UI logic
+- `recommendations.md`: Component documentation and implementation steps
+- `DetailedDiagram.md`: Full deployment visualization
+- `SimplifiedDiagram.md`: Condensed deployment visualization
 
-#### PDF Export
-PDF generation includes:
-- Formatted content based on toggle state
-- Proper page breaks
-- Clickable links
-- Consistent styling
+## Making Updates
 
-### Error Handling
-[Previous error handling section remains the same]
+### Adding a New Component
+1. Add component documentation to `recommendations.md`
+2. Add assessment question to the `questions` array
+3. Update Mermaid diagrams in both `DetailedDiagram.md` and `SimplifiedDiagram.md`
+4. Add component to appropriate deployment phase
 
-### Debug Logging
-[Previous debug logging section remains the same]
+### Updating Existing Content
+1. Locate the component in `recommendations.md`
+2. Update documentation while maintaining the established format
+3. Update corresponding question if needed
+4. Update diagram relationships if component dependencies change
 
-### Code Cleanup Checklist
-[Previous checklist remains the same]
+### Best Practices
+- Maintain consistent component IDs across all files
+- Keep implementation steps clear and actionable
+- Verify all documentation links
+- Test PDF export after making changes
+- Update both detailed and simplified diagrams
 
-### Version Control Best Practices
-[Previous version control section remains the same]
+## Development Notes
+- The tool uses vanilla JavaScript for better maintainability
+- Mermaid.js for diagram rendering
+- jsPDF for PDF generation
+- Marked for Markdown parsing
 
-### Future Improvements
-Consider these enhancements:
-1. Move to TypeScript for better type safety
-2. Add unit tests
-3. Implement proper build process
-4. Add linting and code formatting
-5. Add search functionality
-6. Improve PDF export formatting
-7. Add print stylesheet
-8. Implement content versioning
-
-### Getting Help
-[Previous getting help section remains the same]
+## Future Improvements
+1. Add search functionality
+2. Implement content versioning
+3. Add print stylesheet
+4. Improve PDF formatting
+5. Add unit tests
+6. Add TypeScript support
+7. Implement proper build process
+8. Add linting and code formatting

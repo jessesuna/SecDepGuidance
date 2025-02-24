@@ -741,24 +741,32 @@
             });
         });
 
+        /**
+         * Exports the assessment results to a PDF document.
+         * Includes the Mermaid diagram, recommendations, and clickable links.
+         * @async
+         * @returns {Promise<void>}
+         * @throws {Error} If PDF generation fails
+         */
         async function exportToPDF() {
             try {
+                // Initialize PDF document with A4 portrait format
                 const doc = new jspdf.jsPDF({
                     orientation: 'portrait',
                     unit: 'mm',
                     format: 'a4'
                 });
 
+                // Configure page layout
                 const margin = 20;
                 let yPos = margin;
 
-                // Add title
+                // Add header section with title and date
                 doc.setTextColor(0, 51, 153);
                 doc.setFontSize(24);
                 doc.text('Security Deployment Assessment Results', margin, yPos);
                 yPos += 15;
 
-                // Add date
                 doc.setTextColor(102, 102, 102);
                 doc.setFontSize(12);
                 doc.text(`Generated: ${new Date().toLocaleDateString()}`, margin, yPos);
@@ -798,18 +806,20 @@
                 // Process recommendations and links
                 const recommendationsDiv = document.getElementById('recommendations');
                 if (recommendationsDiv) {
-                    // Process each section
+                    // Select all content elements that need processing
                     const sections = recommendationsDiv.querySelectorAll('h2, p, ul, li, a');
                     
                     sections.forEach(element => {
-                        // Check if we need a new page
-                        if (yPos > 270) {  // Leave margin at bottom
+                        // Add new page if current page is full
+                        if (yPos > 270) {  // 270mm leaves room for margins
                             doc.addPage();
                             yPos = margin;
                         }
 
+                        // Process each element type with appropriate formatting
                         switch(element.tagName.toLowerCase()) {
                             case 'h2':
+                                // Format section headers
                                 doc.setFontSize(16);
                                 doc.setTextColor(0, 51, 153);
                                 doc.text(element.textContent.trim(), margin, yPos);
@@ -817,25 +827,26 @@
                                 break;
 
                             case 'a':
-                                // Handle links
+                                // Process hyperlinks with click functionality
                                 doc.setFontSize(12);
-                                doc.setTextColor(0, 0, 255);  // Blue for links
+                                doc.setTextColor(0, 0, 255);
                                 const linkText = element.textContent.trim();
                                 const linkUrl = element.href;
                                 
-                                // Add clickable link
+                                // Create clickable area and add link text
                                 doc.link(margin, yPos - 5, doc.getTextWidth(linkText), 5, { url: linkUrl });
                                 doc.text(linkText, margin, yPos);
                                 yPos += 7;
                                 break;
 
                             case 'li':
+                                // Process list items and their nested links
                                 doc.setFontSize(12);
                                 doc.setTextColor(0, 0, 0);
                                 const liText = element.childNodes[0].textContent.trim();
                                 doc.text('• ' + liText, margin + 5, yPos);
                                 
-                                // Handle any links within the list item
+                                // Handle links within list items
                                 const liLinks = element.getElementsByTagName('a');
                                 if (liLinks.length > 0) {
                                     yPos += 7;
@@ -852,10 +863,12 @@
                                 break;
 
                             default:
+                                // Process regular text content
                                 doc.setFontSize(12);
                                 doc.setTextColor(0, 0, 0);
                                 const text = element.textContent.trim();
                                 if (text) {
+                                    // Split long text to fit page width
                                     const splitText = doc.splitTextToSize(text, 170);
                                     splitText.forEach(line => {
                                         doc.text(line, margin, yPos);
@@ -866,6 +879,7 @@
                     });
                 }
 
+                // Save the generated PDF
                 doc.save('security-assessment-results.pdf');
 
             } catch (error) {
