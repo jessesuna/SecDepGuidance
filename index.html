@@ -473,51 +473,43 @@
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 const markdown = await response.text();
-                console.log('Loaded markdown file:', markdown.substring(0, 100) + '...'); 
                 
-                // Split the markdown into sections based on horizontal rules
-                const sections = markdown.split('---').map(section => section.trim());
-                console.log('Split sections count:', sections.length);
-                
-                // Parse the sections into a recommendations object
+                // Initialize recommendations object
                 const recommendations = {
-                    keyResources: sections[0],
+                    keyResources: '',
                     phases: {
                         phase1: { title: '', items: {} },
                         phase2: { title: '', items: {} },
                         phase3: { title: '', items: {} }
                     }
                 };
+
+                // Extract key resources (everything before the first phase marker)
+                const keyResourcesMatch = markdown.match(/### Key Resources[\s\S]+?(?=\n## )/);
+                if (keyResourcesMatch) {
+                    recommendations.keyResources = keyResourcesMatch[0].trim();
+                }
+
+                // Find all phase sections
+                const phaseRegex = /## ([^\n]+) \{#(phase\d+)\}([\s\S]+?)(?=\n## |$)/g;
+                let phaseMatch;
                 
-                let currentPhase = null;
-                let currentSection = '';
-                
-                // Parse remaining sections
-                for (let i = 1; i < sections.length; i++) {
-                    const section = sections[i];
+                while ((phaseMatch = phaseRegex.exec(markdown)) !== null) {
+                    const [_, title, phaseId, content] = phaseMatch;
+                    recommendations.phases[phaseId].title = title;
                     
-                    // Check if this section is a phase header
-                    const phaseMatch = section.match(/## ([^\n]+) \{#(phase\d+)\}/);
-                    if (phaseMatch) {
-                        currentPhase = phaseMatch[2];
-                        recommendations.phases[currentPhase].title = phaseMatch[1];
-                        console.log('Found phase:', currentPhase, 'with title:', phaseMatch[1]);
-                        currentSection = section;
-                        continue;
-                    }
+                    // Find all recommendations within this phase
+                    const recommendationRegex = /### ([^\n]+) \{#(\w+)\}([\s\S]+?)(?=\n### |$)/g;
+                    let recMatch;
                     
-                    // Extract the component ID and content
-                    const idMatch = section.match(/### [^\n]+ \{#(\w+)\}/);
-                    if (idMatch && currentPhase) {
-                        const id = idMatch[1];
-                        // Remove the ID tag from the content
-                        const content = section.replace(/\{#\w+\}/, '').trim();
-                        recommendations.phases[currentPhase].items[id] = content;
-                        console.log('Added recommendation for:', id, 'in phase:', currentPhase);
+                    while ((recMatch = recommendationRegex.exec(content)) !== null) {
+                        const [__, recTitle, recId, recContent] = recMatch;
+                        recommendations.phases[phaseId].items[recId] = `### ${recTitle}${recContent}`;
+                        console.log(`Added recommendation ${recId} to ${phaseId}`);
                     }
                 }
 
-                // Debug log the structure of recommendations
+                // Debug log the structure
                 Object.entries(recommendations.phases).forEach(([phaseId, phase]) => {
                     console.log(`Phase ${phaseId}:`, {
                         title: phase.title,
