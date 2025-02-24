@@ -441,29 +441,42 @@
             }
         ];
 
-        // Function to create question elements
-        function createQuestionElements() {
-            const container = document.getElementById('questionsContainer');
-            if (!container) {
-                console.error('Questions container not found!');
+        // Function to generate questions
+        function generateQuestions() {
+            const questionsContainer = document.getElementById('questions');
+            if (!questionsContainer) {
+                console.error('Questions container not found');
                 return;
             }
+            
+            questionsContainer.innerHTML = ''; // Clear existing questions
 
-            questions.forEach(q => {
+            questions.forEach((q, index) => {
                 const questionDiv = document.createElement('div');
                 questionDiv.className = 'question';
-                questionDiv.innerHTML = `
-                    <h3>${q.text}</h3>
-                    <p>${q.description}</p>
-                    <p><a href="${q.docLink}" target="_blank">Learn more</a></p>
-                    <div class="radio-group">
-                        <input type="radio" id="${q.id}_no" name="${q.id}" value="false" checked>
-                        <label for="${q.id}_no">No</label>
-                        <input type="radio" id="${q.id}_yes" name="${q.id}" value="true">
-                        <label for="${q.id}_yes">Yes</label>
-                    </div>
-                `;
-                container.appendChild(questionDiv);
+                questionDiv.setAttribute('data-id', q.id);
+
+                const questionText = document.createElement('p');
+                questionText.textContent = q.text;
+                questionDiv.appendChild(questionText);
+
+                const radioGroup = document.createElement('div');
+                radioGroup.className = 'radio-group';
+
+                q.options.forEach(option => {
+                    const label = document.createElement('label');
+                    const input = document.createElement('input');
+                    input.type = 'radio';
+                    input.name = q.id;
+                    input.value = option.toLowerCase();
+                    
+                    label.appendChild(input);
+                    label.appendChild(document.createTextNode(' ' + option));
+                    radioGroup.appendChild(label);
+                });
+
+                questionDiv.appendChild(radioGroup);
+                questionsContainer.appendChild(questionDiv);
             });
         }
 
@@ -718,12 +731,16 @@
             }
         }
 
-        // Initialize toggle when DOM is ready
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initializeToggles);
-        } else {
-            initializeToggles();
-        }
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', async function() {
+            try {
+                generateQuestions();
+                await loadRecommendations();
+                initializeToggles();
+            } catch (error) {
+                console.error('Error during initialization:', error);
+            }
+        });
 
         async function exportToPDF() {
             try {
