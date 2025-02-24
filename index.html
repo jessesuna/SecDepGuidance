@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -465,33 +464,99 @@
             });
         }
 
+        // Function to load recommendations from markdown file
+        async function loadRecommendations() {
+            try {
+                const response = await fetch('./recommendations.md');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const markdown = await response.text();
+                
+                // Split the markdown into sections based on horizontal rules
+                const sections = markdown.split('---').map(section => section.trim());
+                
+                // Parse the sections into a recommendations object
+                const recommendations = {};
+                
+                // First section is always key resources
+                recommendations.keyResources = sections[0];
+                
+                // Parse remaining sections
+                for (let i = 1; i < sections.length; i++) {
+                    const section = sections[i];
+                    // Extract the ID from the header {#ID}
+                    const idMatch = section.match(/\{#(\w+)\}/);
+                    if (idMatch) {
+                        const id = idMatch[1];
+                        // Remove the ID from the content and parse the section
+                        const content = section.replace(/\{#\w+\}/, '').trim();
+                        recommendations[id] = content;
+                    }
+                }
+                
+                return recommendations;
+            } catch (error) {
+                console.error('Error loading recommendations:', error);
+                return null;
+            }
+        }
+
         // Function to generate results
-        function generateResults() {
+        async function generateResults() {
             const deploymentStatus = {};
-            questions.forEach(q => {
-                const radioValue = document.querySelector(`input[name="${q.id}"]:checked`).value;
-                deploymentStatus[q.id] = radioValue === 'true';
+            questions.forEach(category => {
+                category.questions.forEach(q => {
+                    const radioValue = document.querySelector(`input[name="${q.id}"]:checked`).value;
+                    deploymentStatus[q.id] = radioValue === 'true';
+                });
             });
 
-            // Handle the main diagram
+            // Load recommendations from markdown file
+            const recommendations = await loadRecommendations();
+            if (!recommendations) {
+                console.error('Failed to load recommendations');
+                return;
+            }
+
+            // Generate recommendations content
+            let recommendationsContent = '## Recommended Next Steps\n\n';
+            
+            // Add key resources
+            recommendationsContent += recommendations.keyResources + '\n';
+
+            // Add section headers based on what's not deployed
+            if (!deploymentStatus['CloudID'] || !deploymentStatus['MFA'] || !deploymentStatus['CA'] || 
+                !deploymentStatus['IntuneEnroll'] || !deploymentStatus['IntuneCompPol'] || !deploymentStatus['MDVM']) {
+                recommendationsContent += '\n## First 30 Days: Foundation and Quick Wins\n\n';
+            }
+
+            if (!deploymentStatus['RCA'] || !deploymentStatus['XDR'] || !deploymentStatus['EPA'] || 
+                !deploymentStatus['IDProtection'] || !deploymentStatus['MDE']) {
+                recommendationsContent += '\n## Enhanced Security Features\n\n';
+            }
+
+            if (!deploymentStatus['IGA'] || !deploymentStatus['PIM'] || !deploymentStatus['DSPM'] || 
+                !deploymentStatus['GSA'] || !deploymentStatus['EndpointAnalytics']) {
+                recommendationsContent += '\n## Advanced Features and Optimization\n\n';
+            }
+
+            // Add specific recommendations based on deployment status
+            Object.entries(deploymentStatus).forEach(([id, isDeployed]) => {
+                if (!isDeployed && recommendations[id]) {
+                    recommendationsContent += recommendations[id] + '\n\n';
+                }
+            });
+
+            // Update the UI with diagrams and recommendations
             const mermaidDiv = document.getElementById('mermaidChart');
             const diagram = generateSimplifiedDiagram(deploymentStatus);
             mermaidDiv.innerHTML = `<div class="mermaid">${diagram}</div>`;
 
-            // Generate recommendations and Gantt chart separately
             const recommendationsDiv = document.getElementById('recommendations');
-            const recommendationsContent = generateRecommendations(deploymentStatus);
-            
-            // Create a separate div for the Gantt chart
-            const ganttChart = generateGanttChart(deploymentStatus);
-            
-            // Combine content but keep Mermaid diagram separate
-            recommendationsDiv.innerHTML = marked.parse(recommendationsContent) + 
-                `<div class="mermaid">
-                    ${ganttChart}
-                </div>`;
+            recommendationsDiv.innerHTML = marked.parse(recommendationsContent);
 
-            // Re-initialize mermaid to render all diagrams
+            // Re-initialize mermaid
             mermaid.init(undefined, ".mermaid");
             
             document.getElementById('results').style.display = 'block';
@@ -690,163 +755,6 @@
             `;
         }
 
-        // Function to generate recommendations
-        const markdownContent = {
-            keyResources: `
-### Key Resources
-- [Zero Trust Rapid Deployment Plan](https://learn.microsoft.com/en-us/security/zero-trust/zero-trust-ramp-overview)
-- [Zero Trust deployment plan with Microsoft 365](https://learn.microsoft.com/en-us/microsoft-365/security/microsoft-365-zero-trust?view=o365-worldwide)
-- [Zero Trust Assessment Workshop](https://microsoft.github.io/zerotrustassessment/)
-- [Zero Trust Assessment Tool](https://microsoft.github.io/zerotrustassessment/docs/app-permissions)
-- [Purview Deployment Models](https://learn.microsoft.com/en-us/purview/deploymentmodels/depmod-overview)
-`,
-
-            recommendations: {
-                // Identity and Access Management
-                CloudID: {
-                    title: '### Identity Foundation Priority',
-                    content: `- Configure Cloud Identity as your foundation
-- Review Entra ID Protection features
-- Implement basic identity management
-- Reference: [Zero Trust deployment plan](https://learn.microsoft.com/en-us/microsoft-365/security/microsoft-365-zero-trust?view=o365-worldwide#identity)
-`
-                },
-                MFA: {
-                    title: '### Critical Security Enhancement',
-                    content: `- Deploy Multifactor Authentication immediately
-- Configure MFA for all users
-- Set up conditional access policies
-- Use the [Zero Trust Assessment Tool](https://microsoft.github.io/zerotrustassessment/docs/app-permissions) to validate your MFA configuration
-`
-                },
-                CA: {
-                    title: '### Conditional Access Implementation',
-                    content: `- Configure basic Conditional Access policies
-- Set up risk-based policies
-- Implement device-based access controls
-- Reference: [Conditional Access documentation](https://learn.microsoft.com/en-us/entra/identity/conditional-access/overview)
-`
-                },
-
-                // Device Management
-                IntuneEnroll: {
-                    title: '### Device Enrollment',
-                    content: `- Begin device enrollment in Intune
-- Configure enrollment restrictions
-- Set up device categories
-- Reference: [Intune enrollment guide](https://learn.microsoft.com/en-us/mem/intune/enrollment/)
-`
-                },
-                IntuneCompPol: {
-                    title: '### Compliance Policies',
-                    content: `- Configure basic compliance policies
-- Set up compliance policy rules
-- Define actions for non-compliance
-- Reference: [Device compliance policies](https://learn.microsoft.com/en-us/mem/intune/protect/device-compliance-get-started)
-`
-                },
-
-                // Threat Protection
-                XDR: {
-                    title: '### Enhanced Threat Protection',
-                    content: `- Deploy Microsoft 365 Defender (XDR)
-- Configure EDR capabilities
-- Set up advanced threat protection
-- Enable automated investigation and response
-- Reference: [Microsoft 365 Defender](https://learn.microsoft.com/en-us/microsoft-365/security/defender/microsoft-365-defender)
-`
-                },
-                MDVM: {
-                    title: '### Vulnerability Management',
-                    content: `- Deploy Defender for Vulnerability Management
-- Run initial vulnerability assessment
-- Create preliminary remediation plan
-- Reference: [Defender Vulnerability Management](https://learn.microsoft.com/en-us/defender-vulnerability-management/)
-`
-                },
-
-                // Data Protection
-                DSPM: {
-                    title: '### Data Security Posture Management',
-                    content: `- Deploy Microsoft Purview DSPM
-- Configure data discovery and classification
-- Set up sensitive information types
-- Reference: [Purview DSPM](https://learn.microsoft.com/en-us/purview/data-security-posture-management)
-`
-                },
-                EndpointDLP: {
-                    title: '### Data Loss Prevention',
-                    content: `- Configure Endpoint DLP policies
-- Set up DLP rules and actions
-- Monitor DLP alerts and incidents
-- Reference: [Endpoint DLP](https://learn.microsoft.com/en-us/purview/endpoint-dlp-learn-about)
-`
-                },
-
-                // Advanced Features
-                IGA: {
-                    title: '### Identity Governance',
-                    content: `- Deploy Identity Governance
-- Configure access reviews
-- Set up entitlement management
-- Reference: [Identity Governance](https://learn.microsoft.com/en-us/entra/id-governance/)
-`
-                },
-                PIM: {
-                    title: '### Privileged Identity Management',
-                    content: `- Configure PIM roles and assignments
-- Set up approval workflows
-- Implement just-in-time access
-- Reference: [PIM documentation](https://learn.microsoft.com/en-us/entra/id-governance/privileged-identity-management/)
-`
-                },
-                
-                // Additional components...
-                EndpointAnalytics: {
-                    title: '### Advanced Analytics',
-                    content: `- Deploy Advanced Endpoint Analytics
-- Configure proactive remediations
-- Set up performance monitoring
-- Reference: [Endpoint Analytics](https://learn.microsoft.com/en-us/mem/analytics/)
-`
-                },
-                Cloudpki: {
-                    title: '### Microsoft Cloud PKI',
-                    content: `- Create root CA
-- Create Issuing CA
-- Configure Certificate Profiles
-- Reference: [Cloud PKI Documentation](https://learn.microsoft.com/en-us/mem/intune/protect/microsoft-cloud-pki-overview)
-`
-                }
-                // Add more components as needed...
-            }
-        };
-
-        function generateRecommendations(deploymentStatus) {
-            let recommendations = '## Recommended Next Steps\n\n';
-            
-            // Add key resources
-            recommendations += markdownContent.keyResources + '\n';
-
-            // Foundation (30 Days)
-            let foundationNeeded = false;
-            if (!deploymentStatus['CloudID'] || !deploymentStatus['MFA'] || !deploymentStatus['CA'] || 
-                !deploymentStatus['IntuneEnroll'] || !deploymentStatus['IntuneCompPol'] || !deploymentStatus['MDVM']) {
-                recommendations += '## First 30 Days: Foundation and Quick Wins\n\n';
-                foundationNeeded = true;
-            }
-
-            // Add specific recommendations based on deployment status
-            Object.entries(deploymentStatus).forEach(([id, isDeployed]) => {
-                if (!isDeployed && markdownContent.recommendations[id]) {
-                    recommendations += markdownContent.recommendations[id].title + '\n';
-                    recommendations += markdownContent.recommendations[id].content + '\n';
-                }
-            });
-
-            return recommendations;
-        }
-
         function generateSimplifiedDiagram(deploymentStatus) {
             return `
             flowchart LR
@@ -953,81 +861,6 @@
             
             mermaidDiv.innerHTML = `<div class="mermaid">${diagram}</div>`;
             mermaid.init();
-        }
-
-        // Update the generateGanttChart function to return just the chart content without the mermaid wrapper
-        function generateGanttChart(deploymentStatus) {
-            // Only include tasks that aren't deployed yet
-            let tasks = [];
-            
-            // Foundation tasks
-            if (!deploymentStatus['CloudID']) 
-                tasks.push('    Cloud Identity Setup       :a1, 0, 7d');
-            if (!deploymentStatus['MFA']) 
-                tasks.push('    MFA Deployment            :a2, after a1, 7d');
-            if (!deploymentStatus['CA']) 
-                tasks.push('    Basic Conditional Access  :a3, after a2, 7d');
-            if (!deploymentStatus['IntuneEnroll']) 
-                tasks.push('    Device Enrollment         :a4, after a1, 14d');
-            if (!deploymentStatus['IntuneCompPol']) 
-                tasks.push('    Basic Compliance Policies :a5, after a4, 7d');
-            if (!deploymentStatus['MDVM']) 
-                tasks.push('    Vulnerability Management  :a6, after a1, 14d');
-
-            // Enhanced Security tasks
-            if (!deploymentStatus['RCA'] || !deploymentStatus['IDProtection']) {
-                tasks.push('    Risk-based CA            :b1, after a3, 14d');
-                tasks.push('    Identity Protection      :b2, after b1, 7d');
-            }
-            if (!deploymentStatus['XDR'] || !deploymentStatus['MDE']) {
-                tasks.push('    XDR Implementation       :b3, after a6, 14d');
-                tasks.push('    Defender for Endpoint    :b4, after b3, 7d');
-            }
-            if (!deploymentStatus['EPA'] || !deploymentStatus['EPAConn']) {
-                tasks.push('    Private Access Setup     :b5, after a5, 14d');
-            }
-            if (!deploymentStatus['AppProtection']) {
-                tasks.push('    App Protection Policies  :b6, after b5, 7d');
-            }
-
-            // Advanced Features tasks
-            if (!deploymentStatus['IGA'] || !deploymentStatus['AccessReview'] || !deploymentStatus['PIM']) {
-                tasks.push('    Identity Governance      :c1, after b2, 14d');
-                tasks.push('    Access Reviews           :c2, after c1, 7d');
-                tasks.push('    PIM Implementation      :c3, after c2, 7d');
-            }
-            if (!deploymentStatus['GSA'] || !deploymentStatus['EIA']) {
-                tasks.push('    Global Secure Access    :c4, after b5, 14d');
-            }
-            if (!deploymentStatus['VID'] || !deploymentStatus['VIDCred'] || !deploymentStatus['VIDWorkflow']) {
-                tasks.push('    Verified ID Setup       :c5, after c1, 14d');
-            }
-            if (!deploymentStatus['EndpointAnalytics']) {
-                tasks.push('    Advanced Analytics      :c6, after c4, 14d');
-            }
-            if (!deploymentStatus['DSPM'] || !deploymentStatus['EndpointDLP'] || !deploymentStatus['PurAud']) {
-                tasks.push('    DSPM Implementation     :c7, after b4, 21d');
-            }
-
-            // Only generate the chart if there are remaining tasks
-            if (tasks.length === 0) {
-                return '### Congratulations!\nAll security components have been deployed. Focus on monitoring and optimization.';
-            }
-
-            return `gantt
-    title Remaining Security Implementation Timeline
-    dateFormat  YYYY-MM-DD
-    axisFormat %d
-    todayMarker off
-
-    section Foundation 
-${tasks.filter(t => t.includes(':a')).join('\n')}
-
-    section Enhanced Security 
-${tasks.filter(t => t.includes(':b')).join('\n')}
-
-    section Advanced Features
-${tasks.filter(t => t.includes(':c')).join('\n')}`;
         }
 
         // Make sure mermaid is configured to handle Gantt charts
