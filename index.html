@@ -529,7 +529,7 @@
 
             // Update recommendations
             const recommendationsDiv = document.getElementById('recommendations');
-            recommendationsDiv.innerHTML = recommendationsContent;
+            recommendationsDiv.innerHTML = marked.parse(recommendationsContent);
             console.log('Updated recommendations');
 
             // Show results
