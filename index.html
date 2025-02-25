@@ -495,7 +495,7 @@
 `;
 
                             if (learnMore) {
-                                recommendationsContent += `<strong>Learn More:</strong><br>${learnMore.replace(/\n/g, '<br>')}<br><br>`;
+                                recommendationsContent += `<strong>Learn More:</strong><br>${marked.parse(learnMore)}<br><br>`;
                             }
                         }
                         console.log('Added recommendation for:', id);
@@ -529,7 +529,7 @@
 
             // Update recommendations
             const recommendationsDiv = document.getElementById('recommendations');
-            recommendationsDiv.innerHTML = marked.parse(recommendationsContent);
+            recommendationsDiv.innerHTML = recommendationsContent;
             console.log('Updated recommendations');
 
             // Show results
