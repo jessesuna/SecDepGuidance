@@ -476,11 +476,13 @@
                     // Add recommendations for non-deployed items
                     pendingItems.forEach(([id, content]) => {
                         const whyImportantMatch = content.match(/(?<=\*\*Why it's important:\*\*\n)([\s\S]+?)(?=\n\*\*Implementation Steps:\*\*)/);
-                        const implementationStepsMatch = content.match(/(?<=\*\*Implementation Steps:\*\*\n)([\s\S]+)/);
+                        const implementationStepsMatch = content.match(/(?<=\*\*Implementation Steps:\*\*\n)([\s\S]+?)(?=\n\*\*Learn More:\*\*)/);
+                        const learnMoreMatch = content.match(/(?<=\*\*Learn More:\*\*\n)([\s\S]+)/);
 
                         if (whyImportantMatch && implementationStepsMatch) {
                             const whyImportant = whyImportantMatch[0].trim();
                             const implementationSteps = implementationStepsMatch[0].trim();
+                            const learnMore = learnMoreMatch ? learnMoreMatch[0].trim() : '';
 
                             recommendationsContent += `
 <table>
@@ -491,6 +493,10 @@
 </table>
 <br>
 `;
+
+                            if (learnMore) {
+                                recommendationsContent += `<strong>Learn More:</strong><br>${learnMore.replace(/\n/g, '<br>')}<br><br>`;
+                            }
                         }
                         console.log('Added recommendation for:', id);
                     });
